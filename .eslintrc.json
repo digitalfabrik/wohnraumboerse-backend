@@ -1,0 +1,58 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "standard"
+  ],
+  "env": {
+    "browser": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "rules": {
+    "arrow-parens": [
+      "error",
+      "as-needed"
+    ],
+    "no-extra-bind": "error",
+    "prefer-template": "error",
+    "no-loop-func": "error",
+    "curly": [
+      "error",
+      "all"
+    ],
+    "prefer-const": "error",
+    "indent": [
+      "error",
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "*.js"
+      ],
+      "excludedFiles": [
+        "*.spec.js",
+        "**/__mocks__/*.js"
+      ],
+      "rules": {
+        "no-magic-numbers": [
+          "error",
+          {
+            "ignore": [
+              -1,
+              0,
+              1
+            ],
+            "ignoreArrayIndexes": true
+          }
+        ]
+      }
+    }
+  ]
+}

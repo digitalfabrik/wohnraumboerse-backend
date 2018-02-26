@@ -1,6 +1,6 @@
-import { Router } from 'express';
+import {Router} from 'express';
 
-export default ({config, db}) => {
+export default ({db}) => {
     const router = new Router();
     router.get('/', (req, res) => {
         res.json(req.city)
