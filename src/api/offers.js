@@ -1,17 +1,15 @@
 import {Router} from 'express'
-import Offer from '../models/Offer'
 
-export default ({db}) => {
+export default ({offerService}) => {
   const router = new Router()
   router.get('/', (req, res) => {
-    res.json(req.city)
+    res.json(offerService.getOffers(req.city))
   })
 
   router.put('/', (req, res) => {
-    const {email, formData} = req.body
-    const offer = new Offer({email, city: req.city, formData})
-    res.json(offer)
-
+    const {email, formData, duration} = req.body
+    const id = offerService.createOffer(req.city, email, formData, duration)
+    res.json(id)
   })
 
   return router

@@ -7,8 +7,10 @@ import initializeDb from './db'
 import middleware from './middleware'
 import api from './api'
 import config from './config.json'
+import OfferService from './services/OfferService'
 
-let app = express()
+const offerService = new OfferService()
+const app = express()
 app.server = http.createServer(app)
 
 // logger
@@ -30,7 +32,7 @@ initializeDb(db => {
   app.use(middleware({config, db}))
 
   // api router
-  app.use('/', api({config, db}))
+  app.use('/', api({offerService}))
 
   app.server.listen(process.env.PORT || config.port, () => {
     console.log(`Started on port ${app.server.address().port}`)
