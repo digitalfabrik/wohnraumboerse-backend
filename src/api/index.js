@@ -1,17 +1,16 @@
-import { version } from '../../package.json';
-import { Router } from 'express';
-import facets from './facets';
+import {version} from '../../package.json';
+import {Router} from 'express';
+import offers from './offers';
 
-export default ({ config, db }) => {
-	let api = Router();
+export default ({config, db}) => {
+    const api = Router();
 
-	// mount the facets resource
-	api.use('/facets', facets({ config, db }));
 
-	// perhaps expose some API metadata at the root
-	api.get('/', (req, res) => {
-		res.json({ version });
-	});
+    api.param('city', (req, res, next, id) => {
+        req.city = id;
+        next()
+    });
+    api.use('/v0/:city', offers({config, db}));
 
-	return api;
+    return api;
 }
