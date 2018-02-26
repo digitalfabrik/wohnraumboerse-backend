@@ -1,8 +1,8 @@
 import {version} from '../../package.json';
 import {Router} from 'express';
-import facets from './facets';
+import offers from './offers';
 
-export default () => {
+export default ({config, db}) => {
     const api = Router();
 
 
@@ -10,7 +10,7 @@ export default () => {
         req.city = id;
         next()
     });
-    api.use('/v0/:city', facets());
+    api.use('/v0/:city', offers({config, db}));
 
     return api;
 }
