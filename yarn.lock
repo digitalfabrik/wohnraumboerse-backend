@@ -3006,10 +3006,6 @@ resolve@^1.1.6:
   dependencies:
     path-parse "^1.0.5"
 
-resource-router-middleware@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/resource-router-middleware/-/resource-router-middleware-0.6.0.tgz#bccb286c22ae990840f963769c325f68c875c1f3"
-
 restore-cursor@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/restore-cursor/-/restore-cursor-1.0.1.tgz#34661f46886327fed2991479152252df92daa541"
