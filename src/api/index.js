@@ -1,4 +1,3 @@
-import {version} from '../../package.json'
 import {Router} from 'express'
 import offers from './offers'
 
@@ -9,7 +8,7 @@ export default ({offerService}) => {
     req.city = id
     next()
   })
-  api.use('/v0/:city', offers({offerService }))
+  api.use('/v0/:city', offers({offerService}))
 
   return api
 }
