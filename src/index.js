@@ -7,11 +7,11 @@ import initializeDb from './db'
 import middleware from './middleware'
 import api from './api'
 import config from './config.json'
-import OfferService from './services/OfferService'
 import mailer from 'express-mailer'
 import auth from './auth'
+import initializeServices from './services/initializeServices'
 
-const offerService = new OfferService()
+const services = initializeServices()
 const app = express()
 
 mailer.extend(app, {
@@ -44,7 +44,7 @@ initializeDb(db => {
   app.use(middleware({config, db}))
 
   // api router
-  app.use('/', api({offerService}))
+  app.use('/', api(services))
 
   app.server.listen(process.env.PORT || config.port, () => {
     console.log(`Started on port ${app.server.address().port}`)
