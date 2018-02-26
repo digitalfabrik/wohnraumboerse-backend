@@ -8,9 +8,22 @@ import middleware from './middleware'
 import api from './api'
 import config from './config.json'
 import OfferService from './services/OfferService'
+import mailer from 'express-mailer'
+import auth from './auth'
 
 const offerService = new OfferService()
 const app = express()
+
+mailer.extend(app, {
+  from: 'no-reply@example.com',
+  host: 'smtp.gmail.com',
+  secureConnection: true,
+  port: 465,
+  transportMethod: 'SMTP',
+  auth: auth
+})
+
+app.set('view engine', 'pug')
 app.server = http.createServer(app)
 
 // logger
@@ -27,7 +40,6 @@ app.use(bodyParser.json({
 
 // connect to db
 initializeDb(db => {
-
   // internal middleware
   app.use(middleware({config, db}))
 
