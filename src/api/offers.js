@@ -17,7 +17,9 @@ export default ({offerService}) => {
   })
 
   router.get('/', (req, res) => {
-    res.json(offerService.getActiveOffers(req.city))
+    res.json(offerService
+      .getActiveOffers(req.city)
+      .map(offer => offer.formData))
   })
 
   router.put('/', (req, res) => {
