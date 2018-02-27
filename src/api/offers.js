@@ -9,6 +9,9 @@ const STATUS_SERVER_ERROR = 500
 const getConfirmUrl = (city, token) => `http://neuburg.wohnen.integreat-app.de/offer/${token}/confirm`
 const getDeleteUrl = (city, token) => `http://neuburg.wohnen.integreat-app.de/offer/${token}/delete`
 
+const emailRegExp = new RegExp('^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9._-]+$')
+const durationRegExp = new RegExp('^[0-9]+$')
+
 export default ({offerService}) => {
   const router = new Router()
 
@@ -24,12 +27,15 @@ export default ({offerService}) => {
 
   router.put('/', (req, res) => {
     const {email, formData, duration} = req.body
-    if (!email.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/)) {
+    if (!emailRegExp.test(email)) {
+      console.log(emailRegExp.exec(email))
       res.status(STATUS_INVALID_REQUEST)
-      res.text('Not a valid email')
-    } else if (!duration.match(/([0-9]+)/)) {
+      res.json('Not a valid email')
+      return
+    } else if (!durationRegExp.test(duration)) {
       res.status(STATUS_INVALID_REQUEST)
-      res.text('Not a valid duration')
+      res.json('Not a valid duration')
+      return
     }
     // todo check formData
 
