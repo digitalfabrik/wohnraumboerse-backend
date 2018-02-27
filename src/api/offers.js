@@ -43,7 +43,7 @@ export default ({offerService}) => {
     })
   })
 
-  router.post('/:token/confirm', (req, res) => {
+  router.post('/:token([a-z0-9]{128})/confirm', (req, res) => {
     const {response, offer} = offerService.confirmOffer(req.params.token)
     switch (response) {
       case OfferResponse.CONFIRMED:
@@ -77,7 +77,7 @@ export default ({offerService}) => {
     }
   })
 
-  router.delete('/:token', (req, res) => {
+  router.delete('/:token([a-z0-9]{128})', (req, res) => {
     const response = offerService.delete(req.params.token)
     switch (response) {
       case OfferResponse.CONFIRMED:
