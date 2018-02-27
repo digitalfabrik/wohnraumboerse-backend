@@ -1,5 +1,12 @@
 import Offer from '../models/Offer'
 import fs from 'fs'
+import hash from '../utils/hash'
+
+export const OfferResponse = {
+  CONFIRMED: 'confirmed',
+  NOT_FOUND: 'notFound',
+  INVALID: 'inactive'
+}
 
 export default class OfferService {
   constructor (fileName) {
@@ -15,8 +22,38 @@ export default class OfferService {
     return id
   }
 
-  getOffers (city) {
-    return this.offers.filter(offer => offer.city === city)
+  getActiveOffers (city) {
+    return this.offers.filter(offer => offer.city === city && offer.isActive())
+  }
+
+  confirmOffer (token) {
+    const hashedToken = hash(token)
+    const offer = this.offers.find(offer => offer.hashedToken === hashedToken)
+    if (!offer) {
+      return OfferResponse.NOT_FOUND
+    } else if (!offer.isExpired() && !offer.deleted) {
+      return OfferResponse.INVALID
+    } else {
+      offer.confirmed = true
+      this.save()
+      return OfferResponse.CONFIRMED
+    }
+  }
+
+  delete (token) {
+    const hashedToken = hash(token)
+    const offer = this.offers.find(offer => offer.hashedToken === hashedToken)
+    if (!offer) {
+      return OfferResponse.NOT_FOUND
+    } else if (!offer.isActive()) {
+      offer.deleted = true
+      this.save()
+      return OfferResponse.INVALID
+    } else {
+      offer.deleted = true
+      this.save()
+      return OfferResponse.CONFIRMED
+    }
   }
 
   save () {
