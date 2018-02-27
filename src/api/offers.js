@@ -1,6 +1,6 @@
 import {Router} from 'express'
 import {OfferResponse} from '../services/OfferService'
-import {sendCreationMail, sendConfirmationMail, sendDeletionMail} from '../services/MailService'
+import {sendCreationMail, sendConfirmationMail, sendDeletionMail, sendExtentionMail} from '../services/MailService'
 
 export const STATUS_OK = 200
 export const STATUS_NOT_FOUND = 404
@@ -9,6 +9,8 @@ export const STATUS_SERVER_ERROR = 500
 
 const emailRegExp = new RegExp('^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9._-]+$')
 const durationRegExp = new RegExp('^[0-9]+$')
+
+const TOKEN_PARAM = ':token([a-z0-9]{128})'
 
 export default ({offerService}) => {
   const router = new Router()
@@ -38,14 +40,14 @@ export default ({offerService}) => {
 
     const token = offerService.createOffer(req.city, email, formData, Number(duration))
 
-    sendCreationMail(res, email, req.city, token)
+    sendCreationMail({res: res, email: email, city: req.city, token: token})
   })
 
-  router.post('/:token([a-z0-9]{128})/confirm', (req, res) => {
+  router.post(`/${TOKEN_PARAM}/confirm`, (req, res) => {
     const {response, offer} = offerService.confirmOffer(req.params.token)
     switch (response) {
-      case OfferResponse.CONFIRMED:
-        sendConfirmationMail(res, offer.email, offer.city, req.params.token)
+      case OfferResponse.OK:
+        sendConfirmationMail({res: res, email: offer.email, city: offer.city, token: req.params.token, expirationDate: offer.expirationDate})
         break
       case OfferResponse.ALREADY_CONFIRMED:
         res.status(STATUS_OK)
@@ -65,11 +67,31 @@ export default ({offerService}) => {
     }
   })
 
+  router.post(`/${TOKEN_PARAM}/extend`, (req, res) => {
+    const {response, offer} = offerService.extendOffer(req.params.token, req.body.duration)
+    switch (response) {
+      case OfferResponse.OK:
+        sendExtentionMail({res: res, email: offer.email, expirationDate: offer.expirationDate})
+        break
+      case OfferResponse.INVALID:
+        res.status(STATUS_INVALID_REQUEST)
+        res.send('Offer not available')
+        break
+      case OfferResponse.NOT_FOUND:
+        res.status(STATUS_NOT_FOUND)
+        res.send('No such offer')
+        break
+      default:
+        res.status(STATUS_SERVER_ERROR)
+        res.end()
+    }
+  })
+
   router.delete('/:token([a-z0-9]{128})', (req, res) => {
     const {response, offer} = offerService.delete(req.params.token)
     switch (response) {
-      case OfferResponse.CONFIRMED:
-        sendDeletionMail(res, offer.email)
+      case OfferResponse.OK:
+        sendDeletionMail({res: res, email: offer.email})
         break
       case OfferResponse.INVALID:
         res.status(STATUS_INVALID_REQUEST)

@@ -4,10 +4,10 @@ import hash from '../utils/hash'
 import createToken from '../utils/createToken'
 
 export const OfferResponse = {
-  CONFIRMED: 'confirmed',
+  OK: 'ok',
   ALREADY_CONFIRMED: 'alreadyConfirmed',
   NOT_FOUND: 'notFound',
-  INVALID: 'inactive'
+  INVALID: 'invalid'
 }
 
 export default class OfferService {
@@ -55,7 +55,21 @@ export default class OfferService {
     } else {
       offer.confirmed = true
       this.save()
-      return {response: OfferResponse.CONFIRMED, offer: offer}
+      return {response: OfferResponse.OK, offer: offer}
+    }
+  }
+
+  extendOffer (token, duration) {
+    const hashedToken = hash(token)
+    const offer = this.offers.find(offer => offer.hashedToken === hashedToken)
+    if (!offer) {
+      return OfferResponse.NOT_FOUND
+    } else if (offer.deleted || !offer.confirmed) {
+      return OfferResponse.INVALID
+    } else {
+      offer.expirationDate = Date.now() + duration
+      this.save()
+      return {response: OfferResponse.OK, offer: offer}
     }
   }
 
@@ -71,7 +85,7 @@ export default class OfferService {
     } else {
       offer.deleted = true
       this.save()
-      return {response: OfferResponse.CONFIRMED, offer: offer}
+      return {response: OfferResponse.OK, offer: offer}
     }
   }
 
