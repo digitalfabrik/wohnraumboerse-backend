@@ -24,6 +24,15 @@ export default ({offerService}) => {
 
   router.put('/', (req, res) => {
     const {email, formData, duration} = req.body
+    if (!email.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/)) {
+      res.status(STATUS_INVALID_REQUEST)
+      res.text('Not a valid email')
+    } else if (!duration.match(/([0-9]+)/)) {
+      res.status(STATUS_INVALID_REQUEST)
+      res.text('Not a valid duration')
+    }
+    // todo check formData
+
     const token = offerService.createOffer(req.city, email, formData, Number(duration))
 
     res.mailer.send('confirmationEmail', {
