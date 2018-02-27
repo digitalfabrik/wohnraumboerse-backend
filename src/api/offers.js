@@ -45,6 +45,7 @@ export default ({offerService}) => {
 
   router.post(`/${TOKEN_PARAM}/confirm`, (req, res) => {
     const {response, offer} = offerService.confirmOffer(req.params.token)
+
     switch (response) {
       case OfferResponse.OK:
         sendConfirmationMail({res: res, email: offer.email, city: offer.city, token: req.params.token, expirationDate: offer.expirationDate})

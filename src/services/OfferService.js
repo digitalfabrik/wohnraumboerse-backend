@@ -24,10 +24,10 @@ export default class OfferService {
       email,
       city,
       formData,
-      expirationDate: Date.now() + duration,
+      expirationDate: new Date() + duration,
       confirmed: false,
       deleted: false,
-      createdDate: Date.now(),
+      createdDate: new Date(),
       hashedToken: hash(token)
     })
     this.offers.push(offer)
@@ -51,7 +51,7 @@ export default class OfferService {
     } else if (offer.isExpired() || offer.deleted) {
       return OfferResponse.INVALID
     } else if (offer.confirmed === true) {
-      return {response: OfferResponse.ALREADY_CONFIRMED, offer: offer}
+      return OfferResponse.ALREADY_CONFIRMED
     } else {
       offer.confirmed = true
       this.save()
@@ -67,7 +67,7 @@ export default class OfferService {
     } else if (offer.deleted || !offer.confirmed) {
       return OfferResponse.INVALID
     } else {
-      offer.expirationDate = Date.now() + duration
+      offer.expirationDate = Date() + duration
       this.save()
       return {response: OfferResponse.OK, offer: offer}
     }
