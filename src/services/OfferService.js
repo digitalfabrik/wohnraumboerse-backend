@@ -51,11 +51,11 @@ export default class OfferService {
     } else if (offer.isExpired() || offer.deleted) {
       return OfferResponse.INVALID
     } else if (offer.confirmed === true) {
-      return {response: OfferResponse.ALREADY_CONFIRMED, offer}
+      return {response: OfferResponse.ALREADY_CONFIRMED, offer: offer}
     } else {
       offer.confirmed = true
       this.save()
-      return {response: OfferResponse.CONFIRMED, offer}
+      return {response: OfferResponse.CONFIRMED, offer: offer}
     }
   }
 
@@ -71,7 +71,7 @@ export default class OfferService {
     } else {
       offer.deleted = true
       this.save()
-      return OfferResponse.CONFIRMED
+      return {response: OfferResponse.CONFIRMED, offer: offer}
     }
   }
 

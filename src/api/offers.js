@@ -1,6 +1,6 @@
 import {Router} from 'express'
 import {OfferResponse} from '../services/OfferService'
-import {sendConfirmationMail, sendDeleteMail} from '../services/MailService'
+import {sendCreationMail, sendConfirmationMail, sendDeletionMail} from '../services/MailService'
 
 export const STATUS_OK = 200
 export const STATUS_NOT_FOUND = 404
@@ -26,27 +26,26 @@ export default ({offerService}) => {
   router.put('/', (req, res) => {
     const {email, formData, duration} = req.body
     if (!emailRegExp.test(email)) {
-      console.log(emailRegExp.exec(email))
       res.status(STATUS_INVALID_REQUEST)
-      res.json('Not a valid email')
+      res.send('Not a valid email')
       return
     } else if (!durationRegExp.test(duration)) {
       res.status(STATUS_INVALID_REQUEST)
-      res.json('Not a valid duration')
+      res.send('Not a valid duration')
       return
     }
     // todo check formData
 
     const token = offerService.createOffer(req.city, email, formData, Number(duration))
 
-    sendConfirmationMail(res, email, req.city, token)
+    sendCreationMail(res, email, req.city, token)
   })
 
   router.post('/:token([a-z0-9]{128})/confirm', (req, res) => {
     const {response, offer} = offerService.confirmOffer(req.params.token)
     switch (response) {
       case OfferResponse.CONFIRMED:
-        sendDeleteMail(res, offer.email, offer.city, req.params.token)
+        sendConfirmationMail(res, offer.email, offer.city, req.params.token)
         break
       case OfferResponse.ALREADY_CONFIRMED:
         res.status(STATUS_OK)
@@ -67,11 +66,10 @@ export default ({offerService}) => {
   })
 
   router.delete('/:token([a-z0-9]{128})', (req, res) => {
-    const response = offerService.delete(req.params.token)
+    const {response, offer} = offerService.delete(req.params.token)
     switch (response) {
       case OfferResponse.CONFIRMED:
-        res.status(STATUS_OK)
-        res.end()
+        sendDeletionMail(res, offer.email)
         break
       case OfferResponse.INVALID:
         res.status(STATUS_INVALID_REQUEST)
