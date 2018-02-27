@@ -1,5 +1,12 @@
 import Offer from '../models/Offer'
 import fs from 'fs'
+import hash from '../utils/hash'
+
+export const OfferResponse = {
+  CONFIRMED: 'confirmed',
+  NOT_FOUND: 'notFound',
+  INVALID: 'inactive'
+}
 
 export default class OfferService {
   constructor (fileName) {
@@ -9,14 +16,58 @@ export default class OfferService {
 
   createOffer (city, email, formData, duration) {
     const id = this.offers.length > 0 ? this.offers[this.offers.length - 1].id + 1 : 0
-    const offer = new Offer({id, city, email, formData, expirationDate: Date.now() + duration})
+    const offer = new Offer({
+      id,
+      email,
+      city,
+      formData,
+      expirationDate: Date.now() + duration,
+      confirmed: false,
+      deleted: false,
+      createdDate: Date.now(),
+      hashedToken: String(id)
+    })
     this.offers.push(offer)
     this.save()
-    return id
+    return offer.hashedToken
   }
 
-  getOffers (city) {
-    return this.offers.filter(offer => offer.city === city)
+  getAllOffers () {
+    return this.offers
+  }
+
+  getActiveOffers (city) {
+    return this.offers.filter(offer => offer.city === city && offer.isActive())
+  }
+
+  confirmOffer (token) {
+    const hashedToken = hash(token)
+    const offer = this.offers.find(offer => offer.hashedToken === hashedToken)
+    if (!offer) {
+      return OfferResponse.NOT_FOUND
+    } else if (offer.isExpired() || offer.deleted) {
+      return OfferResponse.INVALID
+    } else {
+      offer.confirmed = true
+      this.save()
+      return {response: OfferResponse.CONFIRMED, offer: offer}
+    }
+  }
+
+  delete (token) {
+    const hashedToken = hash(token)
+    const offer = this.offers.find(offer => offer.hashedToken === hashedToken)
+    if (!offer) {
+      return OfferResponse.NOT_FOUND
+    } else if (!offer.isActive()) {
+      offer.deleted = true
+      this.save()
+      return OfferResponse.INVALID
+    } else {
+      offer.deleted = true
+      this.save()
+      return OfferResponse.CONFIRMED
+    }
   }
 
   save () {

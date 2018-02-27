@@ -1,29 +1,100 @@
 import {Router} from 'express'
+import {OfferResponse} from '../services/OfferService'
+
+const STATUS_OK = 200
+const STATUS_NOT_FOUND = 404
+const STATUS_INVALID_REQUEST = 400
+const STATUS_SERVER_ERROR = 500
+
+const getConfirmUrl = (city, token) => `localhost:8080/v0/${city}/${token}/confirm`
+const getDeleteUrl = (city, token) => `${city}${token}`
 
 export default ({offerService}) => {
-  const router = Router()
+  const router = new Router()
+
+  router.get('/getAll', (req, res) => {
+    res.json(offerService.getAllOffers())
+  })
 
   router.get('/', (req, res) => {
-    res.json(offerService.getOffers(req.city))
+    res.json(offerService.getActiveOffers(req.city))
   })
 
   router.put('/', (req, res) => {
     const {email, formData, duration} = req.body
-    const id = offerService.createOffer(req.city, email, formData, duration)
-    console.log(id)
-
+    const token = offerService.createOffer(req.city, email, formData, Number(duration))
+    console.log(token)
+    console.log(req.city)
     res.mailer.send('email', {
       to: email,
-      subject: 'Test Email'
-    }, function (err) {
+      subject: 'Bitte bestätigen Sie Ihr Wohnungsangebot',
+      confirmUrl: getConfirmUrl(req.city, token)
+    }, err => {
       if (err) {
         // handle error
         console.log(err)
+        res.status(STATUS_SERVER_ERROR)
         res.send('There was an error sending the email')
         return
       }
-      res.send('Email Sent')
+      res.status(STATUS_OK)
+      res.json(token)
     })
+  })
+
+  router.post('/:token/confirm', (req, res) => {
+    const {response, offer} = offerService.confirmOffer(req.params.token)
+    switch (response) {
+      case OfferResponse.CONFIRMED:
+        res.mailer.send('email', {
+          to: offer.email,
+          subject: 'Bestätigung Ihres Wohnungsangebotes',
+          confirmUrl: getDeleteUrl(offer.city, offer.token)
+        }, err => {
+          if (err) {
+            // handle error
+            console.log(err)
+            res.status(STATUS_SERVER_ERROR)
+            res.send('There was an error sending the email')
+            return
+          }
+          res.status(STATUS_OK)
+          res.json(offer.token)
+        })
+        break
+      case OfferResponse.INVALID:
+        res.status(STATUS_INVALID_REQUEST)
+        res.send('Offer not available')
+        break
+      case OfferResponse.NOT_FOUND:
+        res.status(STATUS_NOT_FOUND)
+        res.send('No such offer')
+        break
+      default:
+        res.status(STATUS_SERVER_ERROR)
+        res.end()
+    }
+  })
+
+  router.delete('/:token', (req, res) => {
+    const response = offerService.delete(req.params.token)
+    switch (response) {
+      case OfferResponse.CONFIRMED:
+        res.status(STATUS_OK)
+        res.end()
+        break
+      case OfferResponse.INVALID:
+        res.status(STATUS_INVALID_REQUEST)
+        res.send('Offer not available')
+        break
+      case OfferResponse.NOT_FOUND:
+        res.status(STATUS_NOT_FOUND)
+        res.send('No such offer')
+        break
+      default:
+        res.status(STATUS_SERVER_ERROR)
+        res.end()
+    }
   })
 
   return router
