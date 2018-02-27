@@ -43,7 +43,7 @@ export default ({offerService}) => {
     })
   })
 
-  router.post('/:token([a-z0-9]{64})/confirm', (req, res) => {
+  router.post('/:token/confirm', (req, res) => {
     const {response, offer} = offerService.confirmOffer(req.params.token)
     switch (response) {
       case OfferResponse.CONFIRMED:
