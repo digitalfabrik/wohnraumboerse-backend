@@ -1,13 +1,11 @@
 import {Router} from 'express'
 import {OfferResponse} from '../services/OfferService'
+import {sendConfirmationMail, sendDeleteMail} from '../services/MailService'
 
-const STATUS_OK = 200
-const STATUS_NOT_FOUND = 404
-const STATUS_INVALID_REQUEST = 400
-const STATUS_SERVER_ERROR = 500
-
-const getConfirmUrl = (city, token) => `http://neuburg.wohnen.integreat-app.de/offer/${token}/confirm`
-const getDeleteUrl = (city, token) => `http://neuburg.wohnen.integreat-app.de/offer/${token}/delete`
+export const STATUS_OK = 200
+export const STATUS_NOT_FOUND = 404
+export const STATUS_INVALID_REQUEST = 400
+export const STATUS_SERVER_ERROR = 500
 
 const emailRegExp = new RegExp('^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9._-]+$')
 const durationRegExp = new RegExp('^[0-9]+$')
@@ -41,42 +39,14 @@ export default ({offerService}) => {
 
     const token = offerService.createOffer(req.city, email, formData, Number(duration))
 
-    res.mailer.send('confirmationEmail', {
-      to: email,
-      subject: 'Bitte bestätigen Sie Ihr Wohnungsangebot',
-      confirmUrl: getConfirmUrl(req.city, token)
-    }, err => {
-      if (err) {
-        // handle error
-        console.log(err)
-        res.status(STATUS_SERVER_ERROR)
-        res.send('There was an error sending the email')
-        return
-      }
-      res.status(STATUS_OK)
-      res.json(token)
-    })
+    sendConfirmationMail(res, email, req.city, token)
   })
 
   router.post('/:token([a-z0-9]{128})/confirm', (req, res) => {
     const {response, offer} = offerService.confirmOffer(req.params.token)
     switch (response) {
       case OfferResponse.CONFIRMED:
-        res.mailer.send('deleteEmail', {
-          to: offer.email,
-          subject: 'Bestätigung Ihres Wohnungsangebotes',
-          deleteUrl: getDeleteUrl(offer.city, req.params.token)
-        }, err => {
-          if (err) {
-            // handle error
-            console.log(err)
-            res.status(STATUS_SERVER_ERROR)
-            res.send('There was an error sending the email')
-            return
-          }
-          res.status(STATUS_OK)
-          res.end()
-        })
+        sendDeleteMail(res, offer.email, offer.city, req.params.token)
         break
       case OfferResponse.ALREADY_CONFIRMED:
         res.status(STATUS_OK)
