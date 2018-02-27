@@ -50,7 +50,7 @@ export default ({offerService}) => {
         res.mailer.send('deleteEmail', {
           to: offer.email,
           subject: 'Bestätigung Ihres Wohnungsangebotes',
-          confirmUrl: getDeleteUrl(offer.city, offer.token)
+          deleteUrl: getDeleteUrl(offer.city, req.params.token)
         }, err => {
           if (err) {
             // handle error
