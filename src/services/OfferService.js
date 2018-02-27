@@ -1,6 +1,7 @@
 import Offer from '../models/Offer'
 import fs from 'fs'
 import hash from '../utils/hash'
+import createToken from '../utils/createToken'
 
 export const OfferResponse = {
   CONFIRMED: 'confirmed',
@@ -16,6 +17,7 @@ export default class OfferService {
 
   createOffer (city, email, formData, duration) {
     const id = this.offers.length > 0 ? this.offers[this.offers.length - 1].id + 1 : 0
+    const token = createToken()
     const offer = new Offer({
       id,
       email,
@@ -25,11 +27,11 @@ export default class OfferService {
       confirmed: false,
       deleted: false,
       createdDate: Date.now(),
-      hashedToken: String(id)
+      hashedToken: hash(token)
     })
     this.offers.push(offer)
     this.save()
-    return offer
+    return token
   }
 
   getAllOffers () {
