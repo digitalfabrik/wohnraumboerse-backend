@@ -6,8 +6,8 @@ const STATUS_NOT_FOUND = 404
 const STATUS_INVALID_REQUEST = 400
 const STATUS_SERVER_ERROR = 500
 
-const getConfirmUrl = (city, token) => `http://${city}.wohnen.integreat-app.de/offer/${token}/confirm`
-const getDeleteUrl = (city, token) => `http://${city}.wohnen.integreat-app.de/offer/${token}/delete`
+const getConfirmUrl = (city, token) => `http://neuburg.wohnen.integreat-app.de/offer/${token}/confirm`
+const getDeleteUrl = (city, token) => `http://neuburg.wohnen.integreat-app.de/offer/${token}/delete`
 
 export default ({offerService}) => {
   const router = new Router()
