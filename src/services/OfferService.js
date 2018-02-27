@@ -16,7 +16,17 @@ export default class OfferService {
 
   createOffer (city, email, formData, duration) {
     const id = this.offers.length > 0 ? this.offers[this.offers.length - 1].id + 1 : 0
-    const offer = new Offer({id, city, email, formData, expirationDate: Date.now() + duration})
+    const offer = new Offer({
+      id,
+      email,
+      city,
+      formData,
+      expirationDate: Date.now() + duration,
+      confirmed: false,
+      deleted: false,
+      createdDate: Date.now(),
+      hashedToken: id
+    })
     this.offers.push(offer)
     this.save()
     return id

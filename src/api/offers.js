@@ -15,7 +15,7 @@ export default ({offerService}) => {
 
   router.put('/', (req, res) => {
     const {email, formData, duration} = req.body
-    const id = offerService.create(req.city, email, formData, duration)
+    const id = offerService.createOffer(req.city, email, formData, duration)
     res.json(id)
   })
 
