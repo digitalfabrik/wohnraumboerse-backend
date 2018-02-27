@@ -8,7 +8,7 @@ export default ({offerService}) => {
     req.city = id
     next()
   })
-  api.use('/v0/:city', offers({offerService}))
+  api.use('/v0/:city([-a-z]+)', offers({offerService}))
 
   return api
 }
