@@ -43,14 +43,14 @@ export default ({offerService}) => {
     })
   })
 
-  router.post('/:token([a-z0-9]{64})/confirm', (req, res) => {
+  router.post('/:token/confirm', (req, res) => {
     const {response, offer} = offerService.confirmOffer(req.params.token)
     switch (response) {
       case OfferResponse.CONFIRMED:
         res.mailer.send('deleteEmail', {
           to: offer.email,
           subject: 'Bestätigung Ihres Wohnungsangebotes',
-          confirmUrl: getDeleteUrl(offer.city, offer.token)
+          confirmUrl: getDeleteUrl(offer.city, req.params.token)
         }, err => {
           if (err) {
             // handle error
@@ -60,7 +60,7 @@ export default ({offerService}) => {
             return
           }
           res.status(STATUS_OK)
-          res.json(offer.token)
+          res.json(req.params.token)
         })
         break
       case OfferResponse.INVALID:
