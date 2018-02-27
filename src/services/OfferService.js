@@ -52,7 +52,7 @@ export default class OfferService {
     } else {
       offer.confirmed = true
       this.save()
-      return OfferResponse.CONFIRMED
+      return {response: OfferResponse.CONFIRMED, offer: offer}
     }
   }
 

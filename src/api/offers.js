@@ -6,6 +6,9 @@ const STATUS_NOT_FOUND = 404
 const STATUS_INVALID_REQUEST = 400
 const STATUS_SERVER_ERROR = 500
 
+const getConfirmUrl = (city, token) => `localhost:8080/v0/${city}/${token}/confirm`
+const getDeleteUrl = (city, token) => `${city}${token}`
+
 export default ({offerService}) => {
   const router = new Router()
 
@@ -23,10 +26,10 @@ export default ({offerService}) => {
     const {email, formData, duration} = req.body
     const token = offerService.createOffer(req.city, email, formData, Number(duration))
 
-    res.mailer.send('email', {
+    res.mailer.send('confirmationEmail', {
       to: email,
-      subject: 'Test Email',
-      token
+      subject: 'Bitte bestätigen Sie Ihr Wohnungsangebot',
+      confirmUrl: getConfirmUrl(req.city, token)
     }, err => {
       if (err) {
         // handle error
@@ -41,11 +44,24 @@ export default ({offerService}) => {
   })
 
   router.post('/:token/confirm', (req, res) => {
-    const response = offerService.confirmOffer(req.params.token)
+    const {response, offer} = offerService.confirmOffer(req.params.token)
     switch (response) {
       case OfferResponse.CONFIRMED:
-        res.status(STATUS_OK)
-        res.end()
+        res.mailer.send('deleteEmail', {
+          to: offer.email,
+          subject: 'Bestätigung Ihres Wohnungsangebotes',
+          confirmUrl: getDeleteUrl(offer.city, offer.token)
+        }, err => {
+          if (err) {
+            // handle error
+            console.log(err)
+            res.status(STATUS_SERVER_ERROR)
+            res.send('There was an error sending the email')
+            return
+          }
+          res.status(STATUS_OK)
+          res.json(offer.token)
+        })
         break
       case OfferResponse.INVALID:
         res.status(STATUS_INVALID_REQUEST)
