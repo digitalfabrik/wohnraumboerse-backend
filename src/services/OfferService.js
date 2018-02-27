@@ -5,6 +5,7 @@ import createToken from '../utils/createToken'
 
 export const OfferResponse = {
   CONFIRMED: 'confirmed',
+  ALREADY_CONFIRMED: 'alreadyConfirmed',
   NOT_FOUND: 'notFound',
   INVALID: 'inactive'
 }
@@ -49,10 +50,12 @@ export default class OfferService {
       return OfferResponse.NOT_FOUND
     } else if (offer.isExpired() || offer.deleted) {
       return OfferResponse.INVALID
+    } else if (offer.confirmed === true) {
+      return {response: OfferResponse.ALREADY_CONFIRMED, offer}
     } else {
       offer.confirmed = true
       this.save()
-      return {response: OfferResponse.CONFIRMED, offer: offer}
+      return {response: OfferResponse.CONFIRMED, offer}
     }
   }
 
