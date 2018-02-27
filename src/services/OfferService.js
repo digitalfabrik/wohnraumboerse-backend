@@ -25,11 +25,15 @@ export default class OfferService {
       confirmed: false,
       deleted: false,
       createdDate: Date.now(),
-      hashedToken: id
+      hashedToken: String(id)
     })
     this.offers.push(offer)
     this.save()
     return id
+  }
+
+  getAllOffers () {
+    return this.offers
   }
 
   getActiveOffers (city) {
@@ -41,7 +45,7 @@ export default class OfferService {
     const offer = this.offers.find(offer => offer.hashedToken === hashedToken)
     if (!offer) {
       return OfferResponse.NOT_FOUND
-    } else if (!offer.isExpired() && !offer.deleted) {
+    } else if (offer.isExpired() || offer.deleted) {
       return OfferResponse.INVALID
     } else {
       offer.confirmed = true

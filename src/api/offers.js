@@ -9,13 +9,18 @@ const STATUS_SERVER_ERROR = 500
 export default ({offerService}) => {
   const router = new Router()
 
+  router.get('/getAll', (req, res) => {
+    res.json(offerService.getAllOffers())
+  })
+
   router.get('/', (req, res) => {
+    console.log(req.city)
     res.json(offerService.getActiveOffers(req.city))
   })
 
   router.put('/', (req, res) => {
     const {email, formData, duration} = req.body
-    const id = offerService.createOffer(req.city, email, formData, duration)
+    const id = offerService.createOffer(req.city, email, formData, Number(duration))
     res.json(id)
   })
 
