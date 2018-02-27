@@ -19,23 +19,22 @@ export default ({offerService}) => {
 
   router.put('/', (req, res) => {
     const {email, formData, duration} = req.body
-    const id = offerService.createOffer(req.city, email, formData, duration)
-    console.log(id)
+    const offer = offerService.createOffer(req.city, email, formData, Number(duration))
 
     res.mailer.send('email', {
       to: email,
       subject: 'Test Email'
-    }, function (err) {
+    }, err => {
       if (err) {
         // handle error
         console.log(err)
+        res.status(STATUS_SERVER_ERROR)
         res.send('There was an error sending the email')
         return
       }
-      res.send('Email Sent')
+      res.status(STATUS_OK)
+      res.json(offer.id)
     })
-    const id = offerService.createOffer(req.city, email, formData, Number(duration))
-    res.json(id)
   })
 
   router.post('/:token/confirm', (req, res) => {

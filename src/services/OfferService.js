@@ -29,7 +29,7 @@ export default class OfferService {
     })
     this.offers.push(offer)
     this.save()
-    return id
+    return offer
   }
 
   getAllOffers () {
