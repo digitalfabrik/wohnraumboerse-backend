@@ -75,8 +75,12 @@ export default ({offerService}) => {
             return
           }
           res.status(STATUS_OK)
-          res.json(req.params.token)
+          res.end()
         })
+        break
+      case OfferResponse.ALREADY_CONFIRMED:
+        res.status(STATUS_OK)
+        res.end()
         break
       case OfferResponse.INVALID:
         res.status(STATUS_INVALID_REQUEST)
