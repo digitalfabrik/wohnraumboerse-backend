@@ -19,11 +19,12 @@ export default ({offerService}) => {
 
   router.put('/', (req, res) => {
     const {email, formData, duration} = req.body
-    const offer = offerService.createOffer(req.city, email, formData, Number(duration))
+    const token = offerService.createOffer(req.city, email, formData, Number(duration))
 
     res.mailer.send('email', {
       to: email,
-      subject: 'Test Email'
+      subject: 'Test Email',
+      token
     }, err => {
       if (err) {
         // handle error
@@ -33,7 +34,7 @@ export default ({offerService}) => {
         return
       }
       res.status(STATUS_OK)
-      res.json(offer.id)
+      res.json(token)
     })
   })
 
