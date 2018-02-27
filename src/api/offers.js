@@ -14,12 +14,26 @@ export default ({offerService}) => {
   })
 
   router.get('/', (req, res) => {
-    console.log(req.city)
     res.json(offerService.getActiveOffers(req.city))
   })
 
   router.put('/', (req, res) => {
     const {email, formData, duration} = req.body
+    const id = offerService.createOffer(req.city, email, formData, duration)
+    console.log(id)
+
+    res.mailer.send('email', {
+      to: email,
+      subject: 'Test Email'
+    }, function (err) {
+      if (err) {
+        // handle error
+        console.log(err)
+        res.send('There was an error sending the email')
+        return
+      }
+      res.send('Email Sent')
+    })
     const id = offerService.createOffer(req.city, email, formData, Number(duration))
     res.json(id)
   })
