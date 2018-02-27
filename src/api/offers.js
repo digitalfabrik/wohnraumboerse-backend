@@ -23,8 +23,7 @@ export default ({offerService}) => {
   router.put('/', (req, res) => {
     const {email, formData, duration} = req.body
     const token = offerService.createOffer(req.city, email, formData, Number(duration))
-    console.log(token)
-    console.log(req.city)
+
     res.mailer.send('email', {
       to: email,
       subject: 'Bitte bestätigen Sie Ihr Wohnungsangebot',
