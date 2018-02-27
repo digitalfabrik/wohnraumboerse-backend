@@ -1,16 +1,14 @@
 import {Router} from 'express'
 import {OfferResponse} from '../services/OfferService'
 import {sendCreationMail, sendConfirmationMail, sendDeletionMail, sendExtentionMail} from '../services/MailService'
+import {body, validationResult} from 'express-validator/check'
+import {matchedData} from 'express-validator/filter'
 
 export const STATUS_OK = 200
 export const STATUS_NOT_FOUND = 404
-export const STATUS_INVALID_REQUEST = 400
+export const STATUS_BAD_REQUEST = 400
 export const STATUS_SERVER_ERROR = 500
-
-const emailRegExp = new RegExp('^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9._-]+$')
-const durationRegExp = new RegExp('^[0-9]+$')
-
-const TOKEN_PARAM = ':token([a-z0-9]{128})'
+export const STATUS_UNPROCESSABLE_ENTITY = 422
 
 export default ({offerService}) => {
   const router = new Router()
@@ -25,37 +23,41 @@ export default ({offerService}) => {
       .map(offer => offer.formData))
   })
 
-  router.put('/', (req, res) => {
-    const {email, formData, duration} = req.body
-    if (!emailRegExp.test(email)) {
-      res.status(STATUS_INVALID_REQUEST)
-      res.send('Not a valid email')
-      return
-    } else if (!durationRegExp.test(duration)) {
-      res.status(STATUS_INVALID_REQUEST)
-      res.send('Not a valid duration')
-      return
+  router.put('/', [
+    body('email').isEmail().trim().normalizeEmail(),
+    body('duration').isInt().toInt().custom(value => [3, 7, 14, 30].includes(value))
+  ], (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(STATUS_UNPROCESSABLE_ENTITY).json({errors: errors.mapped()})
     }
-    // todo check formData
+    const {email, formData, duration} = matchedData(req)
 
-    const token = offerService.createOffer(req.city, email, formData, Number(duration))
+    console.log(typeof duration)
 
-    sendCreationMail({res: res, email: email, city: req.city, token: token})
+    const token = offerService.createOffer(req.city, email, formData, duration)
+    sendCreationMail({res, email, city: req.city, token})
   })
 
-  router.post(`/${TOKEN_PARAM}/confirm`, (req, res) => {
+  router.post(`/:token/confirm`, (req, res) => {
     const {response, offer} = offerService.confirmOffer(req.params.token)
 
     switch (response) {
       case OfferResponse.OK:
-        sendConfirmationMail({res: res, email: offer.email, city: offer.city, token: req.params.token, expirationDate: offer.expirationDate})
+        sendConfirmationMail({
+          res: res,
+          email: offer.email,
+          city: offer.city,
+          token: req.params.token,
+          expirationDate: offer.expirationDate
+        })
         break
       case OfferResponse.ALREADY_CONFIRMED:
         res.status(STATUS_OK)
         res.end()
         break
       case OfferResponse.INVALID:
-        res.status(STATUS_INVALID_REQUEST)
+        res.status(STATUS_BAD_REQUEST)
         res.send('Offer not available')
         break
       case OfferResponse.NOT_FOUND:
@@ -68,14 +70,8 @@ export default ({offerService}) => {
     }
   })
 
-  router.post(`/${TOKEN_PARAM}/extend`, (req, res) => {
+  router.post(`/:token/extend`, (req, res) => {
     const {duration} = req.body
-
-    if (!durationRegExp.test(duration)) {
-      res.status(STATUS_INVALID_REQUEST)
-      res.send('Not a valid duration')
-      return
-    }
 
     const {response, offer} = offerService.extendOffer(req.params.token, Number(duration))
     switch (response) {
@@ -83,7 +79,7 @@ export default ({offerService}) => {
         sendExtentionMail({res: res, email: offer.email, expirationDate: offer.expirationDate})
         break
       case OfferResponse.INVALID:
-        res.status(STATUS_INVALID_REQUEST)
+        res.status(STATUS_BAD_REQUEST)
         res.send('Offer not available')
         break
       case OfferResponse.NOT_FOUND:
@@ -96,14 +92,14 @@ export default ({offerService}) => {
     }
   })
 
-  router.delete(`${TOKEN_PARAM}`, (req, res) => {
+  router.delete(`:token`, (req, res) => {
     const {response, offer} = offerService.delete(req.params.token)
     switch (response) {
       case OfferResponse.OK:
         sendDeletionMail({res: res, email: offer.email})
         break
       case OfferResponse.INVALID:
-        res.status(STATUS_INVALID_REQUEST)
+        res.status(STATUS_BAD_REQUEST)
         res.send('Offer not available')
         break
       case OfferResponse.NOT_FOUND:

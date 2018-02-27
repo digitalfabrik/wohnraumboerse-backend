@@ -10,6 +10,8 @@ export const OfferResponse = {
   INVALID: 'invalid'
 }
 
+const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24
+
 export default class OfferService {
   constructor (fileName) {
     this.fileName = fileName
@@ -24,10 +26,10 @@ export default class OfferService {
       email,
       city,
       formData,
-      expirationDate: new Date() + duration,
+      expirationDate: Date.now() + duration * MILLISECONDS_IN_A_DAY,
       confirmed: false,
       deleted: false,
-      createdDate: new Date(),
+      createdDate: Date.now(),
       hashedToken: hash(token)
     })
     this.offers.push(offer)
