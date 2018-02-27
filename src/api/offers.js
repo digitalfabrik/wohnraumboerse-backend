@@ -24,7 +24,7 @@ export default ({offerService}) => {
     const {email, formData, duration} = req.body
     const token = offerService.createOffer(req.city, email, formData, Number(duration))
 
-    res.mailer.send('email', {
+    res.mailer.send('confirmationEmail', {
       to: email,
       subject: 'Bitte bestätigen Sie Ihr Wohnungsangebot',
       confirmUrl: getConfirmUrl(req.city, token)
@@ -45,7 +45,7 @@ export default ({offerService}) => {
     const {response, offer} = offerService.confirmOffer(req.params.token)
     switch (response) {
       case OfferResponse.CONFIRMED:
-        res.mailer.send('email', {
+        res.mailer.send('deleteEmail', {
           to: offer.email,
           subject: 'Bestätigung Ihres Wohnungsangebotes',
           confirmUrl: getDeleteUrl(offer.city, offer.token)
