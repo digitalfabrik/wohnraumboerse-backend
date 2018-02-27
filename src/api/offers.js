@@ -68,7 +68,15 @@ export default ({offerService}) => {
   })
 
   router.post(`/${TOKEN_PARAM}/extend`, (req, res) => {
-    const {response, offer} = offerService.extendOffer(req.params.token, req.body.duration)
+    const {duration} = req.body
+
+    if (!durationRegExp.test(duration)) {
+      res.status(STATUS_INVALID_REQUEST)
+      res.send('Not a valid duration')
+      return
+    }
+
+    const {response, offer} = offerService.extendOffer(req.params.token, Number(duration))
     switch (response) {
       case OfferResponse.OK:
         sendExtentionMail({res: res, email: offer.email, expirationDate: offer.expirationDate})
@@ -87,7 +95,7 @@ export default ({offerService}) => {
     }
   })
 
-  router.delete('/:token([a-z0-9]{128})', (req, res) => {
+  router.delete(`${TOKEN_PARAM}`, (req, res) => {
     const {response, offer} = offerService.delete(req.params.token)
     switch (response) {
       case OfferResponse.OK:
