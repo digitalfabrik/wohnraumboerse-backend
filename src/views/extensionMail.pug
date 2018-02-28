@@ -1,8 +1,10 @@
 html
     head
         meta(http-equiv = 'Content-Type', content = 'text/html; charset=UTF-8')
-        title= subject
-        body
-            h1 Ihr Angebot wurde erfolgreich verlängert.
-            p Gueltig bis:
-            p= expirationDate
+        title Ihr Angebot wurde erfolgreich verlängert
+    body
+        h2 Ihr Angebot wurde erfolgreich verlängert.
+        p Ihr Angebot ist einsehbar bis:
+            strong= expirationDate
+        a(href=deletionLink) Angebot löschen
+        a(href=extensionLink) Angebot verlängern
