@@ -1,6 +1,4 @@
 import {Router} from 'express'
-import {OfferResponse} from '../services/OfferService'
-import {sendDeletionMail, sendExtensionMail} from '../services/MailService'
 import {body, param, validationResult} from 'express-validator/check'
 import {matchedData} from 'express-validator/filter'
 import {TOKEN_LENGTH} from '../utils/createToken'
@@ -51,7 +49,6 @@ export default ({offerService}) => {
     async (req, res) => {
       const {token} = matchedData(req)
       const offer = offerService.findOfferByToken(token)
-
       if (!offer) {
         return res.status(HttpStatus.NOT_FOUND).json('No such offer')
       } else if (offer.isExpired() || offer.deleted) {
@@ -60,7 +57,7 @@ export default ({offerService}) => {
 
       try {
         await offerService.confirmOffer(offer, token)
-        return res.status(HttpStatus.OK)
+        return res.status(HttpStatus.OK).end()
       } catch (e) {
         console.error(e)
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
@@ -68,47 +65,50 @@ export default ({offerService}) => {
     }
   ])
 
-  router.post(`/:token/extend`, (req, res) => {
-    const {duration} = req.body
+  router.post(`/:token/extend`, [
+    param('token').isHexadecimal().isLength(TOKEN_LENGTH),
+    body('duration').isInt().toInt().custom(value => [3, 7, 14, 30].includes(value)),
+    validateMiddleware,
+    async (req, res) => {
+      const {token, duration} = matchedData(req)
+      const offer = offerService.findOfferByToken(token)
+      if (!offer) {
+        return res.status(HttpStatus.NOT_FOUND).json('No such offer')
+      } else if (offer.deleted || !offer.confirmed) {
+        return res.status(HttpStatus.BAD_REQUEST).json('Offer not available')
+      }
 
-    const {response, offer} = offerService.extendOffer(req.params.token, Number(duration))
-    switch (response) {
-      case OfferResponse.OK:
-        sendExtensionMail({res: res, email: offer.email, expirationDate: offer.expirationDate})
-        break
-      case OfferResponse.INVALID:
-        res.status(HttpStatus.BAD_REQUEST)
-        res.send('Offer not available')
-        break
-      case OfferResponse.NOT_FOUND:
-        res.status(HttpStatus.NOT_FOUND)
-        res.send('No such offer')
-        break
-      default:
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        res.end()
+      try {
+        await offerService.extendOffer(token, duration)
+      } catch (e) {
+        console.error(e)
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
+      }
     }
-  })
+  ])
 
-  router.delete(`:token`, (req, res) => {
-    const {response, offer} = offerService.delete(req.params.token)
-    switch (response) {
-      case OfferResponse.OK:
-        sendDeletionMail({res: res, email: offer.email})
-        break
-      case OfferResponse.INVALID:
-        res.status(HttpStatus.BAD_REQUEST)
-        res.send('Offer not available')
-        break
-      case OfferResponse.NOT_FOUND:
-        res.status(HttpStatus.NOT_FOUND)
-        res.send('No such offer')
-        break
-      default:
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        res.end()
+  router.delete(`/:token`, [
+    param('token').isHexadecimal().isLength(TOKEN_LENGTH),
+    validateMiddleware,
+    async (req, res) => {
+      const {token} = matchedData(req)
+
+      const offer = offerService.findOfferByToken(token)
+      if (!offer) {
+        return res.status(HttpStatus.NOT_FOUND).json('No such offer')
+      } else if (offer.deleted) {
+        return res.status(HttpStatus.BAD_REQUEST).json('Already deleted')
+      }
+
+      try {
+        await offerService.deleteOffer(offer)
+        return res.status(HttpStatus.OK).end()
+      } catch (e) {
+        console.error(e)
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
+      }
     }
-  })
+  ])
 
   return router
 }

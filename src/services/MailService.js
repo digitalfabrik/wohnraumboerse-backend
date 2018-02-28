@@ -1,6 +1,6 @@
 import {createTransport} from 'nodemailer'
 import smptConfig from '../smptConfig'
-import {compileFile} from 'pug'
+import { compileFile} from 'pug'
 
 const renderConfirmationMail = compileFile('src/views/confirmationMail.pug')
 const renderCreationMail = compileFile('src/views/creationMail.pug')
@@ -19,7 +19,7 @@ export default class MailService {
   async sendCreationMail (offer, token) {
     const subject = 'Bestätigen Sie Ihr Angebot'
     const html = renderCreationMail({subject, confirmUrl: getConfirmationUrl(offer.city, token)})
-    await this.sendMail({to: offer.mail, subject, html})
+    await this.sendMail({to: offer.email, subject, html})
   }
 
   async sendConfirmationMail (offer, token) {
@@ -28,13 +28,13 @@ export default class MailService {
     const deletionUrl = getDeletionUrl(offer.city, token)
     const extensionUrl = getExtensionUrl(offer.city, token)
     const html = renderConfirmationMail({expirationDate, deletionUrl, extensionUrl})
-    await this.sendMail({to: offer.mail, subject, html})
+    await this.sendMail({to: offer.email, subject, html})
   }
 
   async sendDeletionMail (offer) {
     const subject = 'Angebot erfolgreich gelöscht'
     const html = renderDeletionMail()
-    await this.sendMail({to: offer.mail, subject, html})
+    await this.sendMail({to: offer.email, subject, html})
   }
 
   async sendExtensionMail (offer, token) {
@@ -43,6 +43,6 @@ export default class MailService {
     const deletionUrl = getDeletionUrl(offer.city, token)
     const extensionUrl = getExtensionUrl(offer.city, token)
     const html = renderExtensionMail({expirationDate, deletionUrl, extensionUrl})
-    await this.sendMail({to: offer.mail, subject, html})
+    await this.sendMail({to: offer.email, subject, html})
   }
 }
