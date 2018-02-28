@@ -4,11 +4,13 @@ import hash from '../utils/hash'
 import createToken from '../utils/createToken'
 
 export const OfferResponse = {
-  CONFIRMED: 'confirmed',
+  OK: 'ok',
   ALREADY_CONFIRMED: 'alreadyConfirmed',
   NOT_FOUND: 'notFound',
-  INVALID: 'inactive'
+  INVALID: 'invalid'
 }
+
+const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24
 
 export default class OfferService {
   constructor (fileName) {
@@ -24,7 +26,7 @@ export default class OfferService {
       email,
       city,
       formData,
-      expirationDate: Date.now() + duration,
+      expirationDate: Date.now() + duration * MILLISECONDS_IN_A_DAY,
       confirmed: false,
       deleted: false,
       createdDate: Date.now(),
@@ -51,11 +53,25 @@ export default class OfferService {
     } else if (offer.isExpired() || offer.deleted) {
       return OfferResponse.INVALID
     } else if (offer.confirmed === true) {
-      return {response: OfferResponse.ALREADY_CONFIRMED, offer}
+      return OfferResponse.ALREADY_CONFIRMED
     } else {
       offer.confirmed = true
       this.save()
-      return {response: OfferResponse.CONFIRMED, offer}
+      return {response: OfferResponse.OK, offer: offer}
+    }
+  }
+
+  extendOffer (token, duration) {
+    const hashedToken = hash(token)
+    const offer = this.offers.find(offer => offer.hashedToken === hashedToken)
+    if (!offer) {
+      return OfferResponse.NOT_FOUND
+    } else if (offer.deleted || !offer.confirmed) {
+      return OfferResponse.INVALID
+    } else {
+      offer.expirationDate = Date() + duration
+      this.save()
+      return {response: OfferResponse.OK, offer: offer}
     }
   }
 
@@ -71,7 +87,7 @@ export default class OfferService {
     } else {
       offer.deleted = true
       this.save()
-      return OfferResponse.CONFIRMED
+      return {response: OfferResponse.OK, offer: offer}
     }
   }
 

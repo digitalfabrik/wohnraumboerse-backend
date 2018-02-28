@@ -1,8 +1,8 @@
 import crypto from 'crypto'
 
-const BUFFER_LENGTH = 64
+const TOKEN_LENGTH = 64
+const BYTE_LENGTH = TOKEN_LENGTH / 2
 
 export default () => {
-  const buf = Buffer.alloc(BUFFER_LENGTH)
-  return crypto.randomFillSync(buf).toString('hex')
+  return crypto.randomBytes(BYTE_LENGTH).toString('hex')
 }
