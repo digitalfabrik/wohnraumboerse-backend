@@ -1,6 +1,6 @@
 import {createTransport} from 'nodemailer'
 import smptConfig from '../smptConfig'
-import { compileFile} from 'pug'
+import {compileFile} from 'pug'
 
 const renderConfirmationMail = compileFile('src/views/confirmationMail.pug')
 const renderCreationMail = compileFile('src/views/creationMail.pug')
