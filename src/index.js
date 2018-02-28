@@ -1,3 +1,4 @@
+import 'babel-polyfill'
 import http from 'http'
 import express from 'express'
 import cors from 'cors'
@@ -6,23 +7,11 @@ import bodyParser from 'body-parser'
 import initializeDb from './db'
 import api from './api'
 import config from './config.json'
-import mailer from 'express-mailer'
-import auth from './auth'
 import initializeServices from './services/initializeServices'
 
 const services = initializeServices()
 const app = express()
 
-mailer.extend(app, {
-  from: 'no-reply@example.com',
-  host: 'smtp.gmail.com',
-  secureConnection: true,
-  port: 465,
-  transportMethod: 'SMTP',
-  auth: auth
-})
-
-app.set('view engine', 'pug')
 app.server = http.createServer(app)
 
 // logger

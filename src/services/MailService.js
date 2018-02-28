@@ -1,66 +1,48 @@
-import {STATUS_OK, STATUS_SERVER_ERROR} from '../api/offers'
+import {createTransport} from 'nodemailer'
+import smptConfig from '../smptConfig'
+import {compileFile} from 'pug'
+
+const renderConfirmationMail = compileFile('src/views/confirmationMail.pug')
+const renderCreationMail = compileFile('src/views/creationMail.pug')
+const renderDeletionMail = compileFile('src/views/deletionMail.pug')
+const renderExtensionMail = compileFile('src/views/extensionMail.pug')
 
 const getConfirmationUrl = (city, token) => `http://neuburg.wohnen.integreat-app.de/offer/${token}/confirm`
 const getDeletionUrl = (city, token) => `http://neuburg.wohnen.integreat-app.de/offer/${token}/delete`
-const getExtentionUrl = (city, token) => `http://neuburg.wohnen.integreat-app.de/offer/${token}/extend`
+const getExtensionUrl = (city, token) => `http://neuburg.wohnen.integreat-app.de/offer/${token}/extend`
 
-export const sendCreationMail = ({res, email, city, token}) => res.mailer.send('creationMail', {
-  to: email,
-  subject: 'Bestätigung Ihres Wohungsangebotes benötigt',
-  confirmUrl: getConfirmationUrl(city, token)
-}, err => {
-  if (err) {
-    console.log(err)
-    res.status(STATUS_SERVER_ERROR)
-    res.send('There was an error sending the email')
-    return
+export default class MailService {
+  async sendMail ({to, subject, html}) {
+    await createTransport(smptConfig).sendMail({to, subject, html})
   }
-  res.status(STATUS_OK)
-  res.json(token)
-})
 
-export const sendConfirmationMail = ({res, email, city, token, expirationDate}) => res.mailer.send('confirmationMail', {
-  to: email,
-  subject: 'Bestätigung Ihres Wohnungsangebotes erfolgreich',
-  deleteUrl: getDeletionUrl(city, token),
-  extendUrl: getExtentionUrl(city, token),
-  expirationDate: expirationDate
-}, err => {
-  if (err) {
-    console.log(err)
-    res.status(STATUS_SERVER_ERROR)
-    res.send('There was an error sending the email')
-    return
+  async sendCreationMail (offer, token) {
+    const subject = 'Bestätigen Sie Ihr Angebot'
+    const html = renderCreationMail({subject, confirmUrl: getConfirmationUrl(offer.city, token)})
+    await this.sendMail({to: offer.email, subject, html})
   }
-  res.status(STATUS_OK)
-  res.end()
-})
 
-export const sendDeletionMail = ({res, email}) => res.mailer.send('deletionMail', {
-  to: email,
-  subject: 'Löschung Ihres Wohungsangebotes'
-}, err => {
-  if (err) {
-    console.log(err)
-    res.status(STATUS_SERVER_ERROR)
-    res.send('There was an error sending the email')
-    return
+  async sendConfirmationMail (offer, token) {
+    const subject = 'Bestätigung erfolgreich'
+    const expirationDate = new Date(offer.expirationDate).toDateString()
+    const deletionUrl = getDeletionUrl(offer.city, token)
+    const extensionUrl = getExtensionUrl(offer.city, token)
+    const html = renderConfirmationMail({expirationDate, deletionUrl, extensionUrl})
+    await this.sendMail({to: offer.email, subject, html})
   }
-  res.status(STATUS_OK)
-  res.end()
-})
 
-export const sendExtentionMail = ({res, email, expirationDate}) => res.mailer.send('extentionMail', {
-  to: email,
-  subject: 'Ihr Wohnungsangebot wurde erfolgreich verlängert',
-  expirationDate: expirationDate
-}, err => {
-  if (err) {
-    console.log(err)
-    res.status(STATUS_SERVER_ERROR)
-    res.send('There was an error sending the email')
-    return
+  async sendDeletionMail (offer) {
+    const subject = 'Angebot erfolgreich gelöscht'
+    const html = renderDeletionMail()
+    await this.sendMail({to: offer.email, subject, html})
   }
-  res.status(STATUS_OK)
-  res.end()
-})
+
+  async sendExtensionMail (offer, token) {
+    const subject = 'Angebot erfolgreich verlängert'
+    const expirationDate = new Date(offer.expirationDate).toDateString()
+    const deletionUrl = getDeletionUrl(offer.city, token)
+    const extensionUrl = getExtensionUrl(offer.city, token)
+    const html = renderExtensionMail({expirationDate, deletionUrl, extensionUrl})
+    await this.sendMail({to: offer.email, subject, html})
+  }
+}

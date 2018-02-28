@@ -2,13 +2,7 @@ import Offer from '../models/Offer'
 import fs from 'fs'
 import hash from '../utils/hash'
 import createToken from '../utils/createToken'
-
-export const OfferResponse = {
-  OK: 'ok',
-  ALREADY_CONFIRMED: 'alreadyConfirmed',
-  NOT_FOUND: 'notFound',
-  INVALID: 'invalid'
-}
+import MailService from './MailService'
 
 const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24
 
@@ -18,8 +12,16 @@ export default class OfferService {
     this.offers = this.read()
   }
 
-  createOffer (city, email, formData, duration) {
-    const id = this.offers.length > 0 ? this.offers[this.offers.length - 1].id + 1 : 0
+  createNewId () {
+    if (this.offers.length === 0) {
+      return 0
+    } else {
+      return this.offers[this.offers.length - 1].id + 1
+    }
+  }
+
+  async createOffer (city, email, formData, duration) {
+    const id = this.createNewId()
     const token = createToken()
     const offer = new Offer({
       id,
@@ -32,6 +34,10 @@ export default class OfferService {
       createdDate: Date.now(),
       hashedToken: hash(token)
     })
+
+    const mailService = new MailService()
+    await mailService.sendCreationMail(offer, token)
+
     this.offers.push(offer)
     this.save()
     return token
@@ -45,50 +51,36 @@ export default class OfferService {
     return this.offers.filter(offer => offer.city === city && offer.isActive())
   }
 
-  confirmOffer (token) {
-    const hashedToken = hash(token)
-    const offer = this.offers.find(offer => offer.hashedToken === hashedToken)
-    if (!offer) {
-      return OfferResponse.NOT_FOUND
-    } else if (offer.isExpired() || offer.deleted) {
-      return OfferResponse.INVALID
-    } else if (offer.confirmed === true) {
-      return OfferResponse.ALREADY_CONFIRMED
-    } else {
-      offer.confirmed = true
-      this.save()
-      return {response: OfferResponse.OK, offer: offer}
-    }
+  findOfferByToken (token) {
+    return this.offers.find(offer => offer.hashedToken === hash(token))
   }
 
-  extendOffer (token, duration) {
-    const hashedToken = hash(token)
-    const offer = this.offers.find(offer => offer.hashedToken === hashedToken)
-    if (!offer) {
-      return OfferResponse.NOT_FOUND
-    } else if (offer.deleted || !offer.confirmed) {
-      return OfferResponse.INVALID
-    } else {
-      offer.expirationDate = Date() + duration
-      this.save()
-      return {response: OfferResponse.OK, offer: offer}
+  async confirmOffer (offer, token) {
+    if (offer.confirmed === true) {
+      return
     }
+    const mailService = new MailService()
+    await mailService.sendConfirmationMail(offer, token)
+
+    offer.confirmed = true
+    this.save()
   }
 
-  delete (token) {
-    const hashedToken = hash(token)
-    const offer = this.offers.find(offer => offer.hashedToken === hashedToken)
-    if (!offer) {
-      return OfferResponse.NOT_FOUND
-    } else if (!offer.isActive()) {
-      offer.deleted = true
-      this.save()
-      return OfferResponse.INVALID
-    } else {
-      offer.deleted = true
-      this.save()
-      return {response: OfferResponse.OK, offer: offer}
+  async extendOffer (offer, duration, token) {
+    offer.expirationDate = Date.now() + duration * MILLISECONDS_IN_A_DAY
+    const mailService = new MailService()
+    await mailService.sendExtensionMail(offer, token)
+    this.save()
+  }
+
+  async deleteOffer (offer) {
+    if (offer.deleted) {
+      return
     }
+    const mailService = new MailService()
+    await mailService.sendDeletionMail(offer)
+    offer.deleted = true
+    this.save()
   }
 
   save () {
