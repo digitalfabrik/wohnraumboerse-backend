@@ -1,5 +1,5 @@
 import {createTransport} from 'nodemailer'
-import smptConfig from '../smptConfig'
+import smtpConfig from '../smtpConfig'
 import {compileFile} from 'pug'
 
 const renderConfirmationMail = compileFile('src/views/confirmationMail.pug')
@@ -13,7 +13,7 @@ const getExtensionUrl = (city, token) => `http://neuburg.wohnen.integreat-app.de
 
 export default class MailService {
   async sendMail ({to, subject, html}) {
-    await createTransport(smptConfig).sendMail({to, subject, html})
+    await createTransport(smtpConfig).sendMail({to, subject, html})
   }
 
   async sendCreationMail (offer, token) {

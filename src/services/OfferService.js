@@ -3,6 +3,7 @@ import fs from 'fs'
 import hash from '../utils/hash'
 import createToken from '../utils/createToken'
 import MailService from './MailService'
+import forms from '../database/forms'
 
 const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24
 
@@ -34,9 +35,22 @@ export default class OfferService {
       createdDate: Date.now(),
       hashedToken: hash(token)
     })
+    const form = new forms[city](formData)
+    form.save((err, testOffer) => {
+      if (err) {
+        return console.log(err.toString())
+      }
+      console.log('Saved')
+    })
+    forms[city].find((err, data) => {
+      if (err) {
+        return console.log(err.toString())
+      }
+      console.log(data)
+    })
 
     const mailService = new MailService()
-    await mailService.sendCreationMail(offer, token)
+    // await mailService.sendCreationMail(offer, token)
 
     this.offers.push(offer)
     this.save()
