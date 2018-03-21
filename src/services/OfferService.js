@@ -1,4 +1,4 @@
-import Offer from '../models/Offer'
+import Offer from '../database/Offer'
 import fs from 'fs'
 import hash from '../utils/hash'
 import createToken from '../utils/createToken'
@@ -24,18 +24,20 @@ export default class OfferService {
   async createOffer (city, email, formData, duration) {
     const id = this.createNewId()
     const token = createToken()
+
+    const form = new forms[city](formData)
     const offer = new Offer({
-      id,
-      email,
-      city,
-      formData,
+      id: id,
+      email: email,
+      city: city,
+      formData: form,
       expirationDate: Date.now() + duration * MILLISECONDS_IN_A_DAY,
       confirmed: false,
       deleted: false,
       createdDate: Date.now(),
       hashedToken: hash(token)
     })
-    const form = new forms[city](formData)
+
     form.save((err, testOffer) => {
       if (err) {
         return console.log(err.toString())
