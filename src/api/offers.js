@@ -17,22 +17,34 @@ export default ({offerService}) => {
   const router = new Router()
 
   router.get('/getAll', (req, res) => {
-    res.json(offerService.getAllOffers())
+    offerService.getAllOffersQuery().exec((err, queryResult) => {
+      if (err) {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR)
+      } else {
+        res.json(queryResult)
+      }
+    })
   })
 
   router.get('/', (req, res) => {
-    res.json(offerService
-      .getActiveOffers(req.city)
-      .map(offer => offer.formData))
+    offerService
+      .getActiveOffersQuery(req.city)
+      .exec((err, queryResult) => {
+        if (err) {
+          res.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        } else {
+          res.json(queryResult)
+        }
+      })
   })
 
   router.put('/', [
     body('email').isEmail().trim().normalizeEmail(),
     body('duration').isInt().toInt().custom(value => [3, 7, 14, 30].includes(value)),
+    body('formData').exists(),
     validateMiddleware,
     async (req, res) => {
       const {email, formData, duration} = matchedData(req)
-
       try {
         const token = await offerService.createOffer(req.city, email, formData, duration)
         return res.status(HttpStatus.CREATED).json(token)

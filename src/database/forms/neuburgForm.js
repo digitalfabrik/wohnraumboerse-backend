@@ -1,5 +1,3 @@
 export default {
-  name: String,
-  email: String,
-
+  temp: Number
 }

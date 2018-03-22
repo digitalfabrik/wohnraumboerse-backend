@@ -42,8 +42,4 @@ const offerSchema = mongoose.Schema({
   }
 })
 
-offerSchema.query.actives = function (callback) {
-  return this.find().where('expirationDate').gt(Date.now()).exec(callback)
-}
-
 export default mongoose.model('Offer', offerSchema)
