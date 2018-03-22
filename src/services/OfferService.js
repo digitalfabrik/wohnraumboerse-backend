@@ -23,7 +23,7 @@ export default class OfferService {
     await offer.save()
 
     const mailService = new MailService()
-    // await mailService.sendCreationMail(offer, token)
+    await mailService.sendCreationMail(offer, token)
 
     return token
   }
@@ -50,7 +50,7 @@ export default class OfferService {
       return
     }
     const mailService = new MailService()
-    // await mailService.sendConfirmationMail(offer, token)
+    await mailService.sendConfirmationMail(offer, token)
 
     offer.confirmed = true
     await offer.save()
@@ -59,7 +59,7 @@ export default class OfferService {
   async extendOffer (offer, duration, token) {
     offer.expirationDate = Date.now() + duration * MILLISECONDS_IN_A_DAY
     const mailService = new MailService()
-    // await mailService.sendExtensionMail(offer, token)
+    await mailService.sendExtensionMail(offer, token)
     await offer.save()
   }
 
@@ -68,7 +68,7 @@ export default class OfferService {
       return
     }
     const mailService = new MailService()
-    // await mailService.sendDeletionMail(offer)
+    await mailService.sendDeletionMail(offer)
     offer.deleted = true
     await offer.save()
   }
