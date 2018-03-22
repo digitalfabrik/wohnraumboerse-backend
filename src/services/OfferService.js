@@ -30,6 +30,7 @@ export default class OfferService {
 
   getAllOffers () {
     return Offer.find()
+      .select('-_id -__v')
       .populate({path: 'formData', select: '-_id -__v'})
       .exec()
   }
