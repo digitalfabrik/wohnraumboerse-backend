@@ -3,6 +3,7 @@ import {body, param, validationResult} from 'express-validator/check'
 import {matchedData} from 'express-validator/filter'
 import {TOKEN_LENGTH} from '../utils/createToken'
 import HttpStatus from 'http-status-codes'
+import Offer from '../models/Offer'
 
 const validateMiddleware = (req, res, next) => {
   const errors = validationResult(req)
@@ -16,27 +17,22 @@ const validateMiddleware = (req, res, next) => {
 export default ({offerService}) => {
   const router = new Router()
 
-  router.get('/getAll', (req, res) => {
-    // There are basically 2 ways of executing a query, with or without callback.
-    offerService.getAllOffersQuery().exec((err, queryResult) => {
-      if (err) {
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(err)
-      } else {
-        return res.json(queryResult)
-      }
-    })
+  router.get('/getAll', async (req, res) => {
+    try {
+      const queryResult = await offerService.getAllOffers()
+      return res.json(queryResult)
+    } catch (e) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
+    }
   })
 
-  router.get('/', (req, res) => {
-    offerService
-      .getActiveOffersQuery(req.city)
-      .exec((err, queryResult) => {
-        if (err) {
-          return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(err)
-        } else {
-          return res.json(queryResult)
-        }
-      })
+  router.get('/', async (req, res) => {
+    try {
+      const queryResult = await offerService.getActiveOffers(req.city)
+      return res.json(queryResult)
+    } catch (e) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
+    }
   })
 
   router.put('/', [
@@ -62,7 +58,7 @@ export default ({offerService}) => {
     async (req, res) => {
       try {
         const {token} = matchedData(req)
-        const offer = await offerService.getOfferByTokenQuery(token).exec()
+        const offer = new Offer(await offerService.getOfferByToken(token))
 
         if (!offer) {
           return res.status(HttpStatus.NOT_FOUND).json('No such offer')
@@ -70,6 +66,7 @@ export default ({offerService}) => {
           return res.status(HttpStatus.GONE).json('Offer not available')
         }
 
+        console.log('123')
         await offerService.confirmOffer(offer, token)
         return res.status(HttpStatus.OK).end()
       } catch (e) {
@@ -86,7 +83,7 @@ export default ({offerService}) => {
     async (req, res) => {
       try {
         const {token, duration} = matchedData(req)
-        const offer = await offerService.getOfferByTokenQuery(token).exec()
+        const offer = new Offer(await offerService.getOfferByToken(token))
 
         if (!offer) {
           return res.status(HttpStatus.NOT_FOUND).json('No such offer')
@@ -108,7 +105,7 @@ export default ({offerService}) => {
     async (req, res) => {
       try {
         const {token} = matchedData(req)
-        const offer = await offerService.getOfferByTokenQuery(token).exec()
+        const offer = new Offer(await offerService.getOfferByToken(token))
 
         if (!offer) {
           return res.status(HttpStatus.NOT_FOUND).json('No such offer')

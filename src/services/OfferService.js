@@ -28,21 +28,28 @@ export default class OfferService {
     return token
   }
 
-  getAllOffersQuery () {
-    return Offer.find().populate('formData')
+  getAllOffers () {
+    return Offer.find()
+      .select('-_id -__v')
+      .populate({path: 'formData', select: '-_id -__v'})
+      .exec()
   }
 
-  getActiveOffersQuery (city) {
+  getActiveOffers (city) {
     return Offer.find()
+      .select('-_id -__v')
       .where('city').equals(city)
       .where('expirationDate').gt(Date.now())
-      .populate('formData')
+      .populate({path: 'formData', select: '-_id -__v'})
+      .exec()
   }
 
-  getOfferByTokenQuery (token) {
-    return Offer.find()
+  getOfferByToken (token) {
+    // Don't populate, otherwise an 'Offer' Object cannot be created
+    Offer.findOne()
+      .select('-_id -__v')
       .where('hashedToken').equals(hash(token))
-      .populate('formData')
+      .exec()
   }
 
   async confirmOffer (offer, token) {
@@ -52,15 +59,14 @@ export default class OfferService {
     const mailService = new MailService()
     await mailService.sendConfirmationMail(offer, token)
 
-    offer.confirmed = true
-    await offer.save()
+    await Offer.findByIdAndUpdate(offer._id, {confirmed: true}).exec()
   }
 
   async extendOffer (offer, duration, token) {
-    offer.expirationDate = Date.now() + duration * MILLISECONDS_IN_A_DAY
+    const newExpirationDate = Date.now() + duration * MILLISECONDS_IN_A_DAY
     const mailService = new MailService()
     await mailService.sendExtensionMail(offer, token)
-    await offer.save()
+    await Offer.findByIdAndUpdate(offer._id, {expirationDate: newExpirationDate}).exec()
   }
 
   async deleteOffer (offer) {
@@ -69,7 +75,6 @@ export default class OfferService {
     }
     const mailService = new MailService()
     await mailService.sendDeletionMail(offer)
-    offer.deleted = true
-    await offer.save()
+    await Offer.findByIdAndUpdate(offer._id, {deleted: true}).exec()
   }
 }
