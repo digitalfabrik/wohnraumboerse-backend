@@ -33,7 +33,8 @@ const offerSchema = mongoose.Schema({
   },
   hashedToken: {
     type: String,
-    required: [true, 'ErrorMSG']
+    required: [true, 'ErrorMSG'],
+    unique: true // Create a mongodb unique index
   },
   formData: {
     type: mongoose.Schema.Types.ObjectId,
@@ -42,7 +43,7 @@ const offerSchema = mongoose.Schema({
   }
 })
 
-offerSchema.methods.isExpired = () => {
+offerSchema.methods.isExpired = function () {
   return this.expirationDate <= Date.now()
 }
 

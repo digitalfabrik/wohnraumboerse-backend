@@ -3,7 +3,6 @@ import {body, param, validationResult} from 'express-validator/check'
 import {matchedData} from 'express-validator/filter'
 import {TOKEN_LENGTH} from '../utils/createToken'
 import HttpStatus from 'http-status-codes'
-import hash from '../utils/hash'
 
 const validateMiddleware = (req, res, next) => {
   const errors = validationResult(req)

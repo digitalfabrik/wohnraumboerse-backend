@@ -1,8 +1,8 @@
-import Offer from '../database/Offer'
+import Offer from '../models/Offer'
 import hash from '../utils/hash'
 import createToken from '../utils/createToken'
 import MailService from './MailService'
-import forms from '../database/forms'
+import forms from '../models/forms'
 
 const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24
 
