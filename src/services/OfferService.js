@@ -30,7 +30,6 @@ export default class OfferService {
 
   getAllOffers () {
     return Offer.find()
-      .select('-_id -__v')
       .populate({path: 'formData', select: '-_id -__v'})
       .exec()
   }
@@ -40,14 +39,14 @@ export default class OfferService {
       .select('-_id -__v')
       .where('city').equals(city)
       .where('expirationDate').gt(Date.now())
+      .where('deleted').equals(false)
       .populate({path: 'formData', select: '-_id -__v'})
       .exec()
   }
 
   getOfferByToken (token) {
     // Don't populate, otherwise an 'Offer' Object cannot be created
-    Offer.findOne()
-      .select('-_id -__v')
+    return Offer.findOne()
       .where('hashedToken').equals(hash(token))
       .exec()
   }
@@ -58,12 +57,11 @@ export default class OfferService {
     }
     const mailService = new MailService()
     await mailService.sendConfirmationMail(offer, token)
-
     await Offer.findByIdAndUpdate(offer._id, {confirmed: true}).exec()
   }
 
   async extendOffer (offer, duration, token) {
-    const newExpirationDate = Date.now() + duration * MILLISECONDS_IN_A_DAY
+    const newExpirationDate = new Date(Date.now() + duration * MILLISECONDS_IN_A_DAY).toISOString()
     const mailService = new MailService()
     await mailService.sendExtensionMail(offer, token)
     await Offer.findByIdAndUpdate(offer._id, {expirationDate: newExpirationDate}).exec()

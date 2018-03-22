@@ -66,7 +66,6 @@ export default ({offerService}) => {
           return res.status(HttpStatus.GONE).json('Offer not available')
         }
 
-        console.log('123')
         await offerService.confirmOffer(offer, token)
         return res.status(HttpStatus.OK).end()
       } catch (e) {
@@ -91,7 +90,8 @@ export default ({offerService}) => {
           return res.status(HttpStatus.BAD_REQUEST).json('Offer not available')
         }
 
-        await offerService.extendOffer(token, duration)
+        await offerService.extendOffer(offer, duration, token)
+        return res.status(HttpStatus.OK).end()
       } catch (e) {
         console.error(e)
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
