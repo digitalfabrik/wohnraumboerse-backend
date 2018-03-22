@@ -12,8 +12,6 @@ export default class OfferService {
     const token = createToken()
 
     const form = new forms[city](formData)
-    await form.save()
-
     const offer = new Offer({
       email: email,
       city: city,
@@ -22,48 +20,30 @@ export default class OfferService {
       formData: form
     })
 
+    await form.save()
     await offer.save()
-/*    Offer.findOne().where('_id').equals(offer._id).populate('formData').exec((err, result) => {
-      if (err) {
-        console.log(err)
-      }
-      console.log('Offer after populate: ', offer)
-      console.log('Result after populate:', result)
-    })*/
+
     const mailService = new MailService()
     // await mailService.sendCreationMail(offer, token)
 
     return token
   }
 
-/*  populateOffer (id) {
-    Offer.findOne().where('_id').equals(id).populate('formData').exec((err, result) => {
-      if (err) {
-        console.log(err)
-      }
-      await result.save()
-    })
-  }*/
-
-  validationCallback (err, result) {
-    if (err) {
-      return console.log(err.toString())
-    }
-    console.log('Saved.')
-  }
-
-
   getAllOffersQuery () {
     return Offer.find().populate('formData')
   }
 
   getActiveOffersQuery (city) {
-    return Offer.find().where('city').equals(city)
+    return Offer.find()
+      .where('city').equals(city)
+      .where('expirationDate').gt(Date.now())
+      .populate('formData')
   }
 
-  findOfferByToken (token) {
-    return Offer.find().where('hashedToken').equals(hash(token)).exec(this.findCallback())
-    // this.offers.find(offer => offer.hashedToken === hash(token))
+  getOfferByTokenQuery (token) {
+    return Offer.find()
+      .where('hashedToken').equals(hash(token))
+      .populate('formData')
   }
 
   async confirmOffer (offer, token) {
@@ -71,19 +51,17 @@ export default class OfferService {
       return
     }
     const mailService = new MailService()
-    await
-      mailService.sendConfirmationMail(offer, token)
+    // await mailService.sendConfirmationMail(offer, token)
 
     offer.confirmed = true
-    offer.save(this.validationCallback)
+    await offer.save()
   }
 
   async extendOffer (offer, duration, token) {
     offer.expirationDate = Date.now() + duration * MILLISECONDS_IN_A_DAY
     const mailService = new MailService()
-    await
-      mailService.sendExtensionMail(offer, token)
-    offer.save(this.validationCallback)
+    // await mailService.sendExtensionMail(offer, token)
+    await offer.save()
   }
 
   async deleteOffer (offer) {
@@ -91,22 +69,8 @@ export default class OfferService {
       return
     }
     const mailService = new MailService()
-    await
-      mailService.sendDeletionMail(offer)
+    // await mailService.sendDeletionMail(offer)
     offer.deleted = true
     offer.save(this.validationCallback)
   }
-
-  // save () {
-  //   fs.writeFileSync(this.fileName, JSON.stringify(this.offers))
-  // }
-
-  // read () {
-  //   if (fs.existsSync(this.fileName)) {
-  //     return JSON.parse(fs.readFileSync(this.fileName))
-  //       .map(json => new Offer(json))
-  //   } else {
-  //     return []
-  //   }
-  // }
 }

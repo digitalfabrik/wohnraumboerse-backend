@@ -3,6 +3,7 @@ import {body, param, validationResult} from 'express-validator/check'
 import {matchedData} from 'express-validator/filter'
 import {TOKEN_LENGTH} from '../utils/createToken'
 import HttpStatus from 'http-status-codes'
+import hash from '../utils/hash'
 
 const validateMiddleware = (req, res, next) => {
   const errors = validationResult(req)
@@ -19,9 +20,9 @@ export default ({offerService}) => {
   router.get('/getAll', (req, res) => {
     offerService.getAllOffersQuery().exec((err, queryResult) => {
       if (err) {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(err)
       } else {
-        res.json(queryResult)
+        return res.json(queryResult)
       }
     })
   })
@@ -31,9 +32,9 @@ export default ({offerService}) => {
       .getActiveOffersQuery(req.city)
       .exec((err, queryResult) => {
         if (err) {
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(err)
         } else {
-          res.json(queryResult)
+          return res.json(queryResult)
         }
       })
   })
@@ -59,15 +60,16 @@ export default ({offerService}) => {
     param('token').isHexadecimal().isLength(TOKEN_LENGTH),
     validateMiddleware,
     async (req, res) => {
-      const {token} = matchedData(req)
-      const offer = offerService.findOfferByToken(token)
-      if (!offer) {
-        return res.status(HttpStatus.NOT_FOUND).json('No such offer')
-      } else if (offer.isExpired() || offer.deleted) {
-        return res.status(HttpStatus.GONE).json('Offer not available')
-      }
-
       try {
+        const {token} = matchedData(req)
+        const offer = await offerService.getOfferByTokenQuery(token).exec()
+
+        if (!offer) {
+          return res.status(HttpStatus.NOT_FOUND).json('No such offer')
+        } else if (offer.isExpired() || offer.deleted) {
+          return res.status(HttpStatus.GONE).json('Offer not available')
+        }
+
         await offerService.confirmOffer(offer, token)
         return res.status(HttpStatus.OK).end()
       } catch (e) {
@@ -82,15 +84,16 @@ export default ({offerService}) => {
     body('duration').isInt().toInt().custom(value => [3, 7, 14, 30].includes(value)),
     validateMiddleware,
     async (req, res) => {
-      const {token, duration} = matchedData(req)
-      const offer = offerService.findOfferByToken(token)
-      if (!offer) {
-        return res.status(HttpStatus.NOT_FOUND).json('No such offer')
-      } else if (offer.deleted || !offer.confirmed) {
-        return res.status(HttpStatus.BAD_REQUEST).json('Offer not available')
-      }
-
       try {
+        const {token, duration} = matchedData(req)
+        const offer = await offerService.getOfferByTokenQuery(token).exec()
+
+        if (!offer) {
+          return res.status(HttpStatus.NOT_FOUND).json('No such offer')
+        } else if (offer.deleted || !offer.confirmed) {
+          return res.status(HttpStatus.BAD_REQUEST).json('Offer not available')
+        }
+
         await offerService.extendOffer(token, duration)
       } catch (e) {
         console.error(e)
@@ -105,7 +108,7 @@ export default ({offerService}) => {
     async (req, res) => {
       const {token} = matchedData(req)
 
-      const offer = offerService.findOfferByToken(token)
+      const offer = offerService.getOfferByTokenQuery(token)
       if (!offer) {
         return res.status(HttpStatus.NOT_FOUND).json('No such offer')
       } else if (offer.deleted) {
