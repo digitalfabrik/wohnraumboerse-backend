@@ -7,7 +7,6 @@ import forms from '../database/forms'
 const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24
 
 export default class OfferService {
-
   async createOffer (city, email, formData, duration) {
     const token = createToken()
 
@@ -71,6 +70,6 @@ export default class OfferService {
     const mailService = new MailService()
     // await mailService.sendDeletionMail(offer)
     offer.deleted = true
-    offer.save(this.validationCallback)
+    await offer.save()
   }
 }

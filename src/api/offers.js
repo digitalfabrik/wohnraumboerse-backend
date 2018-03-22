@@ -18,6 +18,7 @@ export default ({offerService}) => {
   const router = new Router()
 
   router.get('/getAll', (req, res) => {
+    // There are basically 2 ways of executing a query, with or without callback.
     offerService.getAllOffersQuery().exec((err, queryResult) => {
       if (err) {
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(err)
@@ -106,16 +107,16 @@ export default ({offerService}) => {
     param('token').isHexadecimal().isLength(TOKEN_LENGTH),
     validateMiddleware,
     async (req, res) => {
-      const {token} = matchedData(req)
-
-      const offer = offerService.getOfferByTokenQuery(token)
-      if (!offer) {
-        return res.status(HttpStatus.NOT_FOUND).json('No such offer')
-      } else if (offer.deleted) {
-        return res.status(HttpStatus.BAD_REQUEST).json('Already deleted')
-      }
-
       try {
+        const {token} = matchedData(req)
+        const offer = await offerService.getOfferByTokenQuery(token).exec()
+
+        if (!offer) {
+          return res.status(HttpStatus.NOT_FOUND).json('No such offer')
+        } else if (offer.deleted) {
+          return res.status(HttpStatus.BAD_REQUEST).json('Already deleted')
+        }
+
         await offerService.deleteOffer(offer)
         return res.status(HttpStatus.OK).end()
       } catch (e) {

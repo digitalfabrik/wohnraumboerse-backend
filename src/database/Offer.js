@@ -42,4 +42,8 @@ const offerSchema = mongoose.Schema({
   }
 })
 
+offerSchema.methods.isExpired = () => {
+  return this.expirationDate <= Date.now()
+}
+
 export default mongoose.model('Offer', offerSchema)
