@@ -28,6 +28,10 @@ app.use(bodyParser.json({
 
 // connect to db
 initializeDb(db => {
+  db.on('error', console.error.bind(console, 'connection error:'))
+  db.once('open', function () {
+    console.log('Connected to DB.')
+  })
   // api router
   app.use('/', api(services))
 

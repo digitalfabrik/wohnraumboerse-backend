@@ -1,58 +1,56 @@
 import Offer from '../models/Offer'
-import fs from 'fs'
 import hash from '../utils/hash'
 import createToken from '../utils/createToken'
 import MailService from './MailService'
+import forms from '../models/forms'
 
 const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24
 
 export default class OfferService {
-  constructor (fileName) {
-    this.fileName = fileName
-    this.offers = this.read()
-  }
-
-  createNewId () {
-    if (this.offers.length === 0) {
-      return 0
-    } else {
-      return this.offers[this.offers.length - 1].id + 1
-    }
-  }
-
   async createOffer (city, email, formData, duration) {
-    const id = this.createNewId()
     const token = createToken()
+
+    const form = new forms[city](formData)
     const offer = new Offer({
-      id,
-      email,
-      city,
-      formData,
+      email: email,
+      city: city,
       expirationDate: Date.now() + duration * MILLISECONDS_IN_A_DAY,
-      confirmed: false,
-      deleted: false,
-      createdDate: Date.now(),
-      hashedToken: hash(token)
+      hashedToken: hash(token),
+      formData: form
     })
+
+    await form.save()
+    await offer.save()
 
     const mailService = new MailService()
     await mailService.sendCreationMail(offer, token)
 
-    this.offers.push(offer)
-    this.save()
     return token
   }
 
   getAllOffers () {
-    return this.offers
+    return Offer.find()
+      .select('-_id -__v')
+      .populate({path: 'formData', select: '-_id -__v'})
+      .exec()
   }
 
   getActiveOffers (city) {
-    return this.offers.filter(offer => offer.city === city && offer.isActive())
+    return Offer.find()
+      .select('-_id -__v')
+      .where('city').equals(city)
+      .where('expirationDate').gt(Date.now())
+      .where('deleted').equals(false)
+      .populate({path: 'formData', select: '-_id -__v'})
+      .exec()
   }
 
-  findOfferByToken (token) {
-    return this.offers.find(offer => offer.hashedToken === hash(token))
+  async getOfferByToken (token) {
+    // Don't populate, otherwise an 'Offer' Object cannot be properly created
+    const offerResult = await Offer.findOne()
+      .where('hashedToken').equals(hash(token))
+      .exec()
+    return new Offer(offerResult)
   }
 
   async confirmOffer (offer, token) {
@@ -61,16 +59,14 @@ export default class OfferService {
     }
     const mailService = new MailService()
     await mailService.sendConfirmationMail(offer, token)
-
-    offer.confirmed = true
-    this.save()
+    await Offer.findByIdAndUpdate(offer._id, {confirmed: true}).exec()
   }
 
   async extendOffer (offer, duration, token) {
-    offer.expirationDate = Date.now() + duration * MILLISECONDS_IN_A_DAY
+    const newExpirationDate = new Date(Date.now() + duration * MILLISECONDS_IN_A_DAY).toISOString()
     const mailService = new MailService()
     await mailService.sendExtensionMail(offer, token)
-    this.save()
+    await Offer.findByIdAndUpdate(offer._id, {expirationDate: newExpirationDate}).exec()
   }
 
   async deleteOffer (offer) {
@@ -79,20 +75,6 @@ export default class OfferService {
     }
     const mailService = new MailService()
     await mailService.sendDeletionMail(offer)
-    offer.deleted = true
-    this.save()
-  }
-
-  save () {
-    fs.writeFileSync(this.fileName, JSON.stringify(this.offers))
-  }
-
-  read () {
-    if (fs.existsSync(this.fileName)) {
-      return JSON.parse(fs.readFileSync(this.fileName))
-        .map(json => new Offer(json))
-    } else {
-      return []
-    }
+    await Offer.findByIdAndUpdate(offer._id, {deleted: true}).exec()
   }
 }

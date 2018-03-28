@@ -1,6 +1,8 @@
 import {createTransport} from 'nodemailer'
-import smptConfig from '../smptConfig'
+import smtpConfig from '../smtpConfig'
 import {compileFile} from 'pug'
+
+const develop = true
 
 const renderConfirmationMail = compileFile('src/views/confirmationMail.pug')
 const renderCreationMail = compileFile('src/views/creationMail.pug')
@@ -13,13 +15,15 @@ const getExtensionUrl = (city, token) => `http://neuburg.wohnen.integreat-app.de
 
 export default class MailService {
   async sendMail ({to, subject, html}) {
-    await createTransport(smptConfig).sendMail({to, subject, html})
+    await createTransport(smtpConfig).sendMail({to, subject, html})
   }
 
   async sendCreationMail (offer, token) {
     const subject = 'Bestätigen Sie Ihr Angebot'
     const html = renderCreationMail({subject, confirmUrl: getConfirmationUrl(offer.city, token)})
-    await this.sendMail({to: offer.email, subject, html})
+    if (!develop) {
+      await this.sendMail({to: offer.email, subject, html})
+    }
   }
 
   async sendConfirmationMail (offer, token) {
@@ -28,13 +32,17 @@ export default class MailService {
     const deletionUrl = getDeletionUrl(offer.city, token)
     const extensionUrl = getExtensionUrl(offer.city, token)
     const html = renderConfirmationMail({expirationDate, deletionUrl, extensionUrl})
-    await this.sendMail({to: offer.email, subject, html})
+    if (!develop) {
+      await this.sendMail({to: offer.email, subject, html})
+    }
   }
 
   async sendDeletionMail (offer) {
     const subject = 'Angebot erfolgreich gelöscht'
     const html = renderDeletionMail()
-    await this.sendMail({to: offer.email, subject, html})
+    if (!develop) {
+      await this.sendMail({to: offer.email, subject, html})
+    }
   }
 
   async sendExtensionMail (offer, token) {
@@ -43,6 +51,8 @@ export default class MailService {
     const deletionUrl = getDeletionUrl(offer.city, token)
     const extensionUrl = getExtensionUrl(offer.city, token)
     const html = renderExtensionMail({expirationDate, deletionUrl, extensionUrl})
-    await this.sendMail({to: offer.email, subject, html})
+    if (!develop) {
+      await this.sendMail({to: offer.email, subject, html})
+    }
   }
 }
