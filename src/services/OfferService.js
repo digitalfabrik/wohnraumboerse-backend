@@ -45,11 +45,12 @@ export default class OfferService {
       .exec()
   }
 
-  getOfferByToken (token) {
-    // Don't populate, otherwise an 'Offer' Object cannot be created
-    return Offer.findOne()
+  async getOfferByToken (token) {
+    // Don't populate, otherwise an 'Offer' Object cannot be properly created
+    const offerResult = await Offer.findOne()
       .where('hashedToken').equals(hash(token))
       .exec()
+    return new Offer(offerResult)
   }
 
   async confirmOffer (offer, token) {
