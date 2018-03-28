@@ -8,6 +8,24 @@ import initializeDb from './db'
 import api from './api'
 import config from './config.json'
 import initializeServices from './services/initializeServices'
+// import commander from 'commander'
+
+// commander
+//   .version('0.0.1')
+//   .option('-D, --develop', 'Start in develop mode')
+//   .option('-p, --peppers', 'Add peppers')
+//   .option('-P, --pineapple', 'Add pineapple')
+//   .option('-b, --bbq-sauce', 'Add bbq sauce')
+//   .option('-c, --cheese [type]', 'Add the specified type of cheese [marble]', 'marble')
+//   .parse(process.argv)
+
+// commander
+//   .option('-dev, --develop', 'Start in develop mode (e-mails are not sent)')
+//   .parse(process.argv)
+//
+// if (commander.develop) {
+//   console.log('DEVELOP ENABLED')
+// }
 
 const services = initializeServices()
 const app = express()
