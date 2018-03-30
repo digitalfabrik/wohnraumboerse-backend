@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "main": "dist",
   "scripts": {
-    "database": "service mongod start",
+    "database-start": "service mongod start",
+    "database-stop": "service mongod stop",
     "dev": "NODE_ENV=develop nodemon --watch src --exec \"babel-node src -u 'mongodb://localhost/livingDB'\"",
     "build": "babel src --source-maps --out-dir dist",
     "serve": "node dist",
