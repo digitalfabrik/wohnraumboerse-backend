@@ -2,7 +2,7 @@ import {createTransport} from 'nodemailer'
 import smtpConfig from '../smtpConfig'
 import {compileFile} from 'pug'
 
-const develop = process.env.NODE_ENV === 'develop'
+const develop = process.env.NODE_ENV === 'development'
 
 const renderConfirmationMail = compileFile('src/views/confirmationMail.pug')
 const renderCreationMail = compileFile('src/views/creationMail.pug')
