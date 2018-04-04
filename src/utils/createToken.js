@@ -1,3 +1,5 @@
+// @flow
+
 import crypto from 'crypto'
 
 export const TOKEN_LENGTH = 64
