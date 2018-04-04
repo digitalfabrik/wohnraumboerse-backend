@@ -8,6 +8,14 @@ import initializeDb from './db'
 import api from './api'
 import config from './config.json'
 import initializeServices from './services/initializeServices'
+import commander from 'commander'
+
+commander
+  .version('0.0.1')
+  .option('-u, --database-url <url>', 'Set the database url', 'mongodb://localhost/livingDB')
+  .parse(process.argv)
+
+const dbUrl = commander.databaseUrl
 
 const services = initializeServices()
 const app = express()
@@ -27,7 +35,7 @@ app.use(bodyParser.json({
 }))
 
 // connect to db
-initializeDb(db => {
+initializeDb(dbUrl, db => {
   db.on('error', console.error.bind(console, 'connection error:'))
   db.once('open', function () {
     console.log('Connected to DB.')

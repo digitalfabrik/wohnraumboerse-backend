@@ -3,10 +3,11 @@
   "version": "0.0.1",
   "main": "dist",
   "scripts": {
-    "database": "service mongod start",
-    "dev": "nodemon --watch src --exec \"babel-node src\"",
+    "database-start": "service mongod start",
+    "database-stop": "service mongod stop",
+    "dev": "NODE_ENV=development nodemon --watch src --exec \"babel-node src --database-url 'mongodb://localhost/livingDB'\"",
     "build": "babel src --source-maps --out-dir dist",
-    "serve": "node dist",
+    "serve": "NODE_ENV=production node dist --database-url 'mongodb://localhost/livingDB'",
     "lint": "eslint src",
     "lintfix": "eslint src --fix "
   },
@@ -14,6 +15,7 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "body-parser": "^1.18.2",
+    "commander": "^2.15.1",
     "compression": "^1.7.2",
     "cors": "^2.8.4",
     "express": "^4.16.2",
