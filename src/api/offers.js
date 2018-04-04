@@ -5,7 +5,6 @@ import {body, param, validationResult} from 'express-validator/check'
 import {matchedData} from 'express-validator/filter'
 import {TOKEN_LENGTH} from '../utils/createToken'
 import HttpStatus from 'http-status-codes'
-import Offer from '../models/Offer'
 import OfferService from '../services/OfferService'
 
 const validateMiddleware = (request, response, next) => {
