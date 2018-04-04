@@ -1,6 +1,9 @@
+// @flow
+
 import {createTransport} from 'nodemailer'
 import smtpConfig from '../smtpConfig'
 import {compileFile} from 'pug'
+import Offer from '../models/Offer'
 
 const develop = process.env.NODE_ENV === 'development'
 
@@ -14,11 +17,11 @@ const getDeletionUrl = (city, token) => `http://neuburg.wohnen.integreat-app.de/
 const getExtensionUrl = (city, token) => `http://neuburg.wohnen.integreat-app.de/offer/${token}/extend`
 
 export default class MailService {
-  async sendMail ({to, subject, html}) {
+  async sendMail ({to, subject, html} : {to: string, subject: string, html: string}) {
     await createTransport(smtpConfig).sendMail({to, subject, html})
   }
 
-  async sendCreationMail (offer, token) {
+  async sendCreationMail (offer: Offer, token: string) {
     const subject = 'Bestätigen Sie Ihr Angebot'
     const html = renderCreationMail({subject, confirmUrl: getConfirmationUrl(offer.city, token)})
     if (!develop) {
@@ -26,7 +29,7 @@ export default class MailService {
     }
   }
 
-  async sendConfirmationMail (offer, token) {
+  async sendConfirmationMail (offer: Offer, token: string) {
     const subject = 'Bestätigung erfolgreich'
     const expirationDate = new Date(offer.expirationDate).toDateString()
     const deletionUrl = getDeletionUrl(offer.city, token)
@@ -37,7 +40,7 @@ export default class MailService {
     }
   }
 
-  async sendDeletionMail (offer) {
+  async sendDeletionMail (offer: Offer) {
     const subject = 'Angebot erfolgreich gelöscht'
     const html = renderDeletionMail()
     if (!develop) {
@@ -45,7 +48,7 @@ export default class MailService {
     }
   }
 
-  async sendExtensionMail (offer, token) {
+  async sendExtensionMail (offer: Offer, token: string) {
     const subject = 'Angebot erfolgreich verlängert'
     const expirationDate = new Date(offer.expirationDate).toDateString()
     const deletionUrl = getDeletionUrl(offer.city, token)
