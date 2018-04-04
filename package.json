@@ -8,7 +8,7 @@
     "dev": "NODE_ENV=development nodemon --watch src --exec \"babel-node src --database-url 'mongodb://localhost/livingDB'\"",
     "build": "babel src --source-maps --out-dir dist",
     "serve": "NODE_ENV=production node dist --database-url 'mongodb://localhost/livingDB'",
-    "lint": "eslint src",
+    "lint": "eslint src && yarn flow",
     "lintfix": "eslint src --fix "
   },
   "license": "MIT",
