@@ -1,6 +1,6 @@
 // @flow
 
-import {Router, Request, Response} from 'express'
+import {Router} from 'express'
 import {body, param, validationResult} from 'express-validator/check'
 import {matchedData} from 'express-validator/filter'
 import {TOKEN_LENGTH} from '../utils/createToken'
