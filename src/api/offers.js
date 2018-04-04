@@ -61,7 +61,7 @@ export default ({offerService} : {offerService: OfferService}) => {
     async (request, response) => {
       try {
         const {token} = matchedData(request)
-        const offer = new Offer(await offerService.getOfferByToken(token))
+        const offer = await offerService.getOfferByToken(token)
 
         if (!offer) {
           return response.status(HttpStatus.NOT_FOUND).json('No such offer')
@@ -85,7 +85,7 @@ export default ({offerService} : {offerService: OfferService}) => {
     async (request, response) => {
       try {
         const {token, duration} = matchedData(request)
-        const offer = new Offer(await offerService.getOfferByToken(token))
+        const offer = await offerService.getOfferByToken(token)
 
         if (!offer) {
           return response.status(HttpStatus.NOT_FOUND).json('No such offer')
@@ -108,7 +108,7 @@ export default ({offerService} : {offerService: OfferService}) => {
     async (request, response) => {
       try {
         const {token} = matchedData(request)
-        const offer = new Offer(await offerService.getOfferByToken(token))
+        const offer = await offerService.getOfferByToken(token)
 
         if (!offer) {
           return response.status(HttpStatus.NOT_FOUND).json('No such offer')
