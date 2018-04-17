@@ -17,7 +17,7 @@ const getDeletionUrl = (city, token) => `http://neuburg.wohnen.integreat-app.de/
 const getExtensionUrl = (city, token) => `http://neuburg.wohnen.integreat-app.de/offer/${token}/extend`
 
 export default class MailService {
-  async sendMail ({to, subject, html} : {to: string, subject: string, html: string}) {
+  async sendMail ({to, subject, html}: {to: string, subject: string, html: string}) {
     await createTransport(smtpConfig).sendMail({to, subject, html})
   }
 

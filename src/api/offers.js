@@ -16,7 +16,7 @@ const validateMiddleware = (request, response, next) => {
   }
 }
 
-export default ({offerService} : {offerService: OfferService}) => {
+export default ({offerService}: {offerService: OfferService}) => {
   const router = new Router()
 
   router.get('/getAll', async (request, response) => {
