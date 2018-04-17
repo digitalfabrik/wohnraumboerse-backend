@@ -1,7 +1,4 @@
 [ignore]
-<PROJECT_ROOT>/.idea/.*
-<PROJECT_ROOT>/dist/.*
-<PROJECT_ROOT>/node_modules/.*
 
 [include]
 
@@ -10,8 +7,10 @@
 [lints]
 
 [options]
-all=true
-# module.system.node.resolve_dirname=node_modules
+# all=true not working
+# See https://github.com/facebook/flow/issues/869 and https://github.com/facebook/flow/issues/3728
+
+module.system.node.resolve_dirname=node_modules
 # See for information about the "./" https://github.com/facebook/flow/issues/5180
 module.system.node.resolve_dirname=./src
 
