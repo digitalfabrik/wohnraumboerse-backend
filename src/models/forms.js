@@ -1,3 +1,5 @@
+// @flow
+
 import neuburgForm from './forms/neuburgForm'
 import mongoose from 'mongoose'
 

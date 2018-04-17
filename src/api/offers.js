@@ -1,9 +1,11 @@
+// @flow
+
 import {Router} from 'express'
 import {body, param, validationResult} from 'express-validator/check'
 import {matchedData} from 'express-validator/filter'
 import {TOKEN_LENGTH} from '../utils/createToken'
 import HttpStatus from 'http-status-codes'
-import Offer from '../models/Offer'
+import OfferService from '../services/OfferService'
 
 const validateMiddleware = (request, response, next) => {
   const errors = validationResult(request)
@@ -14,7 +16,7 @@ const validateMiddleware = (request, response, next) => {
   }
 }
 
-export default ({offerService}) => {
+export default ({offerService} : {offerService: OfferService}) => {
   const router = new Router()
 
   router.get('/getAll', async (request, response) => {
@@ -58,7 +60,7 @@ export default ({offerService}) => {
     async (request, response) => {
       try {
         const {token} = matchedData(request)
-        const offer = new Offer(await offerService.getOfferByToken(token))
+        const offer = await offerService.getOfferByToken(token)
 
         if (!offer) {
           return response.status(HttpStatus.NOT_FOUND).json('No such offer')
@@ -82,7 +84,7 @@ export default ({offerService}) => {
     async (request, response) => {
       try {
         const {token, duration} = matchedData(request)
-        const offer = new Offer(await offerService.getOfferByToken(token))
+        const offer = await offerService.getOfferByToken(token)
 
         if (!offer) {
           return response.status(HttpStatus.NOT_FOUND).json('No such offer')
@@ -105,7 +107,7 @@ export default ({offerService}) => {
     async (request, response) => {
       try {
         const {token} = matchedData(request)
-        const offer = new Offer(await offerService.getOfferByToken(token))
+        const offer = await offerService.getOfferByToken(token)
 
         if (!offer) {
           return response.status(HttpStatus.NOT_FOUND).json('No such offer')

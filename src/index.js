@@ -1,3 +1,5 @@
+// @flow
+
 import 'babel-polyfill'
 import http from 'http'
 import express from 'express'
