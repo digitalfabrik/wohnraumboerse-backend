@@ -8,7 +8,7 @@
     "dev": "NODE_ENV=development nodemon --watch src --exec \"babel-node src --database-url 'mongodb://localhost/livingDB'\"",
     "build": "babel src --source-maps --out-dir dist",
     "serve": "NODE_ENV=production node dist --database-url 'mongodb://localhost/livingDB'",
-    "lint": "eslint src && yarn flow",
+    "lint": "eslint src && flow",
     "lintfix": "eslint src --fix "
   },
   "license": "MIT",
@@ -18,7 +18,6 @@
     "commander": "^2.15.1",
     "compression": "^1.7.2",
     "cors": "^2.8.4",
-    "eslint-plugin-flowtype": "^2.46.2",
     "express": "^4.16.2",
     "express-validator": "^5.0.2",
     "http-status-codes": "1.3.0",
@@ -36,11 +35,13 @@
     "es6-template-string-loader": "^2.0.0",
     "eslint": "^4.18.1",
     "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-flowtype": "^2.46.2",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-standard": "^3.0.1",
     "flow-bin": "^0.69.0",
+    "flow-typed": "^2.4.0",
     "nodemon": "^1.15.1"
   }
 }
