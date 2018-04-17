@@ -24,7 +24,7 @@ const dbUrl = commander.databaseUrl
 const services = initializeServices()
 const app = express()
 
-app.server = http.createServer(app)
+const server = http.createServer(app)
 
 // logger
 app.use(morgan('dev'))
@@ -47,8 +47,8 @@ initializeDb(dbUrl, (db: mongoose.Connection) => {
   // api router
   app.use('/', api(services))
 
-  app.server.listen(process.env.PORT || config.port, () => {
-    console.log(`Started on port ${app.server.address().port}`)
+  server.listen(process.env.PORT || config.port, () => {
+    console.log(`Started on port ${server.address().port}`)
   })
 })
 
