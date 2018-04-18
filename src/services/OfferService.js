@@ -56,7 +56,7 @@ export default class OfferService {
   }
 
   async confirmOffer (offer: Offer, token: string): Promise<void> {
-    if (offer.confirmed !== true) {
+    if (!offer.confirmed) {
       const mailService = new MailService()
       await mailService.sendConfirmationMail(offer, token)
       await Offer.findByIdAndUpdate(offer._id, {confirmed: true}).exec()
