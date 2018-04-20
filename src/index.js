@@ -3,6 +3,7 @@
 import 'babel-polyfill'
 import http from 'http'
 import express from 'express'
+import mongoose from 'mongoose'
 import cors from 'cors'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
@@ -17,12 +18,13 @@ commander
   .option('-u, --database-url <url>', 'Set the database url', 'mongodb://localhost/livingDB')
   .parse(process.argv)
 
+// $FlowFixMe It seems like this is not supported in commander flow-types, thus I disabled the warning
 const dbUrl = commander.databaseUrl
 
 const services = initializeServices()
 const app = express()
 
-app.server = http.createServer(app)
+const server = http.createServer(app)
 
 // logger
 app.use(morgan('dev'))
@@ -37,7 +39,7 @@ app.use(bodyParser.json({
 }))
 
 // connect to db
-initializeDb(dbUrl, db => {
+initializeDb(dbUrl, (db: mongoose.Connection) => {
   db.on('error', console.error.bind(console, 'connection error:'))
   db.once('open', function () {
     console.log('Connected to DB.')
@@ -45,8 +47,8 @@ initializeDb(dbUrl, db => {
   // api router
   app.use('/', api(services))
 
-  app.server.listen(process.env.PORT || config.port, () => {
-    console.log(`Started on port ${app.server.address().port}`)
+  server.listen(process.env.PORT || config.port, () => {
+    console.log(`Started on port ${server.address().port}`)
   })
 })
 
