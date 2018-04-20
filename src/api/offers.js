@@ -68,10 +68,10 @@ export default ({offerService}: { offerService: OfferService }): Router => {
           response.status(HttpStatus.NOT_FOUND).json('No such offer')
         } else if (offer.isExpired() || offer.deleted) {
           response.status(HttpStatus.GONE).json('Offer not available')
+        } else {
+          await offerService.confirmOffer(offer, token)
+          response.status(HttpStatus.OK).end()
         }
-
-        await offerService.confirmOffer(offer, token)
-        response.status(HttpStatus.OK).end()
       } catch (e) {
         console.error(e)
         response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
@@ -92,10 +92,10 @@ export default ({offerService}: { offerService: OfferService }): Router => {
           response.status(HttpStatus.NOT_FOUND).json('No such offer')
         } else if (offer.deleted || !offer.confirmed) {
           response.status(HttpStatus.BAD_REQUEST).json('Offer not available')
+        } else {
+          await offerService.extendOffer(offer, duration, token)
+          response.status(HttpStatus.OK).end()
         }
-
-        await offerService.extendOffer(offer, duration, token)
-        response.status(HttpStatus.OK).end()
       } catch (e) {
         console.error(e)
         response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
@@ -115,10 +115,10 @@ export default ({offerService}: { offerService: OfferService }): Router => {
           response.status(HttpStatus.NOT_FOUND).json('No such offer')
         } else if (offer.deleted) {
           response.status(HttpStatus.BAD_requestUEST).json('Already deleted')
+        } else {
+          await offerService.deleteOffer(offer)
+          response.status(HttpStatus.OK).end()
         }
-
-        await offerService.deleteOffer(offer)
-        response.status(HttpStatus.OK).end()
       } catch (e) {
         console.error(e)
         response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
