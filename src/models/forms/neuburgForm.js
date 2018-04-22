@@ -12,7 +12,7 @@ export default {
   street: {
     type: String
   },
-  plz: {
+  zip: {
     type: Number,
     min: 10000,
     max: 99999
@@ -20,7 +20,7 @@ export default {
   location: {
     type: String
   },
-  telephone: {
+  phone: {
     type: String
   },
 
@@ -31,6 +31,7 @@ export default {
   },
   totalRooms: {
     type: Number,
+    min: 1,
     required: true
   },
   ofRooms: {
