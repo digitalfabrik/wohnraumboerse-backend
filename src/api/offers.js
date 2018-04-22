@@ -114,7 +114,7 @@ export default ({offerService}: { offerService: OfferService }): Router => {
         if (!offer) {
           response.status(HttpStatus.NOT_FOUND).json('No such offer')
         } else if (offer.deleted) {
-          response.status(HttpStatus.BAD_requestUEST).json('Already deleted')
+          response.status(HttpStatus.BAD_REQUEST).json('Already deleted')
         } else {
           await offerService.deleteOffer(offer)
           response.status(HttpStatus.OK).end()
