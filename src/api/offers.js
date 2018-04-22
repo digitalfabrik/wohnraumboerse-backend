@@ -43,6 +43,7 @@ export default ({offerService}: { offerService: OfferService }): Router => {
     body('email').isEmail().trim().normalizeEmail(),
     body('duration').isInt().toInt().custom((value: number): boolean => [3, 7, 14, 30].includes(value)),
     body('formData').exists(),
+    body('agreedToDataProtection').isBoolean().toBoolean().custom((value: boolean): boolean => value),
     validateMiddleware,
     async (request: $Request, response: $Response): Promise<void> => {
       const {email, formData, duration} = matchedData(request)
