@@ -46,6 +46,10 @@ export default {
       message: 'ofRooms can not be empty'
     }
   },
+  moveInDate: {
+    type: Date,
+    required: true
+  },
 
   baseRent: {
     type: Number,
