@@ -14,7 +14,7 @@ export default {
   },
   zip: {
     type: Number,
-    min: 10000,
+    min: 0,
     max: 99999
   },
   location: {
