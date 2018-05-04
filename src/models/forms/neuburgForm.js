@@ -3,7 +3,7 @@
 export default {
   // landlord's data
   landlord: {
-    surname: {
+    lastName: {
       type: String,
       required: true
     },
@@ -16,7 +16,7 @@ export default {
   },
 
   // data on the object
-  object: {
+  accommodation: {
     totalArea: {
       type: Number,
       required: true
