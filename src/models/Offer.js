@@ -45,7 +45,7 @@ const offerSchema = mongoose.Schema({
   }
 })
 
-// Arrow functions don't work here for some reason
+// Don't use an arrow function here (because of the 'this' scope)
 offerSchema.methods.isExpired = function (): boolean {
   return this.expirationDate <= Date.now()
 }

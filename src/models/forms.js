@@ -3,7 +3,9 @@
 import neuburgForm from './forms/neuburgForm'
 import mongoose from 'mongoose'
 
-const Neuburg = mongoose.model('neuburg', mongoose.Schema(neuburgForm))
+const schemaOptions = {strict: 'throw'}
+
+const Neuburg = mongoose.model('neuburg', mongoose.Schema(neuburgForm, schemaOptions))
 
 export default {
   'neuburg': Neuburg
