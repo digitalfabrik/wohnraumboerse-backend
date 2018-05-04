@@ -44,7 +44,7 @@ export default {
     }
   },
 
-  // costs for the object
+  // costs of the object
   costs: {
     baseRent: {
       type: Number,
