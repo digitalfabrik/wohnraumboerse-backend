@@ -2,92 +2,88 @@
 
 export default {
   // landlord's data
-  surname: {
-    type: String,
-    required: true
-  },
-  firstName: {
-    type: String
-  },
-  street: {
-    type: String
-  },
-  zip: {
-    type: Number,
-    min: 0,
-    max: 99999
-  },
-  location: {
-    type: String
-  },
-  phone: {
-    type: String
+  landlord: {
+    surname: {
+      type: String,
+      required: true
+    },
+    firstName: {
+      type: String
+    },
+    phone: {
+      type: String
+    }
   },
 
   // data on the object
-  totalArea: {
-    type: Number,
-    required: true
-  },
-  totalRooms: {
-    type: Number,
-    min: 1,
-    required: true
-  },
-  ofRooms: {
-    type: [String],
-    lowercase: true,
-    enum: ['kitchen', 'bath', 'wc', 'child1', 'child2',
-      'child3', 'bed', 'hallway', 'store', 'basement', 'balcony'],
-    validate: {
-      validator: function (values: Array<string>): boolean {
-        return values.length > 0
-      },
-      message: 'ofRooms can not be empty'
+  object: {
+    totalArea: {
+      type: Number,
+      required: true
+    },
+    totalRooms: {
+      type: Number,
+      min: 1,
+      required: true
+    },
+    ofRooms: {
+      type: [String],
+      lowercase: true,
+      enum: ['kitchen', 'bath', 'wc', 'child1', 'child2',
+        'child3', 'bed', 'hallway', 'store', 'basement', 'balcony'],
+      validate: {
+        validator: function (values: Array<string>): boolean {
+          return values.length > 0
+        },
+        message: 'ofRooms can not be empty'
+      }
+    },
+    moveInDate: {
+      type: Date,
+      required: true
     }
-  },
-  moveInDate: {
-    type: Date,
-    required: true
   },
 
-  baseRent: {
-    type: Number,
-    min: 0,
-    required: true
-  },
-  runningCosts: {
-    type: Number,
-    min: 0,
-    default: 0
-  },
-  ofRunningServices: {
-    type: [String],
-    enum: ['heating', 'water', 'garbage', 'chimney', 'other'],
-    validate: {
-      validator: function (values: Array<string>): boolean {
-        return this.runningCosts === 0 || values.length > 0
-      },
-      message: 'ofRunningServices can not be empty if runningCosts > 0'
-    }
-  },
-  hotWaterInHeatingCosts: {
-    type: Boolean,
-    default: false
-  },
-  additionalCosts: {
-    type: Number,
-    min: 0,
-    default: 0
-  },
-  ofAdditionalServices: {
-    type: [String],
-    enum: ['garage', 'other'],
-    validate: {
-      validator: function (values: Array<string>): boolean {
-        return this.additionalCosts === 0 || values.length > 0
-      },
-      message: 'ofAdditionalServices can not be empty if additionalCosts > 0'
+  // costs for the object
+  costs: {
+    baseRent: {
+      type: Number,
+      min: 0,
+      required: true
+    },
+    runningCosts: {
+      type: Number,
+      min: 0,
+      default: 0
+    },
+    ofRunningServices: {
+      type: [String],
+      enum: ['heating', 'water', 'garbage', 'chimney', 'other'],
+      validate: {
+        validator: function (values: Array<string>): boolean {
+          return this.costs.runningCosts === 0 || values.length > 0
+        },
+        message: 'ofRunningServices can not be empty if runningCosts > 0'
+      }
+    },
+    hotWaterInHeatingCosts: {
+      type: Boolean,
+      default: false
+    },
+    additionalCosts: {
+      type: Number,
+      min: 0,
+      default: 0
+    },
+    ofAdditionalServices: {
+      type: [String],
+      enum: ['garage', 'other'],
+      validate: {
+        validator: function (values: Array<string>): boolean {
+          return this.costs.additionalCosts === 0 || values.length > 0
+        },
+        message: 'ofAdditionalServices can not be empty if additionalCosts > 0'
+      }
     }
   }
 }
