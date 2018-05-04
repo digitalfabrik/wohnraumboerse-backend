@@ -54,7 +54,7 @@ export default {
     runningCosts: {
       type: Number,
       min: 0,
-      default: 0
+      required: true
     },
     ofRunningServices: {
       type: [String],
@@ -68,12 +68,12 @@ export default {
     },
     hotWaterInHeatingCosts: {
       type: Boolean,
-      default: false
+      required: true
     },
     additionalCosts: {
       type: Number,
       min: 0,
-      default: 0
+      required: true
     },
     ofAdditionalServices: {
       type: [String],
