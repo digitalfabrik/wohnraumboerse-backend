@@ -1,0 +1,15 @@
+{
+    "port": 8080,
+    "bodyLimit": "100kb",
+    "corsHeaders": ["Link"],
+  "mongoDBUrl": "mongodb://localhost/livingDB",
+  "smtp": {
+    "host": "smtp.gmail.com",
+    "port": 465,
+    "secure": true,
+    "auth": {
+      "user": "keineantwort@integreat-app.de",
+      "pass": ""
+    }
+  }
+}

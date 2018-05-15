@@ -81,6 +81,21 @@
   dependencies:
     "@types/babel-types" "*"
 
+"@types/events@*":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@types/events/-/events-1.2.0.tgz#81a6731ce4df43619e5c8c945383b3e62a89ea86"
+
+"@types/node@*":
+  version "10.0.9"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.0.9.tgz#7cb73a6ef9cf4e41e5354e114e824bfdfd96a6b4"
+
+"@types/nodemailer@^4.6.0":
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/@types/nodemailer/-/nodemailer-4.6.0.tgz#542ecb5fff91cd3d841fc67cace0527649030462"
+  dependencies:
+    "@types/events" "*"
+    "@types/node" "*"
+
 abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
@@ -856,10 +871,6 @@ big-integer@^1.6.17:
   version "1.6.28"
   resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.28.tgz#8cef0fda3ccde8759c2c66efcfacc35aea658283"
 
-big.js@^3.1.3:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/big.js/-/big.js-3.2.0.tgz#a5fc298b81b9e0dca2e458824784b65c52ba588e"
-
 binary-extensions@^1.0.0:
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-1.11.0.tgz#46aa1751fb6a2f93ee5e689bb1087d4b14c6c205"
@@ -1307,6 +1318,14 @@ cors@^2.8.4:
     object-assign "^4"
     vary "^1"
 
+cosmiconfig@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/cosmiconfig/-/cosmiconfig-5.0.3.tgz#299c08ebce9d2df8a2c9ec3f11e55b1c2e897bf3"
+  dependencies:
+    is-directory "^0.3.1"
+    js-yaml "^3.9.0"
+    parse-json "^4.0.0"
+
 create-error-class@^3.0.0:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/create-error-class/-/create-error-class-3.0.2.tgz#06be7abef947a3f14a30fd610671d401bca8b7b6"
@@ -1487,25 +1506,15 @@ electron-to-chromium@^1.3.30:
   version "1.3.34"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.34.tgz#d93498f40391bb0c16a603d8241b9951404157ed"
 
-emojis-list@^2.0.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/emojis-list/-/emojis-list-2.1.0.tgz#4daa4d9db00f9819880c79fa457ae5b09a1fd389"
-
 encodeurl@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/encodeurl/-/encodeurl-1.0.2.tgz#ad3ff4c86ec2d029322f5a02c3a9a606c95b3f59"
 
-error-ex@^1.2.0:
+error-ex@^1.2.0, error-ex@^1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/error-ex/-/error-ex-1.3.1.tgz#f855a86ce61adc4e8621c3cda21e7a7612c3a8dc"
   dependencies:
     is-arrayish "^0.2.1"
-
-es6-template-string-loader@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/es6-template-string-loader/-/es6-template-string-loader-2.0.0.tgz#1e368d546db19396fb315a895384cd595930f233"
-  dependencies:
-    loader-utils "^1.1.0"
 
 escape-html@~1.0.3:
   version "1.0.3"
@@ -2372,6 +2381,10 @@ is-descriptor@^1.0.0, is-descriptor@^1.0.2:
     is-data-descriptor "^1.0.0"
     kind-of "^6.0.2"
 
+is-directory@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/is-directory/-/is-directory-0.3.1.tgz#61339b6f2475fc772fd9c9d83f5c8575dc154ae1"
+
 is-dotfile@^1.0.0:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/is-dotfile/-/is-dotfile-1.0.3.tgz#a6a2f32ffd2dfb04f5ca25ecd0f6b83cf798a1e1"
@@ -2591,6 +2604,13 @@ js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
 
+js-yaml@^3.9.0:
+  version "3.11.0"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.11.0.tgz#597c1a8bd57152f26d622ce4117851a51f5ebaef"
+  dependencies:
+    argparse "^1.0.7"
+    esprima "^4.0.0"
+
 js-yaml@^3.9.1:
   version "3.10.0"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.10.0.tgz#2e78441646bd4682e963f22b6e92823c309c62dc"
@@ -2614,6 +2634,10 @@ jsesc@~0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-0.5.0.tgz#e7dee66e35d6fc16f710fe91d5cf69f70f08911d"
 
+json-parse-better-errors@^1.0.1:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/json-parse-better-errors/-/json-parse-better-errors-1.0.2.tgz#bb867cfb3450e69107c131d1c514bab3dc8bcaa9"
+
 json-schema-traverse@^0.3.0:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/json-schema-traverse/-/json-schema-traverse-0.3.1.tgz#349a6d44c53a51de89b40805c5d5e59b417d3340"
@@ -2636,7 +2660,7 @@ json-stringify-safe@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
 
-json5@^0.5.0, json5@^0.5.1:
+json5@^0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/json5/-/json5-0.5.1.tgz#1eade7acc012034ad84e2396767ead9fa5495821"
 
@@ -2741,14 +2765,6 @@ load-json-file@^2.0.0:
     parse-json "^2.2.0"
     pify "^2.0.0"
     strip-bom "^3.0.0"
-
-loader-utils@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/loader-utils/-/loader-utils-1.1.0.tgz#c98aef488bcceda2ffb5e2de646d6a754429f5cd"
-  dependencies:
-    big.js "^3.1.3"
-    emojis-list "^2.0.0"
-    json5 "^0.5.0"
 
 locate-path@^2.0.0:
   version "2.0.0"
@@ -3243,6 +3259,13 @@ parse-json@^2.2.0:
   resolved "https://registry.yarnpkg.com/parse-json/-/parse-json-2.2.0.tgz#f480f40434ef80741f8469099f8dea18f55a4dc9"
   dependencies:
     error-ex "^1.2.0"
+
+parse-json@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/parse-json/-/parse-json-4.0.0.tgz#be35f5425be1f7f6c747184f98a788cb99477ee0"
+  dependencies:
+    error-ex "^1.3.1"
+    json-parse-better-errors "^1.0.1"
 
 parseurl@~1.3.2:
   version "1.3.2"
