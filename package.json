@@ -3,14 +3,14 @@
   "version": "0.0.1",
   "main": "dist",
   "scripts": {
-    "database-start": "service mongod start",
-    "database-stop": "service mongod stop",
     "flow-typed": "flow-typed install",
-    "dev": "NODE_ENV=development nodemon --watch src --exec \"babel-node src\"",
-    "build": "babel src --source-maps --out-dir dist",
-    "serve": "NODE_ENV=production node -r source-map-support/register dist",
+    "build": "babel src --out-dir dist",
+    "build:dev": "babel src --source-maps --out-dir dist",
+    "start": "NODE_ENV=production node dist",
+    "start:dev": "NODE_ENV=development nodemon --watch src --exec \"babel-node src\"",
+    "flow": "flow",
     "lint": "eslint src; flow",
-    "lintfix": "eslint src --fix "
+    "lint:fix": "eslint src --fix "
   },
   "license": "MIT",
   "dependencies": {
