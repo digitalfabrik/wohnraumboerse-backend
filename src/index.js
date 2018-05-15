@@ -3,7 +3,6 @@
 import 'babel-polyfill'
 import http from 'http'
 import express from 'express'
-import cors from 'cors'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import initializeDb from './db'
@@ -32,13 +31,6 @@ const server = http.createServer(app)
 
 // logger
 app.use(morgan('dev'))
-
-// 3rd party middleware
-app.use(
-  cors({
-    exposedHeaders: config.corsHeaders
-  })
-)
 
 app.use(
   bodyParser.json({
