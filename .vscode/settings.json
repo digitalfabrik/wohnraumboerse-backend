@@ -1,0 +1,8 @@
+{
+  "flow.pathToFlow": "${workspaceRoot}/node_modules/.bin/flow",
+  "flow.useNPMPackagedFlow": true,
+  "javascript.validate.enable": false,
+  "yarn.packageJson": "package.json",
+  "jira.baseUrl": "https://integreat.atlassian.net/",
+  "jira.projectNames": "NEUBURG"
+}

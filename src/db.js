@@ -2,8 +2,8 @@
 
 import mongoose from 'mongoose'
 
-export default (dbUrl: string, callback: (db: mongoose.Connection) => void) => {
+export default (dbUrl: string): mongoose.Connection => {
   mongoose.connect(dbUrl)
   const db = mongoose.connection
-  callback(db)
+  return db
 }

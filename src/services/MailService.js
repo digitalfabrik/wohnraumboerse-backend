@@ -1,7 +1,6 @@
 // @flow
 
-import {createTransport} from 'nodemailer'
-import smtpConfig from '../smtpConfig'
+import {createTransport, SMTPTransport} from 'nodemailer'
 import {compileFile} from 'pug'
 import Offer from '../models/Offer'
 import neuburgConfig from '../cityConfigs/neuburg'
@@ -18,8 +17,14 @@ const getDeletionUrl = (city: string, token: string): string => `http://neuburg.
 const getExtensionUrl = (city: string, token: string): string => `http://neuburg.wohnen.integreat-app.de/offer/${token}/extend`
 
 export default class MailService {
+  smtpConfig: SMTPTransport
+
+  constructor (smtpConfig: SMTPTransport) {
+    this.smtpConfig = smtpConfig
+  }
+
   async sendMail ({to, subject, html}: {to: string, subject: string, html: string}): Promise<void> {
-    await createTransport(smtpConfig).sendMail({to, subject, html})
+    await createTransport(this.smtpConfig).sendMail({to, subject, html})
   }
 
   async sendRequestConfirmationMail (offer: Offer, token: string): Promise<void> {
