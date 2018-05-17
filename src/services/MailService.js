@@ -32,7 +32,7 @@ export default class MailService {
   }
 
   async sendConfirmationMail (offer: Offer, token: string): Promise<void> {
-    const subject = 'Informationen zu Ihrem Angebot'
+    const subject = 'Informationen zu Ihrem Wohnungsangebot'
     const expirationDate = new Date(offer.expirationDate).toDateString()
     const deletionUrl = getDeletionUrl(offer.city, token)
     const extensionUrl = getExtensionUrl(offer.city, token)
@@ -43,7 +43,7 @@ export default class MailService {
   }
 
   async sendDeletionMail (offer: Offer): Promise<void> {
-    const subject = 'Angebot erfolgreich gelöscht'
+    const subject = 'Löschung Ihres Wohnungsangebotes erfolgreich'
     const html = renderDeletionMail()
     if (!develop) {
       await this.sendMail({to: offer.email, subject, html})
@@ -51,7 +51,7 @@ export default class MailService {
   }
 
   async sendExtensionMail (offer: Offer, token: string): Promise<void> {
-    const subject = 'Angebot erfolgreich verlängert'
+    const subject = 'Verlängerung Ihres Wohungsangebotes erfolgreich'
     const expirationDate = new Date(offer.expirationDate).toDateString()
     const deletionUrl = getDeletionUrl(offer.city, token)
     const extensionUrl = getExtensionUrl(offer.city, token)

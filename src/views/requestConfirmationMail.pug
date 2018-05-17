@@ -5,9 +5,9 @@ html
         style
             include style.css
     body
-        #wrapper
-            #background
-            #content
+        .wrapper
+            .background
+            .content
                 h2 Bestätigung Ihres Wohnungsangebotes erforderlich
                 p
                     | Vielen Dank, dass Sie ein Angebot auf
@@ -17,14 +17,12 @@ html
                     | erstellt haben.
                 p
                     div Um das Angebot zu aktivieren und zu bestätigen, dass Sie das Angebot erstellt haben, klicken Sie bitte auf den Button:
-                    #button-wrapper
-                        #button-div
+                    .button-wrapper
+                        .button-div
                             a.button(href=confirmUrl) Angebot bestätigen
                     div Falls der Button nicht funktioniert, so kopieren Sie bitte die folgende URL und öffnen diese in der Adressleiste Ihres Browsers:
                     div
                         a(href=confirmUrl)
                 p
-                    #hint Haben Sie kein Angebot erstellt, so können Sie diese E-Mail einfach ignorieren.
+                    .hint Haben Sie kein Angebot erstellt, so können Sie diese E-Mail einfach ignorieren.
                         div Diese E-Mail wurde automatisch verschickt. Bitte antworten Sie nicht darauf.
-
-

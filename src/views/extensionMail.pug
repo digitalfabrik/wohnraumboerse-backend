@@ -1,10 +1,35 @@
 html
     head
-        meta(http-equiv = 'Content-Type', content = 'text/html; charset=UTF-8')
-        title Ihr Angebot wurde erfolgreich verlängert
+        meta(http-equiv="Content-Type" content="text/html; charset=UTF-8")
+        title Verlängerung Ihres Wohnungsangebotes erfolgreich
+        style
+            include style.css
     body
-        h2 Ihr Angebot wurde erfolgreich verlängert.
-        p Ihr Angebot ist einsehbar bis:
-            strong= expirationDate
-        a(href=deletionLink) Angebot löschen
-        a(href=extensionLink) Angebot verlängern
+        .wrapper
+            .background
+            .content
+                h2 Verlängerung Ihres Wohnungsangebotes
+                p
+                    | Ihr Angebot wurde erfolgreich verlängert und ist jetzt bis zum
+                    |
+                    strong=expirationDate
+                    |
+                    | aktiv.
+                p
+                    div Um das Angebot nochmals zu verlängern, klicken Sie bitte auf den folgenden Button:
+                    .button-wrapper
+                        .button-div
+                            a.button(href=extensionUrl) Angebot verlängern
+                    div Falls der Button nicht funktioniert, so kopieren Sie bitte die folgende URL und öffnen diese in der Adressleiste Ihres Browsers:
+                    div
+                        a(href=extensionUrl)
+                p
+                    div Um das Angebot zu löschen, klicken Sie bitte auf den folgenden Button:
+                    .button-wrapper
+                        .button-div
+                            a.button(href=deletionUrl) Angebot löschen
+                    div Falls der Button nicht funktioniert, so kopieren Sie bitte die folgende URL und öffnen diese in der Adressleiste Ihres Browsers:
+                    div
+                        a(href=deletionUrl)
+                p
+                    .hint Diese E-Mail wurde automatisch verschickt. Bitte antworten Sie nicht darauf.
