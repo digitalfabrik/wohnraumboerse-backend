@@ -4,6 +4,7 @@ import {createTransport} from 'nodemailer'
 import smtpConfig from '../smtpConfig'
 import {compileFile} from 'pug'
 import Offer from '../models/Offer'
+import neuburgConfig from '../cityConfigs/neuburg'
 
 const develop = process.env.NODE_ENV === 'development'
 
@@ -23,8 +24,9 @@ export default class MailService {
 
   async sendRequestConfirmationMail (offer: Offer, token: string): Promise<void> {
     const subject = 'Bestätigung Ihres Wohnungsangebotes erforderlich'
+    const confirmationUrl = getConfirmationUrl(offer.city, token)
     const html = renderRequestConfirmationMail({
-      subject, portalName: 'DummyPortal', confirmUrl: getConfirmationUrl(offer.city, token)
+      subject, confirmationUrl, ...neuburgConfig
     })
     if (!develop) {
       await this.sendMail({to: offer.email, subject, html})
@@ -36,7 +38,7 @@ export default class MailService {
     const expirationDate = new Date(offer.expirationDate).toDateString()
     const deletionUrl = getDeletionUrl(offer.city, token)
     const extensionUrl = getExtensionUrl(offer.city, token)
-    const html = renderConfirmationMail({expirationDate, deletionUrl, extensionUrl})
+    const html = renderConfirmationMail({expirationDate, deletionUrl, extensionUrl, ...neuburgConfig})
     if (!develop) {
       await this.sendMail({to: offer.email, subject, html})
     }
@@ -44,7 +46,7 @@ export default class MailService {
 
   async sendDeletionMail (offer: Offer): Promise<void> {
     const subject = 'Löschung Ihres Wohnungsangebotes erfolgreich'
-    const html = renderDeletionMail()
+    const html = renderDeletionMail({...neuburgConfig})
     if (!develop) {
       await this.sendMail({to: offer.email, subject, html})
     }
@@ -55,7 +57,9 @@ export default class MailService {
     const expirationDate = new Date(offer.expirationDate).toDateString()
     const deletionUrl = getDeletionUrl(offer.city, token)
     const extensionUrl = getExtensionUrl(offer.city, token)
-    const html = renderExtensionMail({expirationDate, deletionUrl, extensionUrl})
+    const html = renderExtensionMail({
+      expirationDate, deletionUrl, extensionUrl, ...neuburgConfig
+    })
     if (!develop) {
       await this.sendMail({to: offer.email, subject, html})
     }
