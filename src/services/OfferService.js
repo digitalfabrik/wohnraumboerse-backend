@@ -25,7 +25,7 @@ export default class OfferService {
     await offer.save()
 
     const mailService = new MailService()
-    await mailService.sendCreationMail(offer, token)
+    await mailService.sendRequestConfirmationMail(offer, token)
 
     return token
   }
