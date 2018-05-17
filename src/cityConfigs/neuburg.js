@@ -4,8 +4,4 @@ const neuburgConfig = {
   accentColor: '#f9b232'
 }
 
-const cityConfigs = {
-  neuburg: neuburgConfig
-}
-
-export default cityConfigs
+export default neuburgConfig
