@@ -19,6 +19,11 @@ div.button {
     position: relative;
 }
 
+a.button {
+    color: #fff;
+    text-decoration: none;
+}
+
 .content-wrapper {
     display: flex;
     flex-direction: column;
@@ -28,25 +33,11 @@ div.button {
     box-sizing: border-box;
 }
 
-.content-wrapper::before {
-    flex-grow: 1;
-    display: block;
-    height: 24px;
-    content: '';
-}
-
-.content-wrapper::after {
-    flex-grow: 1;
-    display: block;
-    height: 24px;
-    content: '';
-}
-
 .content {
     flex-shrink: 0;
     z-index: 2;
     width: 800px;
-    margin: 0 auto;
+    margin: 20px auto;
     display: block;
     box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14),0 3px 1px -2px rgba(0,0,0,0.12),0 1px 5px 0 rgba(0,0,0,0.2);
     max-width: 100%;

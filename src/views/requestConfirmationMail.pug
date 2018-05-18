@@ -21,8 +21,7 @@ html
                         .button(style={background: accentColor})
                             a.button(href=confirmationUrl) Angebot bestätigen
                     div Falls der Button nicht funktioniert, so kopieren Sie bitte die folgende URL und öffnen diese in der Adressleiste Ihres Browsers:
-                    div: a(href=confirmationUrl)
+                    div: a(href=confirmationUrl)=confirmationUrl
                 p
                     .hint Haben Sie kein Angebot erstellt, so können Sie diese E-Mail einfach ignorieren.
                         div Diese E-Mail wurde automatisch verschickt. Bitte antworten Sie nicht darauf.
-                .center-wrapper: img.logo(src=logoSrc)

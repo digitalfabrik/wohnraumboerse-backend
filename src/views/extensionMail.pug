@@ -21,13 +21,12 @@ html
                         .button(style={background: accentColor})
                             a.button(href=extensionUrl) Angebot verlängern
                     div Falls der Button nicht funktioniert, so kopieren Sie bitte die folgende URL und öffnen diese in der Adressleiste Ihres Browsers:
-                    div: a(href=extensionUrl)
+                    div: a(href=extensionUrl)=extensionUrl
                 p
                     div Um das Angebot zu löschen, klicken Sie bitte auf den folgenden Button:
                     .center-wrapper
                         .button(style={background: accentColor})
                             a.button(href=deletionUrl) Angebot löschen
                     div Falls der Button nicht funktioniert, so kopieren Sie bitte die folgende URL und öffnen diese in der Adressleiste Ihres Browsers:
-                    div: a(href=deletionUrl)
+                    div: a(href=deletionUrl)=deletionUrl
                 p: .hint Diese E-Mail wurde automatisch verschickt. Bitte antworten Sie nicht darauf.
-                .center-wrapper: img.logo(src=logoSrc)
