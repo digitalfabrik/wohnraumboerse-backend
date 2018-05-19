@@ -7,15 +7,13 @@ class CityConfig {
   formsEnabled: boolean
   title: string
   logo: string
-  impressumUrl: string
 
-  constructor (cmsName: string, hostname: string, formsEnabled: boolean, title: string, logo: string, impressumUrl: string) {
+  constructor (cmsName: string, hostname: string, formsEnabled: boolean, title: string, logo: string) {
     this.cmsName = cmsName
     this.hostName = hostname
     this.formsEnabled = formsEnabled
     this.title = title
     this.logo = logo
-    this.impressumUrl = impressumUrl
   }
 }
 
