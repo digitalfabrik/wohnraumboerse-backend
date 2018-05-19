@@ -6,8 +6,8 @@
     "flow-typed": "flow-typed install",
     "build": "babel src --out-dir dist",
     "build:dev": "babel src --source-maps --out-dir dist",
-    "start": "NODE_ENV=production node dist",
-    "start:dev": "NODE_ENV=development nodemon --watch src --exec \"babel-node src\"",
+    "start": "cross-env NODE_ENV=production node dist",
+    "start:dev": "cross-env NODE_ENV=development nodemon --watch src --exec \"babel-node src\"",
     "flow": "flow",
     "lint": "eslint src; flow",
     "lint:fix": "eslint src --fix "
@@ -34,6 +34,7 @@
     "babel-eslint": "^8.2.2",
     "babel-preset-env": "^1.6.1",
     "babel-preset-flow": "^6.23.0",
+    "cross-env": "^5.1.5",
     "eslint": "^4.18.1",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-flowtype": "^2.46.2",
