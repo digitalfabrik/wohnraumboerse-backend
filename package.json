@@ -6,7 +6,7 @@
     "database-start": "service mongod start",
     "database-stop": "service mongod stop",
     "flow-typed": "flow-typed install",
-    "dev": "NODE_ENV=development nodemon --watch src --exec \"babel-node src --database-url 'mongodb://localhost/livingDB'\"",
+    "dev": "nodemon NODE_ENV=development --watch src --exec \"babel-node src --database-url mongodb://localhost/livingDB\"",
     "build": "babel src --source-maps --out-dir dist",
     "serve": "NODE_ENV=production node dist --database-url 'mongodb://localhost/livingDB'",
     "lint": "eslint src; flow",
