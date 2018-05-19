@@ -36,7 +36,7 @@ export default class OfferService {
     await form.save()
     await offer.save()
 
-    const mailService = new MailService()
+    const mailService = new MailService(this.config.smtp)
     await mailService.sendCreationMail(offer, token)
 
     return token
