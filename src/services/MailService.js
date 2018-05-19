@@ -13,9 +13,9 @@ const renderRequestConfirmationMail = compileFile('src/views/requestConfirmation
 const renderDeletionMail = compileFile('src/views/deletionMail.pug')
 const renderExtensionMail = compileFile('src/views/extensionMail.pug')
 
-const getConfirmationUrl = (city: string, token: string): string => `http://neuburg.wohnen.integreat-app.de/offer/${token}/confirm`
-const getDeletionUrl = (city: string, token: string): string => `http://neuburg.wohnen.integreat-app.de/offer/${token}`
-const getExtensionUrl = (city: string, token: string): string => `http://neuburg.wohnen.integreat-app.de/offer/${token}/extend`
+const getConfirmationUrl = (host: string, token: string): string => `${host}/v0/${token}/confirm`
+const getExtensionUrl = (host: string, token: string): string => `${host}/v0/${token}/extend`
+const getDeletionUrl = (host: string, token: string): string => `${host}/v0/${token}`
 
 const getFormattedDate = (date: Date): string => moment(date).locale('de').format('dddd, Do MMMM YYYY')
 
