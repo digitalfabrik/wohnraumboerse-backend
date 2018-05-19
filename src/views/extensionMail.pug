@@ -2,31 +2,19 @@ html
     head
         meta(http-equiv="Content-Type" content="text/html; charset=UTF-8")
         title Verlängerung Ihres Wohnungsangebotes erfolgreich
-        style
-            include style.css
     body
-        .content-wrapper
-            .background
-            .content
-                h2 Verlängerung Ihres Wohnungsangebotes
-                p
-                    | Ihr Angebot wurde erfolgreich verlängert und ist jetzt bis zum
-                    |
-                    strong=expirationDate
-                    |
-                    | aktiv.
-                p
-                    div Um das Angebot nochmals zu verlängern, klicken Sie bitte auf den folgenden Button:
-                    .center-wrapper
-                        .button(style={background: accentColor})
-                            a.button(href=extensionUrl) Angebot verlängern
-                    div Falls der Button nicht funktioniert, so kopieren Sie bitte die folgende URL und öffnen diese in der Adressleiste Ihres Browsers:
-                    div: a(href=extensionUrl)=extensionUrl
-                p
-                    div Um das Angebot zu löschen, klicken Sie bitte auf den folgenden Button:
-                    .center-wrapper
-                        .button(style={background: accentColor})
-                            a.button(href=deletionUrl) Angebot löschen
-                    div Falls der Button nicht funktioniert, so kopieren Sie bitte die folgende URL und öffnen diese in der Adressleiste Ihres Browsers:
-                    div: a(href=deletionUrl)=deletionUrl
-                p: .hint Diese E-Mail wurde automatisch verschickt. Bitte antworten Sie nicht darauf.
+        h2 Verlängerung Ihres Wohnungsangebotes
+        p
+            | Ihr Angebot wurde erfolgreich verlängert und ist jetzt bis zum
+            |
+            strong=expirationDate
+            |
+            | aktiv.
+        p
+            div Um das Angebot nochmals zu verlängern, klicken Sie bitte auf den folgenden Link:
+            div: a(href=extensionUrl)=extensionUrl
+        p
+            div Um das Angebot zu löschen, klicken Sie bitte auf den folgenden Link:
+            div: a(href=deletionUrl)=deletionUrl
+        p Diese E-Mail wurde automatisch verschickt. Bitte antworten Sie nicht darauf.
+
