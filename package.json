@@ -22,11 +22,13 @@
     "express": "^4.16.2",
     "express-validator": "^5.0.2",
     "http-status-codes": "1.3.0",
+    "moment": "^2.22.1",
     "mongodb": "^3.0.4",
     "mongoose": "^5.0.11",
     "morgan": "^1.9.0",
     "nodemailer": "^4.6.0",
-    "pug": "^2.0.0-rc.4"
+    "pug": "^2.0.3",
+    "pug-cli": "^1.0.0-alpha6"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
