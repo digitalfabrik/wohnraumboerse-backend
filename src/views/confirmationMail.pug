@@ -1,10 +1,19 @@
 html
     head
         meta(http-equiv='Content-Type' content='text/html; charset=UTF-8')
-        title Ihr Angebot wurde bestätigt
+        title Informationen zu Ihrem Wohnungsangebot
     body
-        h2 Ihr Angebot wurde bestätigt
-        p Ihr Angebot ist einsehbar bis:
-            strong= expirationDate
-        a(href=deletionUrl) Angebot löschen
-        a(href=extensionUrl) Angebot verlängern
+        h2 Informationen zu Ihrem Wohnungsangebot
+        p
+            | Ihr Angebot wurde erfolgreich bestätigt und ist ab jetzt bis zum
+            |
+            strong=expirationDate
+            |
+            | aktiv.
+        p
+            div Um das Angebot zu verlängern, klicken Sie bitte auf den folgenden Link:
+            div: a(href=extensionUrl)=extensionUrl
+        p
+            div Um das Angebot zu löschen, klicken Sie bitte auf den folgenden Link:
+            div: a(href=deletionUrl)=deletionUrl
+        p Diese E-Mail wurde automatisch verschickt. Bitte antworten Sie nicht darauf.
