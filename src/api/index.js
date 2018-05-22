@@ -5,8 +5,16 @@ import type {$Request, $Response, NextFunction} from 'express'
 import offers from './offers'
 import OfferService from '../services/OfferService'
 
-export default ({offerService}: {offerService: OfferService}): Router => {
+export default ({offerService}: { offerService: OfferService }): Router => {
   const api = Router()
+
+  // Enable CORS globally
+  api.use((request: $Request, response: $Response, next: NextFunction) => {
+    response.header('Access-Control-Allow-Origin', '*')
+    response.header('Access-Control-Allow-Methods', '*')
+    response.header('Access-Control-Allow-Headers', '*')
+    next()
+  })
 
   api.param('city', (request: $Request, response: $Response, next: NextFunction, id: string) => {
     request.city = id
