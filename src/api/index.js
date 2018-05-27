@@ -12,7 +12,7 @@ export default ({offerService}: {offerService: OfferService}): Router => {
     request.city = id
     next()
   })
-  api.use('/v0/:city([-a-z]+)', offers({offerService}))
+  api.use('/v0/:city([-a-z]+)/offer', offers({offerService}))
 
   return api
 }
