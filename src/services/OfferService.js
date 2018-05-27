@@ -24,7 +24,7 @@ export default class OfferService {
   ): Promise<string> {
     const token = createToken()
 
-    const form = new forms[city](formData)
+    const form = new forms[city]['Schema'](formData)
     const offer = new Offer({
       email: email,
       city: city,

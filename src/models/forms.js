@@ -11,5 +11,8 @@ const Neuburg = mongoose.model(
 )
 
 export default {
-  [cityConfigs.neuburgschrobenhausenwohnraum.cmsName]: Neuburg
+  [cityConfigs.neuburgschrobenhausenwohnraum.cmsName]: {
+    Schema: Neuburg,
+    model: neuburgForm
+  }
 }
