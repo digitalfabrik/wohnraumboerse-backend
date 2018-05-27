@@ -45,7 +45,7 @@ export default class OfferService {
   getAllOffers (): Promise<void> {
     return Offer.find()
       .select('-_id -__v')
-      .populate({ path: 'formData', select: '-_id -__v' })
+      .populate({path: 'formData', select: '-_id -__v'})
       .exec()
   }
 
@@ -58,7 +58,7 @@ export default class OfferService {
       .gt(Date.now())
       .where('deleted')
       .equals(false)
-      .populate({ path: 'formData', select: '-_id -__v' })
+      .populate({path: 'formData', select: '-_id -__v'})
       .exec()
   }
 
@@ -71,11 +71,16 @@ export default class OfferService {
     return new Offer(offerResult)
   }
 
+  async findByIdAndUpdate (id: string, values: {}): Offer {
+    await Offer.findByIdAndUpdate(id, values).exec()
+    return Offer.findById(id).exec()
+  }
+
   async confirmOffer (offer: Offer, token: string): Promise<void> {
     if (!offer.confirmed) {
+      offer = await this.findByIdAndUpdate(offer._id, {confirmed: true})
       const mailService = new MailService(this.config.smtp)
       await mailService.sendConfirmationMail(offer, token)
-      await Offer.findByIdAndUpdate(offer._id, { confirmed: true }).exec()
     }
   }
 
@@ -84,21 +89,21 @@ export default class OfferService {
     duration: number,
     token: string
   ): Promise<void> {
+
     const newExpirationDate = new Date(
       Date.now() + duration * MILLISECONDS_IN_A_DAY
     ).toISOString()
+
+    offer = await this.findByIdAndUpdate(offer._id, {expirationDate: newExpirationDate})
     const mailService = new MailService(this.config.smtp)
     await mailService.sendExtensionMail(offer, token)
-    await Offer.findByIdAndUpdate(offer._id, {
-      expirationDate: newExpirationDate
-    }).exec()
   }
 
   async deleteOffer (offer: Offer): Promise<void> {
     if (!offer.deleted) {
+      offer = await this.findByIdAndUpdate(offer._id, {deleted: true})
       const mailService = new MailService(this.config.smtp)
       await mailService.sendDeletionMail(offer)
-      await Offer.findByIdAndUpdate(offer._id, { deleted: true }).exec()
     }
   }
 }
