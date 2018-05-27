@@ -12,7 +12,9 @@ const develop = process.env.NODE_ENV === 'development'
 
 const projectRoot = getProjectRoot()
 
-const compile = viewPath => compileFile(path.resolve(projectRoot, 'views/' + viewPath))
+type RendererType = (Object) => string
+
+const compile = (viewPath: string): RendererType => compileFile(path.resolve(projectRoot, `views/${viewPath}`))
 
 const renderConfirmationMail = compile('confirmationMail.pug')
 const renderRequestConfirmationMail = compile('requestConfirmationMail.pug')
@@ -35,7 +37,7 @@ export default class MailService {
     this.smtpConfig = smtpConfig
   }
 
-  async sendMail ({to, subject, html}: {to: string, subject: string, html: string}): Promise<void> {
+  async sendMail ({to, subject, html}: { to: string, subject: string, html: string }): Promise<void> {
     await createTransport(this.smtpConfig).sendMail({to, subject, html})
   }
 
