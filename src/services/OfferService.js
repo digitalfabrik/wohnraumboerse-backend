@@ -63,12 +63,11 @@ export default class OfferService {
   }
 
   async getOfferByToken (token: string): Offer {
-    // Don't populate, otherwise an 'Offer' Object cannot be properly created
-    const offerResult = await Offer.findOne()
+    return Offer.findOne()
       .where('hashedToken')
       .equals(hash(token))
+      .populate({path: 'formData'})
       .exec()
-    return new Offer(offerResult)
   }
 
   async findByIdAndUpdate (id: string, values: {}): Offer {
@@ -89,7 +88,6 @@ export default class OfferService {
     duration: number,
     token: string
   ): Promise<void> {
-
     const newExpirationDate = new Date(
       Date.now() + duration * MILLISECONDS_IN_A_DAY
     ).toISOString()
