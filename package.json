@@ -7,8 +7,8 @@
   },
   "scripts": {
     "flow-typed": "flow-typed install",
-    "build": "babel src --out-dir dist",
-    "build:dev": "babel src --source-maps --out-dir dist",
+    "build": "babel src --out-dir dist --copy-files",
+    "build:dev": "babel src --source-maps --out-dir dist --copy-files",
     "start": "cross-env NODE_ENV=production node dist",
     "start:dev": "cross-env NODE_ENV=development nodemon --watch src --exec \"babel-node src\"",
     "flow": "flow",
