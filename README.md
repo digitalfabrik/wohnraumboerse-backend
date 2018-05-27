@@ -1,5 +1,10 @@
 # Neuburg Backend
 The aim of this repository is to build a backend server for the Neuburger-Modell.
+## Setup
+You need to install a mongodb on your machine. Follow https://docs.mongodb.com/getting-started/shell/installation/ and choose the guide for your OS. Before starting the neuburg-backend, make sure that the mongodb is running.
+
+For development: Before running the lint script or the flow type checker, execute the `flow-typed` script first. It will install the flow type definitions for external libraries.
+
 ## API Version v0
 ### Offers Endpoint
 

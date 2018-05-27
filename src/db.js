@@ -1,4 +1,9 @@
-export default callback => {
-  // connect to a database if needed, then pass it to `callback`:
-  callback()
+// @flow
+
+import mongoose from 'mongoose'
+
+export default (dbUrl: string): mongoose.Connection => {
+  mongoose.connect(dbUrl)
+  const db = mongoose.connection
+  return db
 }

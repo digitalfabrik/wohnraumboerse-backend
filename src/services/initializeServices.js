@@ -1,8 +1,9 @@
+// @flow
+
 import OfferService from './OfferService'
+import { Config } from '../Config'
 
-export default () => {
-  const offersFileName = './offers.json'
-  const offerService = new OfferService(offersFileName)
-
+export default (config: Config): {offerService: OfferService} => {
+  const offerService = new OfferService(config)
   return {offerService}
 }
