@@ -7,7 +7,7 @@ import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import initializeDb from './db'
 import api from './api'
-import type {Config} from './Config'
+import type { Config } from './Config'
 import initializeServices from './services/initializeServices'
 import commander from 'commander'
 import cosmiconfig from 'cosmiconfig'
@@ -50,7 +50,8 @@ db.on('error', (message: string) => {
 
 db.once('open', () => {
   console.log('Connected to DB.')
-  server.listen(process.env.PORT || config.port, () => {
+  const CONNECTION_QUEUE_SIZE = 10
+  server.listen(parseInt(process.env.PORT) || config.port, process.env.IP || config.host, CONNECTION_QUEUE_SIZE, () => {
     console.log(`Started on port ${server.address().port}`)
   })
 })
