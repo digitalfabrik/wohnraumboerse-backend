@@ -42,14 +42,14 @@ export default class OfferService {
     return token
   }
 
-  getAllOffers (): Promise<void> {
+  getAllOffers (): Promise<Array<Offer>> {
     return Offer.find()
       .select('-_id -__v')
       .populate({path: 'formData', select: '-_id -__v'})
       .exec()
   }
 
-  getActiveOffers (city: string): Promise<void> {
+  getActiveOffers (city: string): Promise<Array<Offer>> {
     return Offer.find()
       .select('-_id -__v')
       .where('city')
@@ -59,7 +59,12 @@ export default class OfferService {
       .where('deleted')
       .equals(false)
       .populate({path: 'formData', select: '-_id -__v'})
+      .lean()
       .exec()
+  }
+
+  fillAdditionalFieds (offer: Offer, city: string): Offer {
+    return forms[city].setAdditionalFields(offer) || offer
   }
 
   async getOfferByToken (token: string): Offer {
@@ -67,6 +72,7 @@ export default class OfferService {
       .where('hashedToken')
       .equals(hash(token))
       .populate({path: 'formData'})
+      .lean()
       .exec()
   }
 
