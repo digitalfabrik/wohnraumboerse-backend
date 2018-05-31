@@ -24,7 +24,7 @@ export default class OfferService {
   ): Promise<string> {
     const token = createToken()
 
-    const form = new forms[city]['Schema'](formData)
+    const form = new forms[city].Schema(formData)
     const offer = new Offer({
       email: email,
       city: city,
@@ -64,7 +64,7 @@ export default class OfferService {
   }
 
   fillAdditionalFieds (offer: Offer, city: string): Offer {
-    return forms[city].setAdditionalFields(offer) || offer
+    return forms[city].setAdditionalFields ? forms[city].setAdditionalFields(offer) : offer
   }
 
   async getOfferByToken (token: string): Offer {
