@@ -69,7 +69,7 @@ export default ({offerService}: { offerService: OfferService }): Router => {
 
         if (!offer) {
           response.status(HttpStatus.NOT_FOUND).json('No such offer')
-        } else if (offer.isExpired() || offer.deleted) {
+        } else if (offer.expirationDate <= Date.now()  || offer.deleted) {
           response.status(HttpStatus.GONE).json('Offer not available')
         } else {
           await offerService.confirmOffer(offer, token)

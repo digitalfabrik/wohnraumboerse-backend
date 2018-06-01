@@ -24,7 +24,9 @@ export default class OfferService {
   ): Promise<string> {
     const token = createToken()
 
-    const form = new forms[city].Schema(formData)
+    const {FormModel} = forms[city]
+    const form = new FormModel(formData)
+
     const offer = new Offer({
       email: email,
       city: city,
@@ -46,6 +48,7 @@ export default class OfferService {
     return Offer.find()
       .select('-_id -__v')
       .populate({path: 'formData', select: '-_id -__v'})
+      .lean()
       .exec()
   }
 
