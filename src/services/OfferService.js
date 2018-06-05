@@ -54,7 +54,7 @@ export default class OfferService {
 
   getActiveOffers (city: string): Promise<Array<Offer>> {
     return Offer.find()
-      .select('-_id -__v')
+      .select('-_id -__v -city -deleted -confirmed -expirationDate -hashedToken')
       .where('city')
       .equals(city)
       .where('expirationDate')
