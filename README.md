@@ -8,10 +8,25 @@ For development: Before running the lint script or the flow type checker, execut
 ## API Version v0
 ### Offers Endpoint
 
-#### GET `/v0/:city/offers`
-Returns all currently available offers (Array of objects that represent only the formData).
+#### GET `/v0/:city/offer`
+Returns all currently available offers (Array of objects that represent the formData, the email-addresses and the date the offer has been created). Result Sample
+```javascript
+[
+{
+  "email": "erika@mustermann.de"
+  "createdDate": "2018-05-27T11:19:49.185Z"
+  "formData": { ... }
+},
+{
+  "email": "peter@mustermensch.de"
+  "createdDate": "2018-06-05T12:13:27.679Z"
+  "formData": { ... }
+},
+...
+]
+```
 
-#### PUT `/v0/:city/offers`
+#### PUT `/v0/:city/offer`
 Creates a new offer. Expected request body sample:
 ```javascript
 {
@@ -27,10 +42,10 @@ On a correct request, the server will send a confirmation-email to `email` conta
 }
 ```
 
-#### POST `/v0/:city/offers/:token/confirm`
+#### POST `/v0/:city/offer/:token/confirm`
 Confirms the email-adress of the offer with the specified `token`.
 If the corresponding offer is not yet expired and has not been deleted, the confirmation will be accepted and the server will
 send an email to the offer's `email` and to a city administrator with a link to delete the offer.
 
-#### DELETE `/v0/:city/offers/:token`
+#### DELETE `/v0/:city/offer/:token`
 Sets the offer with the specified `token` as deleted.
