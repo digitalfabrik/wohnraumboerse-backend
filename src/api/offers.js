@@ -9,6 +9,8 @@ import HttpStatus from 'http-status-codes'
 import OfferService from '../services/OfferService'
 import Offer from '../models/Offer'
 
+const develop = process.env.NODE_ENV === 'development'
+
 const validateMiddleware = (request: $Request, response: $Response, next: NextFunction) => {
   const errors = validationResult(request)
   if (!errors.isEmpty()) {
@@ -21,15 +23,17 @@ const validateMiddleware = (request: $Request, response: $Response, next: NextFu
 export default ({offerService}: { offerService: OfferService }): Router => {
   const router = new Router()
 
-  router.get('/getAll',
-    async (request: $Request, response: $Response): Promise<void> => {
-      try {
-        const queryResult = await offerService.getAllOffers()
-        response.json(queryResult)
-      } catch (e) {
-        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
-      }
-    })
+  if (develop) {
+    router.get('/getAll',
+      async (request: $Request, response: $Response): Promise<void> => {
+        try {
+          const queryResult = await offerService.getAllOffers()
+          response.json(queryResult)
+        } catch (e) {
+          response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
+        }
+      })
+  }
 
   router.get('/', async (request: $Request, response: $Response): Promise<void> => {
     try {
