@@ -27,20 +27,16 @@ Returns all currently available offers (Array of objects that represent the form
 ```
 
 #### PUT `/v0/:city/offer`
-Creates a new offer. Expected request body sample:
+Creates a new offer. E-mail, duration and agreedToDataProtection are required (and agreedToDataProtection must be set to `true`). Expected request body sample:
 ```javascript
 {
   "email": "erika@mustermann.de",   /* The landlord's email */
   "duration": 3,                    /* Either 3, 7, 14 or 30. Duration in days of visibility of the offer */
+  "agreedToDataProtection": true,
   "formData": { ... }               /* The filled data of the form which is validated against the :city's form scheme */
 }
 ```
-On a correct request, the server will send a confirmation-email to `email` containing the `token` and respond:
-```javascript
-{
-  "token": "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF" /* A token for the created offer */
-}
-```
+On a correct request, the server will send a confirmation-email to `email` containing the `token` and respond with HTTP-statuscode 200.
 
 #### POST `/v0/:city/offer/:token/confirm`
 Confirms the email-adress of the offer with the specified `token`.
