@@ -55,7 +55,11 @@ export default ({offerService}: { offerService: OfferService }): Router => {
       const {email, formData, duration} = matchedData(request)
       try {
         const token = await offerService.createOffer(request.city, email, formData, duration)
-        response.status(HttpStatus.CREATED).json(token)
+        if (develop) {
+          response.status(HttpStatus.CREATED).json(token)
+        } else {
+          response.status(HttpStatus.CREATED).end()
+        }
       } catch (e) {
         console.error(e)
         response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
@@ -73,7 +77,7 @@ export default ({offerService}: { offerService: OfferService }): Router => {
 
         if (!offer) {
           response.status(HttpStatus.NOT_FOUND).json('No such offer')
-        } else if (offer.expirationDate <= Date.now()  || offer.deleted) {
+        } else if (offer.expirationDate <= Date.now() || offer.deleted) {
           response.status(HttpStatus.GONE).json('Offer not available')
         } else {
           await offerService.confirmOffer(offer, token)
