@@ -8,6 +8,7 @@ import {TOKEN_LENGTH} from '../utils/createToken'
 import HttpStatus from 'http-status-codes'
 import OfferService from '../services/OfferService'
 import Offer from '../models/Offer'
+import ErrorService from '../services/ErrorService'
 
 const develop = process.env.NODE_ENV === 'development'
 
@@ -20,7 +21,7 @@ const validateMiddleware = (request: $Request, response: $Response, next: NextFu
   }
 }
 
-export default ({offerService}: { offerService: OfferService }): Router => {
+export default ({offerService, errorService}: { offerService: OfferService, errorService: ErrorService }): Router => {
   const router = new Router()
 
   if (develop) {
@@ -30,7 +31,8 @@ export default ({offerService}: { offerService: OfferService }): Router => {
           const queryResult = await offerService.getAllOffers()
           response.json(queryResult)
         } catch (e) {
-          response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
+          const errorResponse = errorService.computeInternalServerErrorResponse(e)
+          response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
         }
       })
   }
@@ -41,7 +43,8 @@ export default ({offerService}: { offerService: OfferService }): Router => {
       offers.forEach((offer: Offer): Offer => offerService.fillAdditionalFieds(offer, request.city))
       response.json(offers)
     } catch (e) {
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
+      const errorResponse = errorService.computeInternalServerErrorResponse(e)
+      response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
     }
   })
 
@@ -61,8 +64,8 @@ export default ({offerService}: { offerService: OfferService }): Router => {
           response.status(HttpStatus.CREATED).end()
         }
       } catch (e) {
-        console.error(e)
-        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
+        const errorResponse = errorService.computeInternalServerErrorResponse(e)
+        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
       }
     }
   )
@@ -84,8 +87,8 @@ export default ({offerService}: { offerService: OfferService }): Router => {
           response.status(HttpStatus.OK).end()
         }
       } catch (e) {
-        console.error(e)
-        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
+        const errorResponse = errorService.computeInternalServerErrorResponse(e)
+        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
       }
     }
   )
@@ -108,8 +111,8 @@ export default ({offerService}: { offerService: OfferService }): Router => {
           response.status(HttpStatus.OK).end()
         }
       } catch (e) {
-        console.error(e)
-        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
+        const errorResponse = errorService.computeInternalServerErrorResponse(e)
+        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
       }
     }
   )
@@ -131,8 +134,8 @@ export default ({offerService}: { offerService: OfferService }): Router => {
           response.status(HttpStatus.OK).end()
         }
       } catch (e) {
-        console.error(e)
-        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
+        const errorResponse = errorService.computeInternalServerErrorResponse(e)
+        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
       }
     }
   )
