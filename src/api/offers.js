@@ -31,7 +31,7 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
           const queryResult = await offerService.getAllOffers()
           response.json(queryResult)
         } catch (e) {
-          const errorResponse = errorService.computeInternalServerErrorResponse(e)
+          const errorResponse = errorService.createInternalServerErrorResponse(e)
           response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
         }
       })
@@ -43,7 +43,7 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
       offers.forEach((offer: Offer): Offer => offerService.fillAdditionalFieds(offer, request.city))
       response.json(offers)
     } catch (e) {
-      const errorResponse = errorService.computeInternalServerErrorResponse(e)
+      const errorResponse = errorService.createInternalServerErrorResponse(e)
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
     }
   })
@@ -64,7 +64,7 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
           response.status(HttpStatus.CREATED).end()
         }
       } catch (e) {
-        const errorResponse = errorService.computeInternalServerErrorResponse(e)
+        const errorResponse = errorService.createInternalServerErrorResponse(e)
         response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
       }
     }
@@ -87,7 +87,7 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
           response.status(HttpStatus.OK).end()
         }
       } catch (e) {
-        const errorResponse = errorService.computeInternalServerErrorResponse(e)
+        const errorResponse = errorService.createInternalServerErrorResponse(e)
         response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
       }
     }
@@ -111,7 +111,7 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
           response.status(HttpStatus.OK).end()
         }
       } catch (e) {
-        const errorResponse = errorService.computeInternalServerErrorResponse(e)
+        const errorResponse = errorService.createInternalServerErrorResponse(e)
         response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
       }
     }
@@ -125,16 +125,15 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
         const {token} = matchedData(request)
         const offer = await offerService.getOfferByToken(token)
 
-        if (!offer) {
-          response.status(HttpStatus.NOT_FOUND).json('No such offer')
-        } else if (offer.deleted) {
-          response.status(HttpStatus.BAD_REQUEST).json('Already deleted')
+        if (!offer || offer.deleted) {
+          const errorResponse = errorService.createOfferNotFoundErrorResponse(token)
+          response.status(HttpStatus.NOT_FOUND).json(errorResponse)
         } else {
           await offerService.deleteOffer(offer)
           response.status(HttpStatus.OK).end()
         }
       } catch (e) {
-        const errorResponse = errorService.computeInternalServerErrorResponse(e)
+        const errorResponse = errorService.createInternalServerErrorResponse(e)
         response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
       }
     }
