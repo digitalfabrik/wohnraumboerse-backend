@@ -19,4 +19,7 @@ export default class ErrorService {
     return new ErrorResponse('token', `Das Angebot mit Token ${token} existiert nicht oder wurde gelöscht.`)
   }
 
+  createOfferNotConfirmedErrorResponse (): ErrorResponse {
+    return new ErrorResponse('confirmation', 'Das Angebot wurde noch nicht bestätigt. Bitte bestätigen Sie Ihr Angebot zuerst.')
+  }
 }
