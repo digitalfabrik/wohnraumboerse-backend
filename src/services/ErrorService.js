@@ -6,8 +6,8 @@ const develop = process.env.NODE_ENV === 'development'
 
 export default class ErrorService {
   createInternalServerErrorResponse (e: Error): Error | ErrorResponse {
+    console.error(e)
     if (develop) {
-      console.error(e)
       return e
     } else {
       return new ErrorResponse('server',
@@ -21,5 +21,9 @@ export default class ErrorService {
 
   createOfferNotConfirmedErrorResponse (): ErrorResponse {
     return new ErrorResponse('confirmation', 'Das Angebot wurde noch nicht bestätigt. Bitte bestätigen Sie Ihr Angebot zuerst.')
+  }
+
+  createOfferExpiredErrorResponse (token: string): ErrorResponse {
+    return new ErrorResponse('token', `Das Angebot Token ${token} ist bereits abgelaufen.`)
   }
 }
