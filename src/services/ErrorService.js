@@ -1,14 +1,15 @@
 // @flow
 
 import ErrorResponse from '../models/ErrorResponse'
+import _ from 'lodash'
 
 const develop = process.env.NODE_ENV === 'development'
 
 export default class ErrorService {
-  createInternalServerErrorResponse (e: Error): Error | ErrorResponse {
-    console.error(e)
+  createInternalServerErrorResponse (error: Error): Error | ErrorResponse {
+    console.error(error)
     if (develop) {
-      return e
+      return error
     } else {
       return new ErrorResponse('server',
         'Ein interner Serverfehler ist aufgetreten. Bitte kontaktieren Sie Ihren Administrator.')
@@ -16,7 +17,7 @@ export default class ErrorService {
   }
 
   createOfferNotFoundErrorResponse (token: string): ErrorResponse {
-    return new ErrorResponse('token', `Das Angebot mit Token ${token} existiert nicht oder wurde gelöscht.`)
+    return new ErrorResponse('token', `Das Angebot mit Token '${token}' existiert nicht oder wurde gelöscht.`)
   }
 
   createOfferNotConfirmedErrorResponse (): ErrorResponse {
@@ -24,6 +25,32 @@ export default class ErrorService {
   }
 
   createOfferExpiredErrorResponse (token: string): ErrorResponse {
-    return new ErrorResponse('token', `Das Angebot Token ${token} ist bereits abgelaufen.`)
+    return new ErrorResponse('token', `Das Angebot mit Token '${token}' ist bereits abgelaufen.`)
+  }
+
+  createValidationFailedErrorResponse (error: MongooseError): ErrorResponse {
+
+  }
+
+  createValidationFailedErrorResponseFromArray (errors: Array<Error>): ErrorResponse {
+    const errorFields = errors.array().map((error: Error): string => this.translateOuterFormPaths(error.param))
+    const errorFieldsWithoutDuplicates = _.uniq(errorFields)
+    const message = `Ungültige oder fehlende Eingaben in dem/den folgenden Feld(ern): ${errorFieldsWithoutDuplicates.join(', ')}`
+    return new ErrorResponse('validation', message)
+  }
+
+  translateOuterFormPaths (param: string): string {
+    switch (param) {
+      case 'email':
+        return 'E-Mail'
+      case 'duration':
+        return 'Dauer des Angebots'
+      case 'agreedToDataProtection':
+        return 'Zustimmung zu den Datenschutzbestimmungen'
+      case 'formData':
+        return 'Formular'
+      case 'token':
+        return 'Token'
+    }
   }
 }
