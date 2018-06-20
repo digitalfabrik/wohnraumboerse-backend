@@ -28,8 +28,9 @@ export default class ErrorService {
     return new ErrorResponse('token', `Das Angebot mit Token '${token}' ist bereits abgelaufen.`)
   }
 
-  createValidationFailedErrorResponse (error: MongooseError): ErrorResponse {
-
+  createValidationFailedErrorResponse (error: ValidationError): ErrorResponse {
+    const fieldErrorMessages = Object.values(error.errors).map((e: mixed): string => e.message)
+    return new ErrorResponse('validation', `Im Formular sind die folgenden Fehler aufgetreten: ${fieldErrorMessages.join(' ')}`)
   }
 
   createValidationFailedErrorResponseFromArray (errors: Array<Error>): ErrorResponse {

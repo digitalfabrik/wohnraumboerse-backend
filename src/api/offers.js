@@ -12,10 +12,11 @@ import ErrorService from '../services/ErrorService'
 
 const develop = process.env.NODE_ENV === 'development'
 
-const validateMiddleware = (request: $Request, response: $Response, next: NextFunction) => {
+const validateMiddleware = (errorService: ErrorService): mixed => (request: $Request, response: $Response, next: NextFunction) => {
   const errors = validationResult(request)
   if (!errors.isEmpty()) {
-    response.status(HttpStatus.UNPROCESSABLE_ENTITY).json({errors: errors.mapped()})
+    const errorResponse = errorService.createValidationFailedErrorResponseFromArray(errors)
+    response.status(HttpStatus.BAD_REQUEST).json(errorResponse)
   } else {
     next()
   }
@@ -53,26 +54,34 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
     body('duration').isInt().toInt().custom((value: number): boolean => [3, 7, 14, 30].includes(value)),
     body('formData').exists(),
     body('agreedToDataProtection').isBoolean().toBoolean().custom((value: boolean): boolean => value),
-    validateMiddleware,
+    validateMiddleware(errorService),
     async (request: $Request, response: $Response): Promise<void> => {
       const {email, formData, duration} = matchedData(request)
       try {
         const token = await offerService.createOffer(request.city, email, formData, duration)
+
         if (develop) {
           response.status(HttpStatus.CREATED).json(token)
         } else {
           response.status(HttpStatus.CREATED).end()
         }
       } catch (e) {
-        const errorResponse = errorService.createInternalServerErrorResponse(e)
-        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
+        let errorResponse
+        // Check if the error is a mongoose ValidationError
+        if (e.name && e.name === 'ValidationError') {
+          errorResponse = errorService.createValidationFailedErrorResponse(e)
+          response.status(HttpStatus.BAD_REQUEST).json(errorResponse)
+        } else {
+          errorResponse = errorService.createInternalServerErrorResponse(e)
+          response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
+        }
       }
     }
   )
 
   router.post(`/:token/confirm`,
     param('token').isHexadecimal().isLength(TOKEN_LENGTH),
-    validateMiddleware,
+    validateMiddleware(errorService),
     async (request: $Request, response: $Response): Promise<void> => {
       try {
         const {token} = matchedData(request)
@@ -98,7 +107,7 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
   router.post(`/:token/extend`,
     param('token').isHexadecimal().isLength(TOKEN_LENGTH),
     body('duration').isInt().toInt().custom((value: number): boolean => [3, 7, 14, 30].includes(value)),
-    validateMiddleware,
+    validateMiddleware(errorService),
     async (request: $Request, response: $Response): Promise<void> => {
       try {
         const {token, duration} = matchedData(request)
@@ -123,7 +132,7 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
 
   router.delete(`/:token`,
     param('token').isHexadecimal().isLength(TOKEN_LENGTH),
-    validateMiddleware,
+    validateMiddleware(errorService),
     async (request: $Request, response: $Response): Promise<void> => {
       try {
         const {token} = matchedData(request)

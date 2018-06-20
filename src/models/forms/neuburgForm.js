@@ -5,7 +5,7 @@ export default {
   landlord: {
     lastName: {
       type: String,
-      required: true
+      required: [true, 'Nachname ist leer.']
     },
     firstName: {
       type: String
@@ -19,28 +19,31 @@ export default {
   accommodation: {
     totalArea: {
       type: Number,
-      required: true
+      required: [true, 'Gesamtfläche ist leer.']
     },
     totalRooms: {
       type: Number,
-      min: 1,
-      required: true
+      min: [1, 'Der Mindestwert für die Gesamtzahl der Räume ist 1'],
+      required: [true, 'Gesamtzahl der Räume ist leer']
     },
     ofRooms: {
       type: [String],
       lowercase: true,
-      enum: ['kitchen', 'bath', 'wc', 'child1', 'child2',
-        'child3', 'bed', 'hallway', 'store', 'basement', 'balcony'],
+      enum: {
+        values: ['kitchen', 'bath', 'wc', 'child1', 'child2',
+          'child3', 'bed', 'hallway', 'store', 'basement', 'balcony'],
+        message: 'Ungültige Werte für Räume.'
+      },
       validate: {
         validator: function (values: Array<string>): boolean {
           return values.length > 0
         },
-        message: 'ofRooms can not be empty'
+        message: 'Räume ist leer.'
       }
     },
     moveInDate: {
       type: Date,
-      required: true
+      required: [true, 'Einzugsdatum ist leer.']
     }
   },
 
@@ -48,41 +51,47 @@ export default {
   costs: {
     baseRent: {
       type: Number,
-      min: 0,
-      required: true
+      min: [0, 'Der Mindestwert für die Miete ist 0.'],
+      required: [true, 'Miete ist leer']
     },
     runningCosts: {
       type: Number,
-      min: 0,
-      required: true
+      min: [0, 'Der Mindestwert für die Nebenkosten ist 0.'],
+      required: [true, 'Nebenkosten ist leer.']
     },
     ofRunningServices: {
       type: [String],
-      enum: ['heating', 'water', 'garbage', 'chimney', 'other'],
+      enum: {
+        values: ['heating', 'water', 'garbage', 'chimney', 'other'],
+        message: 'Ungültige Werte für Art der Nebenkosten.'
+      },
       validate: {
         validator: function (values: Array<string>): boolean {
           return this.costs.runningCosts === 0 || values.length > 0
         },
-        message: 'ofRunningServices can not be empty if runningCosts > 0'
+        message: 'Art der Nebenkosten ist leer obwohl Nebenkosten anfallen.'
       }
     },
     hotWaterInHeatingCosts: {
       type: Boolean,
-      required: true
+      required: [true, 'Heißwasser in Heizkosten enthalten ist leer.']
     },
     additionalCosts: {
       type: Number,
-      min: 0,
-      required: true
+      min: [0, 'Der Mindestwert für die Zusatzkosten ist 0.'],
+      required: [true, 'Zusatzkosten ist leer.']
     },
     ofAdditionalServices: {
       type: [String],
-      enum: ['garage', 'other'],
+      enum: {
+        values: ['garage', 'other'],
+        message: 'Ungültige Werte für Art der Zusatzkosten'
+      },
       validate: {
         validator: function (values: Array<string>): boolean {
           return this.costs.additionalCosts === 0 || values.length > 0
         },
-        message: 'ofAdditionalServices can not be empty if additionalCosts > 0'
+        message: 'Art der Zusatzkosten ist leer obwohl Zusatzkosten anfallen.'
       }
     }
   }
