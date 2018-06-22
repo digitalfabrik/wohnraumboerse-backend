@@ -58,6 +58,8 @@ export default class OfferService {
       .gt(Date.now())
       .where('deleted')
       .equals(false)
+      .where('confirmed')
+      .equals(true)
       .populate({path: 'formData', select: '-_id -__v'})
       .exec()
   }
