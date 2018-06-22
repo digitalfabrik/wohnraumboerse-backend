@@ -5,13 +5,21 @@ import {compileFile} from 'pug'
 import Offer from '../models/Offer'
 import cityConfigs from '../cities/cityConfigs'
 import moment from 'moment'
+import getProjectRoot from '../utils/getProjectRoot'
+import path from 'path'
 
 const develop = process.env.NODE_ENV === 'development'
 
-const renderConfirmationMail = compileFile('src/views/confirmationMail.pug')
-const renderRequestConfirmationMail = compileFile('src/views/requestConfirmationMail.pug')
-const renderDeletionMail = compileFile('src/views/deletionMail.pug')
-const renderExtensionMail = compileFile('src/views/extensionMail.pug')
+const projectRoot = getProjectRoot()
+
+type RendererType = (Object) => string
+
+const compile = (viewPath: string): RendererType => compileFile(path.resolve(projectRoot, `views/${viewPath}`))
+
+const renderConfirmationMail = compile('confirmationMail.pug')
+const renderRequestConfirmationMail = compile('requestConfirmationMail.pug')
+const renderDeletionMail = compile('deletionMail.pug')
+const renderExtensionMail = compile('extensionMail.pug')
 
 const getConfirmationUrl = (hostname: string, token: string): string => `https://${hostname}/offer/${token}/confirm`
 const getExtensionUrl = (hostname: string, token: string): string => `https://${hostname}/offer/${token}/extend`
@@ -29,7 +37,7 @@ export default class MailService {
     this.smtpConfig = smtpConfig
   }
 
-  async sendMail ({to, subject, html}: {to: string, subject: string, html: string}): Promise<void> {
+  async sendMail ({to, subject, html}: { to: string, subject: string, html: string }): Promise<void> {
     await createTransport(this.smtpConfig).sendMail({to, subject, html})
   }
 

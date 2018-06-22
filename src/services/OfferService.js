@@ -24,7 +24,9 @@ export default class OfferService {
   ): Promise<string> {
     const token = createToken()
 
-    const form = new forms[city](formData)
+    const {FormModel} = forms[city]
+    const form = new FormModel(formData)
+
     const offer = new Offer({
       email: email,
       city: city,
@@ -42,16 +44,17 @@ export default class OfferService {
     return token
   }
 
-  getAllOffers (): Promise<void> {
+  getAllOffers (): Promise<Array<Offer>> {
     return Offer.find()
       .select('-_id -__v')
       .populate({path: 'formData', select: '-_id -__v'})
+      .lean()
       .exec()
   }
 
-  getActiveOffers (city: string): Promise<void> {
+  getActiveOffers (city: string): Promise<Array<Offer>> {
     return Offer.find()
-      .select('-_id -__v')
+      .select('-_id -__v -city -deleted -confirmed -expirationDate -hashedToken')
       .where('city')
       .equals(city)
       .where('expirationDate')
@@ -59,7 +62,12 @@ export default class OfferService {
       .where('deleted')
       .equals(false)
       .populate({path: 'formData', select: '-_id -__v'})
+      .lean()
       .exec()
+  }
+
+  fillAdditionalFieds (offer: Offer, city: string): Offer {
+    return forms[city].setAdditionalFields ? forms[city].setAdditionalFields(offer) : offer
   }
 
   async getOfferByToken (token: string): Offer {
@@ -67,6 +75,7 @@ export default class OfferService {
       .where('hashedToken')
       .equals(hash(token))
       .populate({path: 'formData'})
+      .lean()
       .exec()
   }
 
