@@ -7,6 +7,9 @@ import {matchedData} from 'express-validator/filter'
 import {TOKEN_LENGTH} from '../utils/createToken'
 import HttpStatus from 'http-status-codes'
 import OfferService from '../services/OfferService'
+import Offer from '../models/Offer'
+
+const develop = process.env.NODE_ENV === 'development'
 
 const validateMiddleware = (request: $Request, response: $Response, next: NextFunction) => {
   const errors = validationResult(request)
@@ -20,20 +23,23 @@ const validateMiddleware = (request: $Request, response: $Response, next: NextFu
 export default ({offerService}: { offerService: OfferService }): Router => {
   const router = new Router()
 
-  router.get('/getAll',
-    async (request: $Request, response: $Response): Promise<void> => {
-      try {
-        const queryResult = await offerService.getAllOffers()
-        response.json(queryResult)
-      } catch (e) {
-        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
-      }
-    })
+  if (develop) {
+    router.get('/getAll',
+      async (request: $Request, response: $Response): Promise<void> => {
+        try {
+          const queryResult = await offerService.getAllOffers()
+          response.json(queryResult)
+        } catch (e) {
+          response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
+        }
+      })
+  }
 
   router.get('/', async (request: $Request, response: $Response): Promise<void> => {
     try {
-      const queryResult = await offerService.getActiveOffers(request.city)
-      response.json(queryResult)
+      const offers = await offerService.getActiveOffers(request.city)
+      offers.forEach((offer: Offer): Offer => offerService.fillAdditionalFieds(offer, request.city))
+      response.json(offers)
     } catch (e) {
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
     }
@@ -49,7 +55,11 @@ export default ({offerService}: { offerService: OfferService }): Router => {
       const {email, formData, duration} = matchedData(request)
       try {
         const token = await offerService.createOffer(request.city, email, formData, duration)
-        response.status(HttpStatus.CREATED).json(token)
+        if (develop) {
+          response.status(HttpStatus.CREATED).json(token)
+        } else {
+          response.status(HttpStatus.CREATED).end()
+        }
       } catch (e) {
         console.error(e)
         response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e)
@@ -67,7 +77,7 @@ export default ({offerService}: { offerService: OfferService }): Router => {
 
         if (!offer) {
           response.status(HttpStatus.NOT_FOUND).json('No such offer')
-        } else if (offer.isExpired() || offer.deleted) {
+        } else if (offer.expirationDate <= Date.now() || offer.deleted) {
           response.status(HttpStatus.GONE).json('Offer not available')
         } else {
           await offerService.confirmOffer(offer, token)
