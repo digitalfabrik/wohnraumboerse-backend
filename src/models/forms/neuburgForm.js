@@ -38,12 +38,12 @@ export default {
         validator: function (values: Array<string>): boolean {
           return values.length > 0
         },
-        message: 'Räume ist leer.'
+        message: 'Sie müssen mindestens einen Raum auswählen.'
       }
     },
     moveInDate: {
       type: Date,
-      required: [true, 'Einzugsdatum ist leer.']
+      required: [true, 'Bezugsdatum ist leer.']
     }
   },
 
@@ -69,7 +69,7 @@ export default {
         validator: function (values: Array<string>): boolean {
           return this.costs.runningCosts === 0 || values.length > 0
         },
-        message: 'Art der Nebenkosten ist leer obwohl Nebenkosten anfallen.'
+        message: 'Art der Nebenkosten ist leer, obwohl Nebenkosten anfallen.'
       }
     },
     hotWaterInHeatingCosts: {
@@ -91,7 +91,7 @@ export default {
         validator: function (values: Array<string>): boolean {
           return this.costs.additionalCosts === 0 || values.length > 0
         },
-        message: 'Art der Zusatzkosten ist leer obwohl Zusatzkosten anfallen.'
+        message: 'Art der Zusatzkosten ist leer, obwohl Zusatzkosten anfallen.'
       }
     }
   }
