@@ -22,32 +22,37 @@ const validateMiddleware = (errorService: ErrorService): mixed => (request: $Req
   }
 }
 
+const catchInternalErrors = (fn: mixed, errorService: ErrorService): mixed => (request: $Request, response: $Response, next: NextFunction) => {
+  const promise = fn(request, response, next)
+  if (promise.catch) {
+    promise.catch((e: Error) => {
+      console.log('Catch Internal errors triggered.')
+      let errorResponse
+      if (e.name && e.name === 'ValidationError') {
+        errorResponse = errorService.createValidationFailedErrorResponse(e)
+        response.status(HttpStatus.BAD_REQUEST).json(errorResponse)
+      } else {
+        errorResponse = errorService.createInternalServerErrorResponse(e)
+        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
+      }
+    })
+  }
+}
+
 export default ({offerService, errorService}: { offerService: OfferService, errorService: ErrorService }): Router => {
   const router = new Router()
 
   if (develop) {
-    router.get('/getAll',
-      async (request: $Request, response: $Response): Promise<void> => {
-        try {
-          const queryResult = await offerService.getAllOffers()
-          response.json(queryResult)
-        } catch (e) {
-          const errorResponse = errorService.createInternalServerErrorResponse(e)
-          response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
-        }
-      })
+    router.get('/getAll', catchInternalErrors(async (request: $Request, response: $Response): Promise<void> => {
+      const queryResult = await offerService.getAllOffers()
+      response.json(queryResult)
+    }, errorService))
   }
-
-  router.get('/', async (request: $Request, response: $Response): Promise<void> => {
-    try {
-      const offers = await offerService.getActiveOffers(request.city)
-      offers.forEach((offer: Offer): Offer => offerService.fillAdditionalFieds(offer, request.city))
-      response.json(offers)
-    } catch (e) {
-      const errorResponse = errorService.createInternalServerErrorResponse(e)
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
-    }
-  })
+  router.get('/', catchInternalErrors(async (request: $Request, response: $Response): Promise<void> => {
+    const offers = await offerService.getActiveOffers(request.city)
+    offers.forEach((offer: Offer): Offer => offerService.fillAdditionalFieds(offer, request.city))
+    response.json(offers)
+  }, errorService))
 
   router.put('/',
     body('email').isEmail().trim().normalizeEmail(),
@@ -55,101 +60,73 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
     body('formData').exists(),
     body('agreedToDataProtection').isBoolean().toBoolean().custom((value: boolean): boolean => value),
     validateMiddleware(errorService),
-    async (request: $Request, response: $Response): Promise<void> => {
+    catchInternalErrors(async (request: $Request, response: $Response): Promise<void> => {
       const {email, formData, duration} = matchedData(request)
-      try {
-        const token = await offerService.createOffer(request.city, email, formData, duration)
-
-        if (develop) {
-          response.status(HttpStatus.CREATED).json(token)
-        } else {
-          response.status(HttpStatus.CREATED).end()
-        }
-      } catch (e) {
-        let errorResponse
-        // Check if the error is a mongoose ValidationError
-        if (e.name && e.name === 'ValidationError') {
-          errorResponse = errorService.createValidationFailedErrorResponse(e)
-          response.status(HttpStatus.BAD_REQUEST).json(errorResponse)
-        } else {
-          errorResponse = errorService.createInternalServerErrorResponse(e)
-          response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
-        }
+      const token = await offerService.createOffer(request.city, email, formData, duration)
+      if (develop) {
+        response.status(HttpStatus.CREATED).json(token)
+      } else {
+        response.status(HttpStatus.CREATED).end()
       }
-    }
+    }, errorService)
   )
 
   router.post(`/:token/confirm`,
     param('token').isHexadecimal().isLength(TOKEN_LENGTH),
     validateMiddleware(errorService),
-    async (request: $Request, response: $Response): Promise<void> => {
-      try {
-        const {token} = matchedData(request)
-        const offer = await offerService.getOfferByToken(token)
+    catchInternalErrors(async (request: $Request, response: $Response): Promise<void> => {
+      const {token} = matchedData(request)
+      const offer = await offerService.getOfferByToken(token)
 
-        if (!offer || offer.deleted) {
-          const errorResponse = errorService.createOfferNotFoundErrorResponse(token)
-          response.status(HttpStatus.NOT_FOUND).json(errorResponse)
-        } else if (offer.expirationDate <= Date.now()) {
-          const errorResponse = errorService.createOfferExpiredErrorResponse(token)
-          response.status(HttpStatus.GONE).json(errorResponse)
-        } else {
-          await offerService.confirmOffer(offer, token)
-          response.status(HttpStatus.OK).end()
-        }
-      } catch (e) {
-        const errorResponse = errorService.createInternalServerErrorResponse(e)
-        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
+      if (!offer || offer.deleted) {
+        const errorResponse = errorService.createOfferNotFoundErrorResponse(token)
+        response.status(HttpStatus.NOT_FOUND).json(errorResponse)
+      } else if (offer.expirationDate <= Date.now()) {
+        const errorResponse = errorService.createOfferExpiredErrorResponse(token)
+        response.status(HttpStatus.GONE).json(errorResponse)
+      } else {
+        await offerService.confirmOffer(offer, token)
+        response.status(HttpStatus.OK).end()
       }
-    }
+    }, errorService)
   )
 
   router.post(`/:token/extend`,
     param('token').isHexadecimal().isLength(TOKEN_LENGTH),
     body('duration').isInt().toInt().custom((value: number): boolean => [3, 7, 14, 30].includes(value)),
     validateMiddleware(errorService),
-    async (request: $Request, response: $Response): Promise<void> => {
-      try {
-        const {token, duration} = matchedData(request)
-        const offer = await offerService.getOfferByToken(token)
+    catchInternalErrors(async (request: $Request, response: $Response): Promise<void> => {
+      const {token, duration} = matchedData(request)
+      const offer = await offerService.getOfferByToken(token)
 
-        if (!offer || offer.deleted) {
-          const errorResponse = errorService.createOfferNotFoundErrorResponse(token)
-          response.status(HttpStatus.NOT_FOUND).json(errorResponse)
-        } else if (!offer.confirmed) {
-          const errorResponse = errorService.createOfferNotConfirmedErrorResponse()
-          response.status(HttpStatus.BAD_REQUEST).json(errorResponse)
-        } else {
-          await offerService.extendOffer(offer, duration, token)
-          response.status(HttpStatus.OK).end()
-        }
-      } catch (e) {
-        const errorResponse = errorService.createInternalServerErrorResponse(e)
-        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
+      if (!offer || offer.deleted) {
+        const errorResponse = errorService.createOfferNotFoundErrorResponse(token)
+        response.status(HttpStatus.NOT_FOUND).json(errorResponse)
+      } else if (!offer.confirmed) {
+        const errorResponse = errorService.createOfferNotConfirmedErrorResponse()
+        response.status(HttpStatus.BAD_REQUEST).json(errorResponse)
+      } else {
+        await offerService.extendOffer(offer, duration, token)
+        response.status(HttpStatus.OK).end()
       }
-    }
+    }, errorService)
   )
 
   router.delete(`/:token`,
     param('token').isHexadecimal().isLength(TOKEN_LENGTH),
     validateMiddleware(errorService),
-    async (request: $Request, response: $Response): Promise<void> => {
-      try {
-        const {token} = matchedData(request)
-        const offer = await offerService.getOfferByToken(token)
+    catchInternalErrors(async (request: $Request, response: $Response): Promise<void> => {
+      const {token} = matchedData(request)
+      const offer = await offerService.getOfferByToken(token)
 
-        if (!offer || offer.deleted) {
-          const errorResponse = errorService.createOfferNotFoundErrorResponse(token)
-          response.status(HttpStatus.NOT_FOUND).json(errorResponse)
-        } else {
-          await offerService.deleteOffer(offer)
-          response.status(HttpStatus.OK).end()
-        }
-      } catch (e) {
-        const errorResponse = errorService.createInternalServerErrorResponse(e)
-        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
+      if (!offer || offer.deleted) {
+        const errorResponse = errorService.createOfferNotFoundErrorResponse(token)
+        response.status(HttpStatus.NOT_FOUND).json(errorResponse)
+      } else {
+        await offerService.deleteOffer(offer)
+        response.status(HttpStatus.OK).end()
       }
-    }
+    }, errorService)
   )
 
   return router
