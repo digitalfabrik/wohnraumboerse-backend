@@ -6,7 +6,7 @@ import offers from './offers'
 import OfferService from '../services/OfferService'
 import ErrorService from '../services/ErrorService'
 
-export default ({offerService, errorService}: {offerService: OfferService, errorService: ErrorService}): Router => {
+export default ({offerService, errorService}: { offerService: OfferService, errorService: ErrorService }): Router => {
   const api = Router()
 
   api.param('city', (request: $Request, response: $Response, next: NextFunction, id: string) => {

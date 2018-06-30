@@ -6,11 +6,13 @@ import express from 'express'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import initializeDb from './db'
+import fs from 'fs'
 import api from './api'
-import type { Config } from './Config'
+import type {Config} from './Config'
 import initializeServices from './services/initializeServices'
 import commander from 'commander'
 import cosmiconfig from 'cosmiconfig'
+import type {$Request, $Response} from '../flow-typed/npm/express_v4.16.x'
 
 commander.version('0.0.1').parse(process.argv)
 
@@ -30,7 +32,8 @@ const app = express()
 const server = http.createServer(app)
 
 // logger
-app.use(morgan('dev'))
+morgan.token('error', (request: $Request, response: $Response): string => response.error ? `\n${response.error}` : '')
+app.use(morgan('[:date[clf]] :method :url :response-time ms :error', {stream: fs.createWriteStream('./access.log', {flags: 'a'})}))
 
 app.use(
   bodyParser.json({

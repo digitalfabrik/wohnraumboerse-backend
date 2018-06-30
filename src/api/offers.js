@@ -32,6 +32,7 @@ const catchInternalErrors = (fn: mixed, errorService: ErrorService): mixed => (r
         errorResponse = errorService.createValidationFailedErrorResponse(e)
         response.status(HttpStatus.BAD_REQUEST).json(errorResponse)
       } else {
+        response.error = e
         errorResponse = errorService.createInternalServerErrorResponse(e)
         response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
       }
