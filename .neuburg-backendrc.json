@@ -3,6 +3,7 @@
   "port": 8080,
   "bodyLimit": "100kb",
   "mongoDBUrl": "mongodb://localhost/livingDB",
+  "logFile": "./neuburg-backend.log",
   "smtp": {
     "host": "smtp.gmail.com",
     "port": 465,

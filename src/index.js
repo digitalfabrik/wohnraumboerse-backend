@@ -7,6 +7,7 @@ import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import initializeDb from './db'
 import fs from 'fs'
+import log4js from 'log4js'
 import api from './api'
 import type {Config} from './Config'
 import initializeServices from './services/initializeServices'
@@ -32,8 +33,27 @@ const app = express()
 const server = http.createServer(app)
 
 // logger
-morgan.token('error', (request: $Request, response: $Response): string => response.error ? `\n${response.error}` : '')
-app.use(morgan('[:date[clf]] :method :url :response-time ms :error', {stream: fs.createWriteStream('./access.log', {flags: 'a'})}))
+const layout = {
+  type: 'pattern',
+  pattern: '[%d{yyyy/MM/dd-hh.mm.ss}] [%p] %m'
+}
+
+log4js.configure({
+  appenders: {
+    logFile: {type: 'file', filename: config.logFile, layout: layout},
+    stdout: {type: 'stdout', layout: layout}
+  },
+  categories: {default: {appenders: ['logFile', 'stdout'], level: 'all'}}
+})
+
+const logger = log4js.getLogger()
+app.use(morgan(':method :url :response-time ms', {
+  stream: {
+    write: (str: string): string => {
+      logger.info(str)
+    }
+  }
+}))
 
 app.use(
   bodyParser.json({
