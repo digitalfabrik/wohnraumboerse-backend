@@ -2,6 +2,7 @@
 
 import ErrorResponse from '../models/ErrorResponse'
 import _ from 'lodash'
+import log4js from 'log4js'
 
 const develop = process.env.NODE_ENV === 'development'
 
@@ -12,9 +13,11 @@ const errorTypes = {
   server: 'server'
 }
 
+const logger = log4js.getLogger()
+
 export default class ErrorService {
   createInternalServerErrorResponse (error: Error): Error | ErrorResponse {
-    console.error(error)
+    logger.error(error)
     if (develop) {
       return error
     } else {
