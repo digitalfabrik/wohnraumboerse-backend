@@ -13,11 +13,14 @@ const errorTypes = {
   server: 'server'
 }
 
-const logger = log4js.getLogger()
-
 export default class ErrorService {
+
+  constructor () {
+    this.logger = log4js.getLogger()
+  }
+
   createInternalServerErrorResponse (error: Error): Error | ErrorResponse {
-    logger.error(error)
+    this.logger.error(error)
     if (develop) {
       return error
     } else {
