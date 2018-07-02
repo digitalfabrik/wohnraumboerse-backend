@@ -73,7 +73,7 @@ export default class MailService {
   }
 
   async sendExtensionMail (offer: Offer, token: string): Promise<void> {
-    const subject = 'Verlängerung Ihres Wohungsangebotes erfolgreich'
+    const subject = 'Erneuerung Ihres Wohungsangebotes erfolgreich'
     const expirationDate = getFormattedDate(offer.expirationDate)
     const deletionUrl = getDeletionUrl(hostname, token)
     const extensionUrl = getExtensionUrl(hostname, token)
