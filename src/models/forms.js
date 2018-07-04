@@ -3,10 +3,10 @@
 import neuburgForm from './forms/neuburgForm'
 import mongoose from 'mongoose'
 import cityConfigs from '../cities/cityConfigs'
-import {get, set, difference, pull} from 'lodash'
+import {difference, get, pull, set} from 'lodash'
 import Offer from './Offer'
 
-type AllFormsType = | typeof neuburgForm;
+type AllFormsType = | typeof neuburgForm
 
 const schemaOptions = {strict: 'throw'}
 

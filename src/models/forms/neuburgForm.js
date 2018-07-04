@@ -17,6 +17,25 @@ export default {
 
   // data on the object
   accommodation: {
+    title: {
+      type: String,
+      validate: {
+        validator: function (value: string): boolean {
+          return value.length >= 10 && value.length <= 40
+        },
+        message: 'Der Titel muss zwischen 10 und 40 Zeichen haben.'
+      },
+      required: [true, 'Titel ist leer.']
+    },
+    location: {
+      type: String,
+      validate: {
+        validator: function (value: string): boolean {
+          return !value || value.length <= 40
+        },
+        message: 'Der Standort darf höchstens 40 Zeichen haben.'
+      }
+    },
     totalArea: {
       type: Number,
       required: [true, 'Gesamtfläche ist leer.']
@@ -31,7 +50,7 @@ export default {
       lowercase: true,
       enum: {
         values: ['kitchen', 'bath', 'wc', 'child1', 'child2',
-          'child3', 'bed', 'hallway', 'store', 'basement', 'balcony'],
+          'child3', 'bed', 'livingroom', 'hallway', 'store', 'basement', 'balcony'],
         message: 'Ungültige Werte für Räume.'
       },
       validate: {
