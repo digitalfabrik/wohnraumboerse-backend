@@ -17,14 +17,20 @@ const Neuburg = mongoose.model(
 const addNotIncludedFor = (offer: Offer, form: AllFormsType, names: Array<string>, omit: Array<string>) => {
   names.forEach((path: string) => {
     const arrayConfig = get(form, path)
-    if (!arrayConfig || !Array.isArray(arrayConfig.enum)) {
+    if (!arrayConfig || !arrayConfig.enum) {
       throw Error(`The supplied form has not the right shape for path '${path}'!`)
     }
+
+    const arrayEnum = Array.isArray(arrayConfig.enum) ? arrayConfig.enum : arrayConfig.enum.values
+    if (!arrayEnum || !Array.isArray(arrayEnum)) {
+      throw Error('Could not find enum in form model!')
+    }
+
     const offerArray = get(offer.formData, path)
     if (!Array.isArray(offerArray)) {
       throw Error(`The supplied offer has no array at path '${path}'!`)
     }
-    const diff = difference(arrayConfig.enum, offerArray)
+    const diff = difference(arrayEnum, offerArray)
     pull(diff, ...omit)
     set(offer.formData, `${path}Diff`, diff)
   })
