@@ -31,9 +31,9 @@ export default {
       type: String,
       validate: {
         validator: function (value: string): boolean {
-          return !value || value.length <= 40
+          return !value || value.length <= 85
         },
-        message: 'Der Standort darf höchstens 40 Zeichen haben.'
+        message: 'Der Standort darf höchstens 85 Zeichen haben.'
       }
     },
     totalArea: {
