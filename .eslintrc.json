@@ -1,17 +1,6 @@
 {
   "extends": [
-    "eslint-config-integreat",
-    "eslint-config-integreat-jest"
-  ],
-  "overrides": [
-    {
-      "files": [
-        "*.js"
-      ],
-      "excludedFiles": [
-        "*.spec.js",
-        "**/__mocks__/*.js"
-      ]
-    }
+    "@integreat-app/eslint-config",
+    "@integreat-app/eslint-config-jest"
   ]
 }
