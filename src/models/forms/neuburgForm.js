@@ -21,9 +21,9 @@ export default {
       type: String,
       validate: {
         validator: function (value: string): boolean {
-          return value.length >= 10 && value.length <= 40
+          return value.length >= 10 && value.length <= 50
         },
-        message: 'Der Titel muss zwischen 10 und 40 Zeichen haben.'
+        message: 'Der Titel muss zwischen 10 und 50 Zeichen haben.'
       },
       required: [true, 'Titel ist leer.']
     },
