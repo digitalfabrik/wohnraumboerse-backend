@@ -52,6 +52,13 @@ export default class OfferService {
       .exec()
   }
 
+  getAllForms (city: string): Promise<Array> {
+    const {FormModel} = forms[city]
+    return FormModel.find()
+      .lean()
+      .exec()
+  }
+
   getActiveOffers (city: string): Promise<Array<Offer>> {
     return Offer.find()
       .select('-_id -__v -city -deleted -confirmed -expirationDate -hashedToken')

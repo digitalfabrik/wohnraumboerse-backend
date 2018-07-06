@@ -47,6 +47,11 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
       const queryResult = await offerService.getAllOffers()
       response.json(queryResult)
     }, errorService))
+
+    router.get('/getAllForms', catchInternalErrors(async (request: $Request, response: $Response): Promise<void> => {
+      const queryResult = await offerService.getAllForms(request.city)
+      response.json(queryResult)
+    }, errorService))
   }
   router.get('/', catchInternalErrors(async (request: $Request, response: $Response): Promise<void> => {
     const offers = await offerService.getActiveOffers(request.city)
