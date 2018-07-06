@@ -124,11 +124,11 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
       const {token} = matchedData(request)
       const offer = await offerService.getOfferByToken(token)
 
-      if (!offer || offer.deleted) {
+      if (!offer) {
         const errorResponse = errorService.createOfferNotFoundErrorResponse(token)
         response.status(HttpStatus.NOT_FOUND).json(errorResponse)
       } else {
-        await offerService.deleteOffer(offer)
+        await offerService.deleteOffer(offer, token, request.city)
         response.status(HttpStatus.OK).end()
       }
     }, errorService)

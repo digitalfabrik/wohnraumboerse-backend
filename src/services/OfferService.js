@@ -46,7 +46,6 @@ export default class OfferService {
 
   getAllOffers (): Promise<Array<Offer>> {
     return Offer.find()
-      .select('-_id -__v')
       .populate({path: 'formData', select: '-_id -__v'})
       .lean()
       .exec()
@@ -115,11 +114,15 @@ export default class OfferService {
     await mailService.sendExtensionMail(offer, token)
   }
 
-  async deleteOffer (offer: Offer): Promise<void> {
-    if (!offer.deleted) {
-      offer = await this.findByIdAndUpdate(offer._id, {deleted: true})
-      const mailService = new MailService(this.config.smtp)
-      await mailService.sendDeletionMail(offer)
-    }
+  async deleteOffer (offer: Offer, token: string, city: string): Promise<void> {
+    const {FormModel} = forms[city]
+    console.log(offer)
+    await FormModel.findByIdAndDelete(offer.formData._id).exec()
+    await Offer.findOneAndDelete({'hashedToken': hash(offer.hashedToken)})
+      .where('hashedToken')
+      .equals(hash(token))
+      .exec()
+    const mailService = new MailService(this.config.smtp)
+    await mailService.sendDeletionMail(offer)
   }
 }
