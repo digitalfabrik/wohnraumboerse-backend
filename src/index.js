@@ -36,13 +36,19 @@ const layout = {
   pattern: '[%d{yyyy/MM/dd-hh.mm.ss}] [%p] %m'
 }
 
-log4js.configure({
+const logConfig = {
   appenders: {
-    logFile: {type: 'file', filename: config.logFile, layout: layout},
     stdout: {type: 'stdout'}
   },
-  categories: {default: {appenders: ['logFile', 'stdout'], level: 'all'}}
-})
+  categories: {default: {appenders: ['stdout'], level: 'all'}}
+}
+
+if (config.logFile) {
+  logConfig.appenders.logFile = {type: 'file', filename: config.logFile, layout: layout}
+  logConfig.categories.default.appenders.push('logFile')
+}
+
+log4js.configure(logConfig)
 
 const logger = log4js.getLogger()
 app.use(morgan(':method :url :response-time ms', {
