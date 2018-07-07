@@ -116,9 +116,8 @@ export default class OfferService {
 
   async deleteOffer (offer: Offer, token: string, city: string): Promise<void> {
     const {FormModel} = forms[city]
-    console.log(offer)
     await FormModel.findByIdAndDelete(offer.formData._id).exec()
-    await Offer.findOneAndDelete({'hashedToken': hash(offer.hashedToken)})
+    await Offer.findOneAndDelete()
       .where('hashedToken')
       .equals(hash(token))
       .exec()
