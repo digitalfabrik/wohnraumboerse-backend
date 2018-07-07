@@ -1,3 +1,5 @@
+.neuburg-backendrc*
+!templates/.neuburg-backendrc*
 
 /dist
 /npm-debug.log
