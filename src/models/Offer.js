@@ -23,11 +23,6 @@ const offerSchema = mongoose.Schema({
     required: [true, 'Missing confirmed property'],
     default: false
   },
-  deleted: {
-    type: Boolean,
-    required: [true, 'Missing deleted property'],
-    default: false
-  },
   createdDate: {
     type: Date,
     required: [true, 'Missing created date'],

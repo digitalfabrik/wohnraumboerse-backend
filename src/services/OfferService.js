@@ -60,13 +60,11 @@ export default class OfferService {
 
   getActiveOffers (city: string): Promise<Array<Offer>> {
     return Offer.find()
-      .select('-_id -__v -city -deleted -confirmed -expirationDate -hashedToken')
+      .select('-_id -__v -city -confirmed -expirationDate -hashedToken')
       .where('city')
       .equals(city)
       .where('expirationDate')
       .gt(Date.now())
-      .where('deleted')
-      .equals(false)
       .where('confirmed')
       .equals(true)
       .populate({path: 'formData', select: '-_id -__v'})

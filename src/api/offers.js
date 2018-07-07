@@ -83,7 +83,7 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
       const {token} = matchedData(request)
       const offer = await offerService.getOfferByToken(token)
 
-      if (!offer || offer.deleted) {
+      if (!offer) {
         const errorResponse = errorService.createOfferNotFoundErrorResponse(token)
         response.status(HttpStatus.NOT_FOUND).json(errorResponse)
       } else if (offer.expirationDate <= Date.now()) {
@@ -104,7 +104,7 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
       const {token, duration} = matchedData(request)
       const offer = await offerService.getOfferByToken(token)
 
-      if (!offer || offer.deleted) {
+      if (!offer) {
         const errorResponse = errorService.createOfferNotFoundErrorResponse(token)
         response.status(HttpStatus.NOT_FOUND).json(errorResponse)
       } else if (!offer.confirmed) {
