@@ -47,6 +47,11 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
       const queryResult = await offerService.getAllOffers()
       response.json(queryResult)
     }, errorService))
+
+    router.get('/getAllForms', catchInternalErrors(async (request: $Request, response: $Response): Promise<void> => {
+      const queryResult = await offerService.getAllForms(request.city)
+      response.json(queryResult)
+    }, errorService))
   }
   router.get('/', catchInternalErrors(async (request: $Request, response: $Response): Promise<void> => {
     const offers = await offerService.getActiveOffers(request.city)
@@ -78,7 +83,7 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
       const {token} = matchedData(request)
       const offer = await offerService.getOfferByToken(token)
 
-      if (!offer || offer.deleted) {
+      if (!offer) {
         const errorResponse = errorService.createOfferNotFoundErrorResponse(token)
         response.status(HttpStatus.NOT_FOUND).json(errorResponse)
       } else if (offer.expirationDate <= Date.now()) {
@@ -99,7 +104,7 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
       const {token, duration} = matchedData(request)
       const offer = await offerService.getOfferByToken(token)
 
-      if (!offer || offer.deleted) {
+      if (!offer) {
         const errorResponse = errorService.createOfferNotFoundErrorResponse(token)
         response.status(HttpStatus.NOT_FOUND).json(errorResponse)
       } else if (!offer.confirmed) {
@@ -119,11 +124,11 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
       const {token} = matchedData(request)
       const offer = await offerService.getOfferByToken(token)
 
-      if (!offer || offer.deleted) {
+      if (!offer) {
         const errorResponse = errorService.createOfferNotFoundErrorResponse(token)
         response.status(HttpStatus.NOT_FOUND).json(errorResponse)
       } else {
-        await offerService.deleteOffer(offer)
+        await offerService.deleteOffer(offer, token, request.city)
         response.status(HttpStatus.OK).end()
       }
     }, errorService)

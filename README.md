@@ -44,4 +44,4 @@ If the corresponding offer is not yet expired and has not been deleted, the conf
 send an email to the offer's `email` and to a city administrator with a link to delete the offer.
 
 #### DELETE `/v0/:city/offer/:token`
-Sets the offer with the specified `token` as deleted.
+Deletes the offer with the specified `token`.

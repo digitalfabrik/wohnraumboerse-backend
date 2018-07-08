@@ -16,7 +16,7 @@ export default class ErrorService {
   createInternalServerErrorResponse (error: Error): Error | ErrorResponse {
     console.error(error)
     if (develop) {
-      return error
+      return error.message
     } else {
       return new ErrorResponse(errorTypes.server,
         'Ein interner Serverfehler ist aufgetreten. Bitte kontaktieren Sie Ihren Administrator.')

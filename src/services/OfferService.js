@@ -46,21 +46,25 @@ export default class OfferService {
 
   getAllOffers (): Promise<Array<Offer>> {
     return Offer.find()
-      .select('-_id -__v')
       .populate({path: 'formData', select: '-_id -__v'})
+      .lean()
+      .exec()
+  }
+
+  getAllForms (city: string): Promise<Array> {
+    const {FormModel} = forms[city]
+    return FormModel.find()
       .lean()
       .exec()
   }
 
   getActiveOffers (city: string): Promise<Array<Offer>> {
     return Offer.find()
-      .select('-_id -__v -city -deleted -confirmed -expirationDate -hashedToken')
+      .select('-_id -__v -city -confirmed -expirationDate -hashedToken')
       .where('city')
       .equals(city)
       .where('expirationDate')
       .gt(Date.now())
-      .where('deleted')
-      .equals(false)
       .where('confirmed')
       .equals(true)
       .populate({path: 'formData', select: '-_id -__v'})
@@ -108,11 +112,14 @@ export default class OfferService {
     await mailService.sendExtensionMail(offer, token)
   }
 
-  async deleteOffer (offer: Offer): Promise<void> {
-    if (!offer.deleted) {
-      offer = await this.findByIdAndUpdate(offer._id, {deleted: true})
-      const mailService = new MailService(this.config.smtp)
-      await mailService.sendDeletionMail(offer)
-    }
+  async deleteOffer (offer: Offer, token: string, city: string): Promise<void> {
+    const {FormModel} = forms[city]
+    await FormModel.findByIdAndDelete(offer.formData._id).exec()
+    await Offer.findOneAndDelete()
+      .where('hashedToken')
+      .equals(hash(token))
+      .exec()
+    const mailService = new MailService(this.config.smtp)
+    await mailService.sendDeletionMail(offer)
   }
 }
