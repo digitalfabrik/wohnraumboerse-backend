@@ -11,6 +11,11 @@ import Offer from '../models/Offer'
 import ErrorService from '../services/ErrorService'
 
 const develop = process.env.NODE_ENV === 'development'
+const THREE_DAYS = 3
+const ONE_WEEK = 7
+const TWO_WEEKS = 14
+const ONE_MONTH = 30
+const ALLOWED_DURATIONS = [THREE_DAYS, ONE_WEEK, TWO_WEEKS, ONE_MONTH]
 
 const validateMiddleware = (errorService: ErrorService): mixed => (request: $Request, response: $Response, next: NextFunction) => {
   const errors = validationResult(request)
@@ -60,7 +65,7 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
 
   router.put('/',
     body('email').isEmail().trim().normalizeEmail(),
-    body('duration').isInt().toInt().custom((value: number): boolean => [3, 7, 14, 30].includes(value)),
+    body('duration').isInt().toInt().custom((value: number): boolean => ALLOWED_DURATIONS.includes(value)),
     body('formData').exists(),
     body('agreedToDataProtection').isBoolean().toBoolean().custom((value: boolean): boolean => value),
     validateMiddleware(errorService),
@@ -97,7 +102,7 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
 
   router.post(`/:token/extend`,
     param('token').isHexadecimal().isLength(TOKEN_LENGTH),
-    body('duration').isInt().toInt().custom((value: number): boolean => [3, 7, 14, 30].includes(value)),
+    body('duration').isInt().toInt().custom((value: number): boolean => ALLOWED_DURATIONS.includes(value)),
     validateMiddleware(errorService),
     catchInternalErrors(async (request: $Request, response: $Response): Promise<void> => {
       const {token, duration} = matchedData(request)
