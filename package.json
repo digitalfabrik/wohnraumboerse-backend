@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "dist",
   "engines": {
-    "node": ">=8"
+    "node": ">=6"
   },
   "scripts": {
     "flow-typed": "flow-typed install",
