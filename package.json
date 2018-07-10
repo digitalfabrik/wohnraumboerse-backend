@@ -12,7 +12,7 @@
     "start": "cross-env NODE_ENV=production node dist",
     "start:dev": "cross-env NODE_ENV=development nodemon --watch src --exec \"babel-node src\"",
     "flow": "flow",
-    "lint": "eslint src; flow",
+    "lint": "eslint src",
     "lint:fix": "eslint src --fix "
   },
   "license": "MIT",
