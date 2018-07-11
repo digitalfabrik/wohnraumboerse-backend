@@ -14,7 +14,7 @@ neuburg-backend will look for configs in the current working directory. If it do
 * `.neuburg-brackendrc.js`,
 * `neuburg-brackend.config.js`
 
-Look into the `templates/` folder for a config template.
+Look into the `templates/` folder for a config template. The config library/engine is [cosmiconfig](https://github.com/davidtheclark/cosmiconfig).
 
 ## API Version v0
 ### Offers Endpoint
