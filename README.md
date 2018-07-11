@@ -5,6 +5,17 @@ You need to install a mongodb on your machine. Follow https://docs.mongodb.com/g
 
 For development: Before running the lint script or the flow type checker, execute the `flow-typed` script first. It will install the flow type definitions for external libraries.
 
+## Using configs for development
+neuburg-backend will look for configs in the current working directory. If it does not find the config it will start to search up the directory tree. The priority of config files is the following (first path has the highest priority):
+* `.neuburg-brackendrc-dev.json`,
+* `.neuburg-brackendrc-dev.js`,
+* `neuburg-brackend-dev.config.js`,
+* `.neuburg-brackendrc.json`,
+* `.neuburg-brackendrc.js`,
+* `neuburg-brackend.config.js`
+
+Look into the `templates/` folder for a config template.
+
 ## API Version v0
 ### Offers Endpoint
 
