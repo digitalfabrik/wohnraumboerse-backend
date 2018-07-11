@@ -26,7 +26,6 @@ const catchInternalErrors = (fn: mixed, errorService: ErrorService): mixed => (r
   const promise = fn(request, response, next)
   if (promise.catch) {
     promise.catch((e: Error) => {
-      console.log('Catch Internal errors triggered.')
       let errorResponse
       if (e.name && e.name === 'ValidationError') {
         errorResponse = errorService.createValidationFailedErrorResponse(e)

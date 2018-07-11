@@ -6,8 +6,9 @@ import express from 'express'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import initializeDb from './db'
+import log4js from 'log4js'
 import api from './api'
-import type { Config } from './Config'
+import type {Config} from './Config'
 import initializeServices from './services/initializeServices'
 import commander from 'commander'
 import cosmiconfig from 'cosmiconfig'
@@ -30,7 +31,33 @@ const app = express()
 const server = http.createServer(app)
 
 // logger
-app.use(morgan('dev'))
+const layout = {
+  type: 'pattern',
+  pattern: '[%d{yyyy/MM/dd-hh.mm.ss}] [%p] %m'
+}
+
+const logConfig = {
+  appenders: {
+    stdout: {type: 'stdout'}
+  },
+  categories: {default: {appenders: ['stdout'], level: 'all'}}
+}
+
+if (config.logFile) {
+  logConfig.appenders.logFile = {type: 'file', filename: config.logFile, layout: layout}
+  logConfig.categories.default.appenders.push('logFile')
+}
+
+log4js.configure(logConfig)
+
+const logger = log4js.getLogger()
+app.use(morgan(':method :url :response-time ms', {
+  stream: {
+    write: (str: string): string => {
+      logger.info(str)
+    }
+  }
+}))
 
 app.use(
   bodyParser.json({
@@ -44,15 +71,15 @@ app.use('/', api(services))
 // connect to db
 const db = initializeDb(config.mongoDBUrl)
 db.on('error', (message: string) => {
-  console.error(message)
+  logger.error(message)
   process.exit(1)
 })
 
 db.once('open', () => {
-  console.log('Connected to DB.')
+  logger.info(`Connected to DB in ${config.mongoDBUrl}.`)
   const CONNECTION_QUEUE_SIZE = 10
   server.listen(parseInt(process.env.PORT) || config.port, process.env.IP || config.host, CONNECTION_QUEUE_SIZE, () => {
-    console.log(`Started on port ${server.address().port}`)
+    logger.info(`Started on port ${server.address().port}`)
   })
 })
 
