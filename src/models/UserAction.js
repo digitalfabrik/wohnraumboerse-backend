@@ -17,7 +17,7 @@ const userActionSchema = mongoose.Schema({
   },
   timeStamp: {
     type: Date,
-    required: [true, 'Missing expiration date']
+    required: [true, 'Missing timestamp']
   },
   action: {
     type: String,
