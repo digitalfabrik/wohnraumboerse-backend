@@ -16,6 +16,26 @@ neuburg-backend will look for configs in the current working directory. If it do
 
 Look into the `templates/` folder for a config template. The config library/engine is [cosmiconfig](https://github.com/davidtheclark/cosmiconfig).
 
+## Deployment
+
+1. Create new release on Jira (should be empty)
+2. Update old issues to use the created release as Fix Version
+   * Query to find old issues: `project = "neuburg-model" AND label = "backend" AND Sprint = "Highway to I10K!" AND Sprint != "Highway to IXIK!" AND fixVersion is empty`
+3. Release the Jira release
+4. Generate release notes in Jira
+
+5. Create a branch and create a Pull Request to develop:
+    * Update version number e.g "2018.03.02" in package.json
+6. Merge branch in develop
+
+7. Create Pull Request to merge develop in master:
+8. Merge develop in master
+
+9. Tag the master HEAD as "2018.03.02". Add the release notes from Jira as description.
+10. Send release notes to Slack channel #passauer-modell
+
+11. Deploy via SSH: `tools/deploy/ssh-deploy.sh wohnen.integreat-app.de /opt/neuburg-backend wohnen:wohnen`
+
 ## API Version v0
 ### Offers Endpoint
 
