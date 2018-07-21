@@ -14,7 +14,6 @@ const errorTypes = {
 }
 
 export default class ErrorService {
-
   constructor () {
     this.logger = log4js.getLogger()
   }
@@ -39,6 +38,10 @@ export default class ErrorService {
 
   createOfferExpiredErrorResponse (token: string): ErrorResponse {
     return new ErrorResponse(errorTypes.token, `Das Angebot mit Token '${token}' ist bereits abgelaufen.`)
+  }
+
+  createConfirmationLinkExpiredErrorResponse (token: string): ErrorResponse {
+    return new ErrorResponse(errorTypes.token, `Der Bestätigungslink des Angebots mit Token '${token}' ist abgelaufen.`)
   }
 
   createValidationFailedErrorResponse (error: ValidationError): ErrorResponse {
