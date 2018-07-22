@@ -91,9 +91,9 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
       } else if (offer.expirationDate <= Date.now()) {
         const errorResponse = errorService.createOfferExpiredErrorResponse(token)
         response.status(HttpStatus.GONE).json(errorResponse)
-      } else if (offer.confirmed === false && offer.createdDate < Date.now() - CONFIRMATION_PERIOD) {
-        const errorResponse = errorService.createConfirmationLinkExpiredErrorResponse(token)
-        response.status(HttpStatus.GONE).json(errorResponse)
+      } else if (!offer.confirmed && offer.createdDate < Date.now() - CONFIRMATION_PERIOD) {
+        const errorResponse = errorService.createOfferNotFoundErrorResponse(token)
+        response.status(HttpStatus.NOT_FOUND).json(errorResponse)
       } else {
         await offerService.confirmOffer(offer, token)
         response.status(HttpStatus.OK).end()

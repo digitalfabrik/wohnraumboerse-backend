@@ -40,10 +40,6 @@ export default class ErrorService {
     return new ErrorResponse(errorTypes.token, `Das Angebot mit Token '${token}' ist bereits abgelaufen.`)
   }
 
-  createConfirmationLinkExpiredErrorResponse (token: string): ErrorResponse {
-    return new ErrorResponse(errorTypes.token, `Der Bestätigungslink des Angebots mit Token '${token}' ist abgelaufen.`)
-  }
-
   createValidationFailedErrorResponse (error: ValidationError): ErrorResponse {
     const fieldErrorMessages = Object.values(error.errors).map((e: mixed): string => e.message)
     return new ErrorResponse(errorTypes.validation, `Im Formular sind die folgenden Fehler aufgetreten: ${fieldErrorMessages.join(' ')}`)
