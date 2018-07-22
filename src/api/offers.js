@@ -12,7 +12,8 @@ import ErrorService from '../services/ErrorService'
 
 const develop = process.env.NODE_ENV === 'development'
 
-const CONFIRMATION_PERIOD = 1000 * 60 * 60 * 48
+const MS_IN_H = 36E5
+const CONFIRMATION_PERIOD = MS_IN_H * 48
 
 const validateMiddleware = (errorService: ErrorService): mixed => (request: $Request, response: $Response, next: NextFunction) => {
   const errors = validationResult(request)
