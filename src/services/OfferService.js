@@ -6,6 +6,13 @@ import type {Config} from '../Config'
 import createToken from '../utils/createToken'
 import MailService from './MailService'
 import forms from '../models/forms'
+import UserAction, {
+  ACTION_ACTIVELY_DELETED,
+  ACTION_CONFIRMED,
+  ACTION_CREATED,
+  ACTION_EXTENDED,
+  ACTION_GET
+} from '../models/UserAction'
 
 const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24
 
@@ -41,6 +48,8 @@ export default class OfferService {
     const mailService = new MailService(this.config.smtp)
     await mailService.sendRequestConfirmationMail(offer, token)
 
+    new UserAction({city, timeStamp: Date.now(), action: ACTION_CREATED}).save()
+
     return token
   }
 
@@ -59,7 +68,7 @@ export default class OfferService {
   }
 
   getActiveOffers (city: string): Promise<Array<Offer>> {
-    return Offer.find()
+    const offers = Offer.find()
       .select('-_id -__v -city -confirmed -expirationDate -hashedToken')
       .where('city')
       .equals(city)
@@ -70,6 +79,10 @@ export default class OfferService {
       .populate({path: 'formData', select: '-_id -__v'})
       .lean()
       .exec()
+
+    new UserAction({city, timeStamp: Date.now(), action: ACTION_GET}).save()
+
+    return offers
   }
 
   fillAdditionalFieds (offer: Offer, city: string): Offer {
@@ -95,6 +108,8 @@ export default class OfferService {
       offer = await this.findByIdAndUpdate(offer._id, {confirmed: true})
       const mailService = new MailService(this.config.smtp)
       await mailService.sendConfirmationMail(offer, token)
+
+      new UserAction({city: offer.city, timeStamp: Date.now(), action: ACTION_CONFIRMED}).save()
     }
   }
 
@@ -110,6 +125,8 @@ export default class OfferService {
     offer = await this.findByIdAndUpdate(offer._id, {expirationDate: newExpirationDate})
     const mailService = new MailService(this.config.smtp)
     await mailService.sendExtensionMail(offer, token)
+
+    new UserAction({city: offer.city, timeStamp: Date.now(), action: ACTION_EXTENDED}).save()
   }
 
   async deleteOffer (offer: Offer, token: string, city: string): Promise<void> {
@@ -121,5 +138,6 @@ export default class OfferService {
       .exec()
     const mailService = new MailService(this.config.smtp)
     await mailService.sendDeletionMail(offer)
+    new UserAction({city, timeStamp: Date.now(), action: ACTION_ACTIVELY_DELETED}).save()
   }
 }
