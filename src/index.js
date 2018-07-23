@@ -15,7 +15,18 @@ import cosmiconfig from 'cosmiconfig'
 
 commander.version('0.0.1').parse(process.argv)
 
-const explorer = cosmiconfig('neuburg-backend')
+commander.version('0.0.1').parse(process.argv)
+const moduleName = 'neuburg-backend'
+const explorer = cosmiconfig(moduleName, {
+  searchPlaces: [
+    `.${moduleName}rc-dev.json`,
+    `.${moduleName}rc-dev.js`,
+    `${moduleName}-dev.config.js`,
+    `.${moduleName}rc.json`,
+    `.${moduleName}rc.js`,
+    `${moduleName}.config.js`
+  ]
+})
 const result = explorer.searchSync()
 
 if (!result) {

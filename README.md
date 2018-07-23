@@ -5,6 +5,37 @@ You need to install a mongodb on your machine. Follow https://docs.mongodb.com/g
 
 For development: Before running the lint script or the flow type checker, execute the `flow-typed` script first. It will install the flow type definitions for external libraries.
 
+## Using configs for development
+neuburg-backend will look for configs in the current working directory. If it does not find the config it will start to search up the directory tree. The priority of config files is the following (first path has the highest priority):
+* `.neuburg-brackendrc-dev.json`,
+* `.neuburg-brackendrc-dev.js`,
+* `neuburg-brackend-dev.config.js`,
+* `.neuburg-brackendrc.json`,
+* `.neuburg-brackendrc.js`,
+* `neuburg-brackend.config.js`
+
+Look into the `templates/` folder for a config template. The config library/engine is [cosmiconfig](https://github.com/davidtheclark/cosmiconfig).
+
+## Deployment
+
+1. Create new release on Jira (should be empty)
+2. Update old issues to use the created release as Fix Version
+   * Query to find old issues: `project = "neuburg-model" AND label = "backend" AND Sprint = "Highway to I10K!" AND Sprint != "Highway to IXIK!" AND fixVersion is empty`
+3. Release the Jira release
+4. Generate release notes in Jira
+
+5. Create a branch and create a Pull Request to develop:
+    * Update version number e.g "2018.03.02" in package.json
+6. Merge branch in develop
+
+7. Create Pull Request to merge develop in master:
+8. Merge develop in master
+
+9. Tag the master HEAD as "2018.03.02". Add the release notes from Jira as description.
+10. Send release notes to Slack channel #passauer-modell
+
+11. Deploy via SSH: `tools/deploy/ssh-deploy.sh wohnen.integreat-app.de /opt/neuburg-backend wohnen:wohnen`
+
 ## API Version v0
 ### Offers Endpoint
 
