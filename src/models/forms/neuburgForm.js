@@ -1,5 +1,9 @@
 // @flow
 
+const MIN_TITLE_LENGTH = 10
+const MAX_TITLE_LENGTH = 50
+const MAX_LOCATION_LENGTH = 85
+
 export default {
   // landlord's data
   landlord: {
@@ -21,7 +25,7 @@ export default {
       type: String,
       validate: {
         validator: function (value: string): boolean {
-          return value.length >= 10 && value.length <= 50
+          return value.length >= MIN_TITLE_LENGTH && value.length <= MAX_TITLE_LENGTH
         },
         message: 'Der Titel muss zwischen 10 und 50 Zeichen haben.'
       },
@@ -31,7 +35,7 @@ export default {
       type: String,
       validate: {
         validator: function (value: string): boolean {
-          return !value || value.length <= 85
+          return !value || value.length <= MAX_LOCATION_LENGTH
         },
         message: 'Der Standort darf höchstens 85 Zeichen haben.'
       }

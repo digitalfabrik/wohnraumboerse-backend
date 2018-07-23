@@ -14,7 +14,11 @@ import UserAction, {
   ACTION_GET
 } from '../models/UserAction'
 
-const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24
+const MS_IN_S = 1000
+const S_IN_MIN = 60
+const MIN_IN_H = 60
+const H_IN_D = 60
+const MILLISECONDS_IN_A_DAY = MS_IN_S * S_IN_MIN * MIN_IN_H * H_IN_D
 
 export default class OfferService {
   config: Config
@@ -60,7 +64,7 @@ export default class OfferService {
       .exec()
   }
 
-  getAllForms (city: string): Promise<Array> {
+  getAllForms (city: string): Promise<Array<any>> {
     const {FormModel} = forms[city]
     return FormModel.find()
       .lean()

@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "dist",
   "engines": {
-    "node": ">=8"
+    "node": ">=6"
   },
   "scripts": {
     "flow-typed": "flow-typed install",
@@ -12,7 +12,7 @@
     "start": "cross-env NODE_ENV=production node dist",
     "start:dev": "cross-env NODE_ENV=development nodemon --watch src --exec \"babel-node src\"",
     "flow": "flow",
-    "lint": "eslint src; flow",
+    "lint": "eslint src",
     "lint:fix": "eslint src --fix "
   },
   "license": "MIT",
@@ -34,6 +34,8 @@
     "pug": "^2.0.3"
   },
   "devDependencies": {
+    "@integreat-app/eslint-config": "^0.2.1",
+    "@integreat-app/eslint-config-jest": "^0.2.1",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.3",
@@ -42,11 +44,15 @@
     "cross-env": "^5.1.5",
     "eslint": "^4.19.1",
     "eslint-config-standard": "^11.0.0",
+    "eslint-config-standard-react": "^6.0.0",
     "eslint-plugin-flowtype": "^2.46.3",
-    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jest": "^21.15.0",
     "eslint-plugin-node": "^6.0.1",
-    "eslint-plugin-promise": "^3.7.0",
-    "eslint-plugin-standard": "^3.1.0",
+    "eslint-plugin-prefer-object-spread": "^1.2.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-react": "^7.7.0",
+    "eslint-plugin-standard": "^3.0.1",
     "flow-bin": "^0.72.0",
     "flow-typed": "^2.4.0",
     "nodemon": "^1.17.4"
