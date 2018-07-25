@@ -4,7 +4,7 @@ import ErrorResponse from '../models/ErrorResponse'
 import _ from 'lodash'
 import log4js from 'log4js'
 import type {Logger} from 'log4js'
-import type {MongooseError} from 'mongoose'
+import type {MongooseError, ValidationError} from 'mongoose'
 import type {Result, ErrorFormatter} from 'express-validator/check'
 
 const develop = process.env.NODE_ENV === 'development'
