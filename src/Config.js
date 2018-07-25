@@ -6,5 +6,6 @@ export interface Config {
     port: number,
     bodyLimit: string,
     mongoDBUrl: string,
-    smtp: SMTPTransport
+    smtp: SMTPTransport,
+    logFile?: string
 }

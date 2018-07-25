@@ -7,6 +7,7 @@ import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import initializeDb from './db'
 import log4js from 'log4js'
+import type {Configuration, FileAppender} from 'log4js'
 import api from './api'
 import type {Config} from './Config'
 import initializeServices from './services/initializeServices'
@@ -47,7 +48,7 @@ const layout = {
   pattern: '[%d{yyyy/MM/dd-hh.mm.ss}] [%p] %m'
 }
 
-const logConfig = {
+const logConfig: Configuration = {
   appenders: {
     stdout: {type: 'stdout'}
   },
@@ -55,16 +56,18 @@ const logConfig = {
 }
 
 if (config.logFile) {
-  logConfig.appenders.logFile = {type: 'file', filename: config.logFile, layout: layout}
+  const logFile: FileAppender = {type: 'file', filename: config.logFile, layout: layout}
+  logConfig.appenders.logFile = logFile
   logConfig.categories.default.appenders.push('logFile')
 }
 
 log4js.configure(logConfig)
 
 const logger = log4js.getLogger()
+// noinspection JSUnusedGlobalSymbols
 app.use(morgan(':method :url :response-time ms', {
   stream: {
-    write: (str: string): string => {
+    write: (str: string): void => {
       logger.info(str)
     }
   }

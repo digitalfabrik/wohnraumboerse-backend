@@ -17,7 +17,7 @@ const TWO_WEEKS = 14
 const ONE_MONTH = 30
 const ALLOWED_DURATIONS = [THREE_DAYS, ONE_WEEK, TWO_WEEKS, ONE_MONTH]
 
-const validateMiddleware = (errorService: ErrorService): mixed => (request: $Request, response: $Response, next: NextFunction) => {
+const validateMiddleware = (errorService: ErrorService) => (request: $Request, response: $Response, next: NextFunction) => {
   const errors = validationResult(request)
   if (!errors.isEmpty()) {
     const errorResponse = errorService.createValidationFailedErrorResponseFromArray(errors)
@@ -27,7 +27,7 @@ const validateMiddleware = (errorService: ErrorService): mixed => (request: $Req
   }
 }
 
-const catchInternalErrors = (fn: mixed, errorService: ErrorService): mixed => (request: $Request, response: $Response, next: NextFunction) => {
+const catchInternalErrors = (fn: ($Request, $Response, () => mixed) => Promise<void>, errorService: ErrorService) => (request: $Request, response: $Response, next: NextFunction) => {
   const promise = fn(request, response, next)
   if (promise.catch) {
     promise.catch((e: Error) => {
