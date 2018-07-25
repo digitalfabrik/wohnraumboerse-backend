@@ -3,6 +3,7 @@
 import {Router} from 'express'
 import type {$Request, $Response, NextFunction} from 'express'
 import {body, param, validationResult} from 'express-validator/check'
+import type {Result} from 'express-validator/check'
 import {matchedData} from 'express-validator/filter'
 import {TOKEN_LENGTH} from '../utils/createToken'
 import HttpStatus from 'http-status-codes'
@@ -18,7 +19,7 @@ const ONE_MONTH = 30
 const ALLOWED_DURATIONS = [THREE_DAYS, ONE_WEEK, TWO_WEEKS, ONE_MONTH]
 
 const validateMiddleware = (errorService: ErrorService) => (request: $Request, response: $Response, next: NextFunction) => {
-  const errors = validationResult(request)
+  const errors: Result = validationResult(request)
   if (!errors.isEmpty()) {
     const errorResponse = errorService.createValidationFailedErrorResponseFromArray(errors)
     response.status(HttpStatus.BAD_REQUEST).json(errorResponse)

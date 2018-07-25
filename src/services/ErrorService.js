@@ -4,6 +4,8 @@ import ErrorResponse from '../models/ErrorResponse'
 import _ from 'lodash'
 import log4js from 'log4js'
 import type {Logger} from 'log4js'
+import type {MongooseError} from 'mongoose'
+import type {Result, ErrorFormatter} from 'express-validator/check'
 
 const develop = process.env.NODE_ENV === 'development'
 
@@ -45,12 +47,13 @@ export default class ErrorService {
   }
 
   createValidationFailedErrorResponse (error: ValidationError): ErrorResponse {
-    const fieldErrorMessages = Object.values(error.errors).map((e: Error): string => e.message)
+    const fieldErrorMessages = Object.values(error.errors).map((e: MongooseError): string => e.message)
     return new ErrorResponse(errorTypes.validation, `Im Formular sind die folgenden Fehler aufgetreten: ${fieldErrorMessages.join(' ')}`)
   }
 
-  createValidationFailedErrorResponseFromArray (errors: Array<Error>): ErrorResponse {
-    const errorFields = errors.array().map((error: Error): string => this.translateOuterFormPaths(error.param))
+  createValidationFailedErrorResponseFromArray (errors: Result): ErrorResponse {
+    console.log(errors.array()[0])
+    const errorFields = errors.array().map((error: ErrorFormatter): string => this.translateOuterFormPaths(error.param))
     const errorFieldsWithoutDuplicates = _.uniq(errorFields)
     const message = `Ungültige oder fehlende Eingaben in dem/den folgenden Feld(ern): ${errorFieldsWithoutDuplicates.join(', ')}`
     return new ErrorResponse(errorTypes.validation, message)
@@ -68,6 +71,8 @@ export default class ErrorService {
         return 'Formular'
       case 'token':
         return 'Token'
+      default:
+        return ''
     }
   }
 }
