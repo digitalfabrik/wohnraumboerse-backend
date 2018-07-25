@@ -21,7 +21,8 @@ const userActionSchema = mongoose.Schema({
   },
   action: {
     type: String,
-    enum: [ACTION_ACTIVELY_DELETED, ACTION_AUTOMATICALLY_DELETED, ACTION_CONFIRMED, ACTION_CREATED, ACTION_EXTENDED, ACTION_GET],
+    enum: [ACTION_ACTIVELY_DELETED, ACTION_AUTOMATICALLY_DELETED, ACTION_CONFIRMED,
+      ACTION_CREATED, ACTION_EXTENDED, ACTION_GET],
     required: [true, 'Missing action type']
   }
 })

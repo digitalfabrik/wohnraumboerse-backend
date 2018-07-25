@@ -18,31 +18,33 @@ const TWO_WEEKS = 14
 const ONE_MONTH = 30
 const ALLOWED_DURATIONS = [THREE_DAYS, ONE_WEEK, TWO_WEEKS, ONE_MONTH]
 
-const validateMiddleware = (errorService: ErrorService) => (request: $Request, response: $Response, next: NextFunction) => {
-  const errors: Result = validationResult(request)
-  if (!errors.isEmpty()) {
-    const errorResponse = errorService.createValidationFailedErrorResponseFromArray(errors)
-    response.status(HttpStatus.BAD_REQUEST).json(errorResponse)
-  } else {
-    next()
+const validateMiddleware = (errorService: ErrorService) =>
+  (request: $Request, response: $Response, next: NextFunction) => {
+    const errors: Result = validationResult(request)
+    if (!errors.isEmpty()) {
+      const errorResponse = errorService.createValidationFailedErrorResponseFromArray(errors)
+      response.status(HttpStatus.BAD_REQUEST).json(errorResponse)
+    } else {
+      next()
+    }
   }
-}
 
-const catchInternalErrors = (fn: ($Request, $Response, () => mixed) => Promise<void>, errorService: ErrorService) => (request: $Request, response: $Response, next: NextFunction) => {
-  const promise = fn(request, response, next)
-  if (promise.catch) {
-    promise.catch((e: Error) => {
-      let errorResponse
-      if (e.name && e.name === 'ValidationError') {
-        errorResponse = errorService.createValidationFailedErrorResponse(e)
-        response.status(HttpStatus.BAD_REQUEST).json(errorResponse)
-      } else {
-        errorResponse = errorService.createInternalServerErrorResponse(e)
-        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
-      }
-    })
+const catchInternalErrors = (fn: ($Request, $Response, () => mixed) => Promise<void>, errorService: ErrorService) =>
+  (request: $Request, response: $Response, next: NextFunction) => {
+    const promise = fn(request, response, next)
+    if (promise.catch) {
+      promise.catch((e: Error) => {
+        let errorResponse
+        if (e.name && e.name === 'ValidationError') {
+          errorResponse = errorService.createValidationFailedErrorResponse(e)
+          response.status(HttpStatus.BAD_REQUEST).json(errorResponse)
+        } else {
+          errorResponse = errorService.createInternalServerErrorResponse(e)
+          response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
+        }
+      })
+    }
   }
-}
 
 export default ({offerService, errorService}: { offerService: OfferService, errorService: ErrorService }): Router => {
   const router = new Router()

@@ -64,7 +64,7 @@ export default class OfferService {
       .exec()
   }
 
-  getAllForms (city: string): Promise<Array<any>> {
+  getAllForms (city: string): Promise<Array<mixed>> {
     const {FormModel} = forms[city]
     return FormModel.find()
       .lean()

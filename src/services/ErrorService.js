@@ -17,7 +17,6 @@ const errorTypes = {
 }
 
 export default class ErrorService {
-
   logger: Logger
 
   constructor () {
@@ -39,7 +38,8 @@ export default class ErrorService {
   }
 
   createOfferNotConfirmedErrorResponse (): ErrorResponse {
-    return new ErrorResponse(errorTypes.confirmation, 'Das Angebot wurde noch nicht bestätigt. Bitte bestätigen Sie Ihr Angebot zuerst.')
+    return new ErrorResponse(errorTypes.confirmation,
+      'Das Angebot wurde noch nicht bestätigt. Bitte bestätigen Sie Ihr Angebot zuerst.')
   }
 
   createOfferExpiredErrorResponse (token: string): ErrorResponse {
@@ -48,14 +48,16 @@ export default class ErrorService {
 
   createValidationFailedErrorResponse (error: ValidationError): ErrorResponse {
     const fieldErrorMessages = Object.values(error.errors).map((e: MongooseError): string => e.message)
-    return new ErrorResponse(errorTypes.validation, `Im Formular sind die folgenden Fehler aufgetreten: ${fieldErrorMessages.join(' ')}`)
+    return new ErrorResponse(errorTypes.validation,
+      `Im Formular sind die folgenden Fehler aufgetreten: ${fieldErrorMessages.join(' ')}`)
   }
 
   createValidationFailedErrorResponseFromArray (errors: Result): ErrorResponse {
     console.log(errors.array()[0])
     const errorFields = errors.array().map((error: ErrorFormatter): string => this.translateOuterFormPaths(error.param))
     const errorFieldsWithoutDuplicates = _.uniq(errorFields)
-    const message = `Ungültige oder fehlende Eingaben in dem/den folgenden Feld(ern): ${errorFieldsWithoutDuplicates.join(', ')}`
+    const message =
+      `Ungültige oder fehlende Eingaben in dem/den folgenden Feld(ern): ${errorFieldsWithoutDuplicates.join(', ')}`
     return new ErrorResponse(errorTypes.validation, message)
   }
 

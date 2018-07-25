@@ -1,7 +1,6 @@
 // @flow
 
 export default class ErrorResponse {
-
   errorType: string
   errorMessage: string
 
