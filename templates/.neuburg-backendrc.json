@@ -9,7 +9,7 @@
     "port": 465,
     "secure": true,
     "auth": {
-      "user": "keineantwort@integreat-app.de",
+      "user": "wohnraumboerse@integreat-app.de",
       "pass": ""
     }
   }

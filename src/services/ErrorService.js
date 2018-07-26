@@ -14,7 +14,6 @@ const errorTypes = {
 }
 
 export default class ErrorService {
-
   constructor () {
     this.logger = log4js.getLogger()
   }

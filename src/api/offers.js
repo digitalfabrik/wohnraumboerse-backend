@@ -1,7 +1,7 @@
 // @flow
 
-import {Router} from 'express'
 import type {$Request, $Response, NextFunction} from 'express'
+import {Router} from 'express'
 import {body, param, validationResult} from 'express-validator/check'
 import {matchedData} from 'express-validator/filter'
 import {TOKEN_LENGTH} from '../utils/createToken'
@@ -16,6 +16,9 @@ const ONE_WEEK = 7
 const TWO_WEEKS = 14
 const ONE_MONTH = 30
 const ALLOWED_DURATIONS = [THREE_DAYS, ONE_WEEK, TWO_WEEKS, ONE_MONTH]
+
+const MS_IN_H = 36E5
+const CONFIRMATION_PERIOD = MS_IN_H * 48
 
 const validateMiddleware = (errorService: ErrorService): mixed => (request: $Request, response: $Response, next: NextFunction) => {
   const errors = validationResult(request)
@@ -93,6 +96,9 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
       } else if (offer.expirationDate <= Date.now()) {
         const errorResponse = errorService.createOfferExpiredErrorResponse(token)
         response.status(HttpStatus.GONE).json(errorResponse)
+      } else if (!offer.confirmed && offer.createdDate < Date.now() - CONFIRMATION_PERIOD) {
+        const errorResponse = errorService.createOfferNotFoundErrorResponse(token)
+        response.status(HttpStatus.NOT_FOUND).json(errorResponse)
       } else {
         await offerService.confirmOffer(offer, token)
         response.status(HttpStatus.OK).end()
