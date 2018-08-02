@@ -66,7 +66,7 @@ log4js.configure(logConfig)
 const logger = log4js.getLogger()
 app.use(morgan(':method :url :response-time ms', {
   stream: {
-    write: (str: string): void => {
+    write: (str: string) => {
       logger.info(str)
     }
   }
