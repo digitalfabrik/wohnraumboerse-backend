@@ -6,8 +6,8 @@ import express from 'express'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import initializeDb from './db'
-import log4js from 'log4js'
 import type {Configuration, FileAppender} from 'log4js'
+import log4js from 'log4js'
 import api from './api'
 import type {Config} from './Config'
 import initializeServices from './services/initializeServices'
@@ -64,7 +64,6 @@ if (config.logFile) {
 log4js.configure(logConfig)
 
 const logger = log4js.getLogger()
-// noinspection JSUnusedGlobalSymbols
 app.use(morgan(':method :url :response-time ms', {
   stream: {
     write: (str: string): void => {
