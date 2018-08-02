@@ -12,6 +12,7 @@ import type {Config} from './Config'
 import initializeServices from './services/initializeServices'
 import commander from 'commander'
 import cosmiconfig from 'cosmiconfig'
+import startCronJobs from './cronjobs'
 
 commander.version('0.0.1').parse(process.argv)
 
@@ -40,6 +41,9 @@ const services = initializeServices(config)
 const app = express()
 
 const server = http.createServer(app)
+
+// cronjobs
+startCronJobs()
 
 // logger
 const layout = {
