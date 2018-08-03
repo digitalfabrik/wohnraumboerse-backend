@@ -52,7 +52,7 @@ export default class OfferService {
     const mailService = new MailService(this.config.smtp)
     await mailService.sendRequestConfirmationMail(offer, token)
 
-    new UserAction({city, timeStamp: Date.now(), action: ACTION_CREATED}).save()
+    new UserAction({city, action: ACTION_CREATED}).save()
 
     return token
   }
@@ -84,7 +84,7 @@ export default class OfferService {
       .lean()
       .exec()
 
-    new UserAction({city, timeStamp: Date.now(), action: ACTION_GET}).save()
+    new UserAction({city, action: ACTION_GET}).save()
 
     return offers
   }
@@ -113,7 +113,7 @@ export default class OfferService {
       const mailService = new MailService(this.config.smtp)
       await mailService.sendConfirmationMail(offer, token)
 
-      new UserAction({city: offer.city, timeStamp: Date.now(), action: ACTION_CONFIRMED}).save()
+      new UserAction({city: offer.city, action: ACTION_CONFIRMED}).save()
     }
   }
 
@@ -130,7 +130,7 @@ export default class OfferService {
     const mailService = new MailService(this.config.smtp)
     await mailService.sendExtensionMail(offer, token)
 
-    new UserAction({city: offer.city, timeStamp: Date.now(), action: ACTION_EXTENDED}).save()
+    new UserAction({city: offer.city, action: ACTION_EXTENDED}).save()
   }
 
   async deleteOffer (offer: Offer, token: string, city: string): Promise<void> {
@@ -142,6 +142,6 @@ export default class OfferService {
       .exec()
     const mailService = new MailService(this.config.smtp)
     await mailService.sendDeletionMail(offer)
-    new UserAction({city, timeStamp: Date.now(), action: ACTION_ACTIVELY_DELETED}).save()
+    new UserAction({city, action: ACTION_ACTIVELY_DELETED}).save()
   }
 }

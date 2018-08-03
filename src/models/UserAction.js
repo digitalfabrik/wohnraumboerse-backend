@@ -17,7 +17,8 @@ const userActionSchema = mongoose.Schema({
   },
   timeStamp: {
     type: Date,
-    required: [true, 'Missing timestamp']
+    required: [true, 'Missing timestamp'],
+    default: Date.now
   },
   action: {
     type: String,
