@@ -40,7 +40,7 @@ Look into the `templates/` folder for a config template. The config library/engi
 ### Offers Endpoint
 
 #### GET `/v0/:city/offer`
-Returns all currently available offers (Array of objects that represent the formData, the email-addresses and the date the offer has been created). Result Sample
+Returns all currently available offers (Array of objects that represent the formData, the email-addresses and the date the offer has been created). Every `formData` object has a key `version` that indicates its version. Result Sample
 ```javascript
 [
 {
@@ -70,9 +70,18 @@ Creates a new offer. E-mail, duration and agreedToDataProtection are required (a
 On a correct request, the server will send a confirmation-email to `email` containing the `token` and respond with HTTP-statuscode 200.
 
 #### POST `/v0/:city/offer/:token/confirm`
-Confirms the email-adress of the offer with the specified `token`.
+Confirms the email-address of the offer with the specified `token`.
 If the corresponding offer is not yet expired and has not been deleted, the confirmation will be accepted and the server will
 send an email to the offer's `email` and to a city administrator with a link to delete the offer.
+
+#### POST `/v0/:city/offer/:token/extend`
+Renews the expiration date of the offer with the specified `token` if the email-address has already been confirmed.
+The new duration must be passed in the request body. Body sample:
+```javascript
+{
+  "duration": 7
+}
+```
 
 #### DELETE `/v0/:city/offer/:token`
 Deletes the offer with the specified `token`.
