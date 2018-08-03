@@ -4,7 +4,6 @@
 /dist
 /npm-debug.log
 /node_modules
-/flow-typed
 .DS_Store
 /src/smtpConfig.js
 ### Node template

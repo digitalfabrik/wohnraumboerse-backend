@@ -17,7 +17,7 @@ import UserAction, {
 const MS_IN_S = 1000
 const S_IN_MIN = 60
 const MIN_IN_H = 60
-const H_IN_D = 60
+const H_IN_D = 24
 const MILLISECONDS_IN_A_DAY = MS_IN_S * S_IN_MIN * MIN_IN_H * H_IN_D
 
 export default class OfferService {
@@ -64,7 +64,7 @@ export default class OfferService {
       .exec()
   }
 
-  getAllForms (city: string): Promise<Array<any>> {
+  getAllForms (city: string): Promise<Array<mixed>> {
     const {FormModel} = forms[city]
     return FormModel.find()
       .lean()

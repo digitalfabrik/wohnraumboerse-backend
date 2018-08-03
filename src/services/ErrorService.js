@@ -3,6 +3,9 @@
 import ErrorResponse from '../models/ErrorResponse'
 import _ from 'lodash'
 import log4js from 'log4js'
+import type {Logger} from 'log4js'
+import type {MongooseError, ValidationError} from 'mongoose'
+import type {Result, ErrorFormatter} from 'express-validator/check'
 
 const develop = process.env.NODE_ENV === 'development'
 
@@ -14,12 +17,14 @@ const errorTypes = {
 }
 
 export default class ErrorService {
+  logger: Logger
+
   constructor () {
     this.logger = log4js.getLogger()
   }
 
-  createInternalServerErrorResponse (error: Error): Error | ErrorResponse {
-    this.logger.error(error)
+  createInternalServerErrorResponse (error: Error): string | ErrorResponse {
+    this.logger.error(error.toString())
     if (develop) {
       return error.message
     } else {
@@ -33,7 +38,8 @@ export default class ErrorService {
   }
 
   createOfferNotConfirmedErrorResponse (): ErrorResponse {
-    return new ErrorResponse(errorTypes.confirmation, 'Das Angebot wurde noch nicht bestätigt. Bitte bestätigen Sie Ihr Angebot zuerst.')
+    return new ErrorResponse(errorTypes.confirmation,
+      'Das Angebot wurde noch nicht bestätigt. Bitte bestätigen Sie Ihr Angebot zuerst.')
   }
 
   createOfferExpiredErrorResponse (token: string): ErrorResponse {
@@ -41,14 +47,17 @@ export default class ErrorService {
   }
 
   createValidationFailedErrorResponse (error: ValidationError): ErrorResponse {
-    const fieldErrorMessages = Object.values(error.errors).map((e: mixed): string => e.message)
-    return new ErrorResponse(errorTypes.validation, `Im Formular sind die folgenden Fehler aufgetreten: ${fieldErrorMessages.join(' ')}`)
+    const fieldErrorMessages = Object.values(error.errors).map((e: MongooseError): string => e.message)
+    return new ErrorResponse(errorTypes.validation,
+      `Im Formular sind die folgenden Fehler aufgetreten: ${fieldErrorMessages.join(' ')}`)
   }
 
-  createValidationFailedErrorResponseFromArray (errors: Array<Error>): ErrorResponse {
-    const errorFields = errors.array().map((error: Error): string => this.translateOuterFormPaths(error.param))
+  createValidationFailedErrorResponseFromArray (errors: Result): ErrorResponse {
+    console.log(errors.array()[0])
+    const errorFields = errors.array().map((error: ErrorFormatter): string => this.translateOuterFormPaths(error.param))
     const errorFieldsWithoutDuplicates = _.uniq(errorFields)
-    const message = `Ungültige oder fehlende Eingaben in dem/den folgenden Feld(ern): ${errorFieldsWithoutDuplicates.join(', ')}`
+    const message =
+      `Ungültige oder fehlende Eingaben in dem/den folgenden Feld(ern): ${errorFieldsWithoutDuplicates.join(', ')}`
     return new ErrorResponse(errorTypes.validation, message)
   }
 
@@ -64,6 +73,8 @@ export default class ErrorService {
         return 'Formular'
       case 'token':
         return 'Token'
+      default:
+        return ''
     }
   }
 }

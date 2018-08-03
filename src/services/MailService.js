@@ -12,7 +12,7 @@ const develop = process.env.NODE_ENV === 'development'
 
 const projectRoot = getProjectRoot()
 
-type RendererType = (Object) => string
+type RendererType = (mixed) => string
 
 const compile = (viewPath: string): RendererType => compileFile(path.resolve(projectRoot, `views/${viewPath}`))
 

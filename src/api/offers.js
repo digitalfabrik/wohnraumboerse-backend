@@ -1,6 +1,7 @@
 // @flow
 
 import type {$Request, $Response, NextFunction} from 'express'
+import type {Result} from 'express-validator/check'
 import {Router} from 'express'
 import {body, param, validationResult} from 'express-validator/check'
 import {matchedData} from 'express-validator/filter'
@@ -18,33 +19,36 @@ const ONE_MONTH = 30
 const ALLOWED_DURATIONS = [THREE_DAYS, ONE_WEEK, TWO_WEEKS, ONE_MONTH]
 
 const MS_IN_H = 36E5
-const CONFIRMATION_PERIOD = MS_IN_H * 48
+const FORTY_EIGHT_HOURS = 48
+const CONFIRMATION_PERIOD = MS_IN_H * FORTY_EIGHT_HOURS
 
-const validateMiddleware = (errorService: ErrorService): mixed => (request: $Request, response: $Response, next: NextFunction) => {
-  const errors = validationResult(request)
-  if (!errors.isEmpty()) {
-    const errorResponse = errorService.createValidationFailedErrorResponseFromArray(errors)
-    response.status(HttpStatus.BAD_REQUEST).json(errorResponse)
-  } else {
-    next()
+const validateMiddleware = (errorService: ErrorService) =>
+  (request: $Request, response: $Response, next: NextFunction) => {
+    const errors: Result = validationResult(request)
+    if (!errors.isEmpty()) {
+      const errorResponse = errorService.createValidationFailedErrorResponseFromArray(errors)
+      response.status(HttpStatus.BAD_REQUEST).json(errorResponse)
+    } else {
+      next()
+    }
   }
-}
 
-const catchInternalErrors = (fn: mixed, errorService: ErrorService): mixed => (request: $Request, response: $Response, next: NextFunction) => {
-  const promise = fn(request, response, next)
-  if (promise.catch) {
-    promise.catch((e: Error) => {
-      let errorResponse
-      if (e.name && e.name === 'ValidationError') {
-        errorResponse = errorService.createValidationFailedErrorResponse(e)
-        response.status(HttpStatus.BAD_REQUEST).json(errorResponse)
-      } else {
-        errorResponse = errorService.createInternalServerErrorResponse(e)
-        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
-      }
-    })
+const catchInternalErrors = (fn: ($Request, $Response, () => mixed) => Promise<void>, errorService: ErrorService) =>
+  (request: $Request, response: $Response, next: NextFunction) => {
+    const promise = fn(request, response, next)
+    if (promise.catch) {
+      promise.catch((e: Error) => {
+        let errorResponse
+        if (e.name && e.name === 'ValidationError') {
+          errorResponse = errorService.createValidationFailedErrorResponse(e)
+          response.status(HttpStatus.BAD_REQUEST).json(errorResponse)
+        } else {
+          errorResponse = errorService.createInternalServerErrorResponse(e)
+          response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
+        }
+      })
+    }
   }
-}
 
 export default ({offerService, errorService}: { offerService: OfferService, errorService: ErrorService }): Router => {
   const router = new Router()
