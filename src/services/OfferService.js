@@ -1,8 +1,9 @@
 // @flow
 
+import type {Config} from '../Config'
+import moment from 'moment'
 import Offer from '../models/Offer'
 import hash from '../utils/hash'
-import type {Config} from '../Config'
 import createToken from '../utils/createToken'
 import MailService from './MailService'
 import forms from '../models/forms'
@@ -13,12 +14,6 @@ import UserAction, {
   ACTION_EXTENDED,
   ACTION_GET
 } from '../models/UserAction'
-
-const MS_IN_S = 1000
-const S_IN_MIN = 60
-const MIN_IN_H = 60
-const H_IN_D = 60
-const MILLISECONDS_IN_A_DAY = MS_IN_S * S_IN_MIN * MIN_IN_H * H_IN_D
 
 export default class OfferService {
   config: Config
@@ -41,7 +36,7 @@ export default class OfferService {
     const offer = new Offer({
       email: email,
       city: city,
-      expirationDate: Date.now() + duration * MILLISECONDS_IN_A_DAY,
+      expirationDate: moment().add(duration, 'days'),
       hashedToken: hash(token),
       formData: form
     })
@@ -77,7 +72,7 @@ export default class OfferService {
       .where('city')
       .equals(city)
       .where('expirationDate')
-      .gt(Date.now())
+      .gt(moment())
       .where('confirmed')
       .equals(true)
       .populate({path: 'formData', select: '-_id -__v'})
@@ -122,9 +117,7 @@ export default class OfferService {
     duration: number,
     token: string
   ): Promise<void> {
-    const newExpirationDate = new Date(
-      Date.now() + duration * MILLISECONDS_IN_A_DAY
-    ).toISOString()
+    const newExpirationDate = moment().add(duration, 'days')
 
     offer = await this.findByIdAndUpdate(offer._id, {expirationDate: newExpirationDate})
     const mailService = new MailService(this.config.smtp)

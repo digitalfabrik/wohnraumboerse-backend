@@ -1,7 +1,8 @@
 // @flow
 
-import {Router} from 'express'
 import type {$Request, $Response, NextFunction} from 'express'
+import {Router} from 'express'
+import moment from 'moment'
 import {body, param, validationResult} from 'express-validator/check'
 import {matchedData} from 'express-validator/filter'
 import {TOKEN_LENGTH} from '../utils/createToken'
@@ -90,7 +91,7 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
       if (!offer) {
         const errorResponse = errorService.createOfferNotFoundErrorResponse(token)
         response.status(HttpStatus.NOT_FOUND).json(errorResponse)
-      } else if (offer.expirationDate <= Date.now()) {
+      } else if (moment().isAfter(offer.expirationDate)) {
         const errorResponse = errorService.createOfferExpiredErrorResponse(token)
         response.status(HttpStatus.GONE).json(errorResponse)
       } else {

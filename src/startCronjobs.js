@@ -1,6 +1,8 @@
 // @flow
 
 import {CronJob} from 'cron'
+// import moment from 'moment'
+import moment from 'moment-timezone'
 import Offer from './models/Offer'
 import forms from './models/forms'
 import UserAction, {
@@ -8,7 +10,7 @@ import UserAction, {
   ACTION_AUTOMATICALLY_DELETED_NOT_CONFIRMED
 } from './models/UserAction'
 
-const TIMEZONE = 'Europe/Berlin'
+const TIMEZONE = moment.tz.guess()
 
 const deleteOffer = async (offer: Offer) => {
   const {FormModel} = forms[offer.city]
@@ -19,8 +21,7 @@ const deleteOffer = async (offer: Offer) => {
 }
 
 const deleteExpired = async () => {
-  const twoYearsAgo = new Date()
-  twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2)
+  const twoYearsAgo = moment().subtract(2, 'year')
 
   const offersToDelete = await Offer.find()
     .where('createdDate')
@@ -35,8 +36,7 @@ const deleteExpired = async () => {
 }
 
 const deleteNotConfirmed = async () => {
-  const twoDaysAgo = new Date()
-  twoDaysAgo.setDate(twoDaysAgo.getDate() - 2)
+  const twoDaysAgo = moment().subtract(2, 'day')
 
   const offersToDelete = await Offer.find()
     .where('createdDate')

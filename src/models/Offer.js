@@ -1,6 +1,7 @@
 // @flow
 
 import mongoose from 'mongoose'
+import moment from 'moment'
 import forms from './forms'
 
 const offerSchema = mongoose.Schema({
@@ -26,7 +27,7 @@ const offerSchema = mongoose.Schema({
   createdDate: {
     type: Date,
     required: [true, 'Missing created date'],
-    default: Date.now
+    default: moment
   },
   hashedToken: {
     type: String,
@@ -42,7 +43,7 @@ const offerSchema = mongoose.Schema({
 
 // Don't use an arrow function here (because of the 'this' scope)
 offerSchema.methods.isExpired = function (): boolean {
-  return this.expirationDate <= Date.now()
+  return moment().isAfter(this.expirationDate)
 }
 
 export default mongoose.model('Offer', offerSchema)

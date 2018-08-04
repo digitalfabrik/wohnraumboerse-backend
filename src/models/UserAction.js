@@ -1,6 +1,7 @@
 // @flow
 
 import mongoose from 'mongoose'
+import moment from 'moment'
 
 export const ACTION_GET = 'get'
 export const ACTION_CREATED = 'created'
@@ -19,7 +20,7 @@ const userActionSchema = mongoose.Schema({
   timeStamp: {
     type: Date,
     required: [true, 'Missing timestamp'],
-    default: Date.now
+    default: moment
   },
   action: {
     type: String,
