@@ -12,7 +12,7 @@ import type {Config} from './Config'
 import initializeServices from './services/initializeServices'
 import commander from 'commander'
 import cosmiconfig from 'cosmiconfig'
-import startCronJobs from './cronjobs'
+import startCronJobs from './startCronjobs'
 
 commander.version('0.0.1').parse(process.argv)
 
