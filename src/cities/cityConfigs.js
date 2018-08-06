@@ -10,6 +10,13 @@ const configs = {
     title: 'Raumfrei Neuburg-Schrobenhausen',
     logo: null
   }),
+  testumgebungwohnraum: new CityConfig({
+    cmsName: 'testumgebungwohnraum',
+    hostname: 'test.wohnen.integreat-app.de',
+    formsEnabled: true,
+    title: 'Testumgebung',
+    logo: null
+  }),
   bayreuthwohnraum: new CityConfig({
     cmsName: 'bayreuthwohnraum',
     hostname: 'bayreuth.wohnen.integreat-app.de',
