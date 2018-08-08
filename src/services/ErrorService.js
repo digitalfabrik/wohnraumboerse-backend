@@ -25,6 +25,7 @@ export default class ErrorService {
 
   createInternalServerErrorResponse (error: Error): string | ErrorResponse {
     this.logger.error(error.toString())
+    this.logger.error(error.stack)
     if (develop) {
       return error.message
     } else {
