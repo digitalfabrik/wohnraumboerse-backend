@@ -5,18 +5,16 @@ import testumgebungForm from './forms/testumgebungForm'
 import mongoose from 'mongoose'
 import cityConfigs from '../cities/cityConfigs'
 import {difference, get, pull, set} from 'lodash'
-import Offer from './Offer'
+import Offer, {FormData} from './Offer'
 
 type AllFormsType = | typeof neuburgForm
 
-const schemaOptions = {strict: 'throw'}
-
-const Neuburg = mongoose.model(
-  cityConfigs.neuburgschrobenhausenwohnraum.cmsName, mongoose.Schema(neuburgForm, schemaOptions)
+const Neuburg = FormData.discriminator(
+  cityConfigs.neuburgschrobenhausenwohnraum.cmsName, new mongoose.Schema(neuburgForm)
 )
 
-const Testumgebung = mongoose.model(
-  cityConfigs.testumgebungwohnraum.cmsName, mongoose.Schema(testumgebungForm, schemaOptions)
+const Testumgebung = FormData.discriminator(
+  cityConfigs.testumgebungwohnraum.cmsName, new mongoose.Schema(testumgebungForm)
 )
 
 const addNotIncludedFor = (offer: Offer, form: AllFormsType, names: Array<string>, omit: Array<string>) => {
