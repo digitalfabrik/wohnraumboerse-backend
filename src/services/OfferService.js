@@ -72,8 +72,9 @@ export default class OfferService {
   }
 
   getActiveOffers (city: string): Promise<Array<Offer>> {
+    // deselecting fields use in where is not working (i.e. deselecting city)
     const offers = Offer.find()
-      .select('-_id -__v -city -confirmed -expirationDate -hashedToken')
+    // .select('-_id -__v -city -confirmed -expirationDate -hashedToken')
       .where('city')
       .equals(city)
       .where('expirationDate')

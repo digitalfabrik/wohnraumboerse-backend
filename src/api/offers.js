@@ -1,8 +1,8 @@
 // @flow
 
 import type {$Request, $Response, NextFunction} from 'express'
-import type {Result} from 'express-validator/check'
 import {Router} from 'express'
+import type {Result} from 'express-validator/check'
 import {body, param, validationResult} from 'express-validator/check'
 import {matchedData} from 'express-validator/filter'
 import {TOKEN_LENGTH} from '../utils/createToken'
@@ -66,6 +66,16 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
   }
   router.get('/', catchInternalErrors(async (request: $Request, response: $Response): Promise<void> => {
     const offers = await offerService.getActiveOffers(request.city)
+
+    // Workaround since select is not working
+    offers.forEach(offer => {
+      delete offer._id
+      delete offer.__v
+      delete offer.city
+      delete offer.confirmed
+      delete offer.expirationDate
+      delete offer.hashedToken
+    })
     offers.forEach((offer: Offer): Offer => offerService.fillAdditionalFieds(offer, request.city))
     response.json(offers)
   }, errorService))

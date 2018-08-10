@@ -1,7 +1,6 @@
 // @flow
 
 import mongoose from 'mongoose'
-import forms from './forms'
 
 const offerSchema = mongoose.Schema({
   email: {
@@ -35,7 +34,7 @@ const offerSchema = mongoose.Schema({
   },
   formData: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: Array.from(Object.keys(forms)), // Must be one of the forms defined in forms.js
+    refPath: 'city',
     required: [true, 'Missing form data']
   }
 })
