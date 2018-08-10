@@ -1,10 +1,19 @@
 // @flow
 
+const VERSION = 1
+
 const MIN_TITLE_LENGTH = 10
 const MAX_TITLE_LENGTH = 50
 const MAX_LOCATION_LENGTH = 85
 
 export default {
+  // version
+  version: {
+    type: Number,
+    required: true,
+    default: VERSION
+  },
+
   // landlord's data
   landlord: {
     lastName: {
