@@ -11,6 +11,13 @@ const configs = {
     logo: 'neuburg_logo.svg',
     favicon: 'neuburg_favicon.ico'
   }),
+  testumgebungwohnraum: new CityConfig({
+    cmsName: 'testumgebungwohnraum',
+    hostname: 'test.wohnen.integreat-app.de',
+    formsEnabled: true,
+    title: 'Testumgebung',
+    logo: null
+  }),
   bayreuthwohnraum: new CityConfig({
     cmsName: 'bayreuthwohnraum',
     hostname: 'wohnraumboerse.bayreuth.de',

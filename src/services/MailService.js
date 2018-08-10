@@ -27,9 +27,6 @@ const getDeletionUrl = (hostname: string, token: string): string => `https://${h
 
 const getFormattedDate = (date: Date): string => moment(date).locale('de').format('dddd, Do MMMM YYYY')
 
-const portalName = cityConfigs.neuburgschrobenhausenwohnraum.title
-const hostname = cityConfigs.neuburgschrobenhausenwohnraum.hostName
-
 export default class MailService {
   smtpConfig: SMTPTransport
 
@@ -43,9 +40,9 @@ export default class MailService {
 
   async sendRequestConfirmationMail (offer: Offer, token: string): Promise<void> {
     const subject = 'Bestätigen Sie Ihr Wohnungsangebot'
-    const confirmationUrl = getConfirmationUrl(hostname, token)
+    const confirmationUrl = getConfirmationUrl(cityConfigs[offer.city].hostName, token)
 
-    const html = renderRequestConfirmationMail({confirmationUrl, portalName})
+    const html = renderRequestConfirmationMail({confirmationUrl, portalName: cityConfigs[offer.city].title})
     if (!develop) {
       await this.sendMail({to: offer.email, subject, html})
     }
@@ -54,10 +51,15 @@ export default class MailService {
   async sendConfirmationMail (offer: Offer, token: string): Promise<void> {
     const subject = 'Informationen zu Ihrem Wohnungsangebot'
     const expirationDate = getFormattedDate(offer.expirationDate)
-    const deletionUrl = getDeletionUrl(hostname, token)
-    const extensionUrl = getExtensionUrl(hostname, token)
+    const deletionUrl = getDeletionUrl(cityConfigs[offer.city].hostName, token)
+    const extensionUrl = getExtensionUrl(cityConfigs[offer.city].hostName, token)
 
-    const html = renderConfirmationMail({expirationDate, deletionUrl, extensionUrl, portalName})
+    const html = renderConfirmationMail({
+      expirationDate,
+      deletionUrl,
+      extensionUrl,
+      portalName: cityConfigs[offer.city].title
+    })
     if (!develop) {
       await this.sendMail({to: offer.email, subject, html})
     }
@@ -66,7 +68,7 @@ export default class MailService {
   async sendDeletionMail (offer: Offer): Promise<void> {
     const subject = 'Löschung Ihres Wohnungsangebotes erfolgreich'
 
-    const html = renderDeletionMail({portalName})
+    const html = renderDeletionMail({portalName: cityConfigs[offer.city].title})
     if (!develop) {
       await this.sendMail({to: offer.email, subject, html})
     }
@@ -75,10 +77,15 @@ export default class MailService {
   async sendExtensionMail (offer: Offer, token: string): Promise<void> {
     const subject = 'Erneuerung Ihres Wohungsangebotes erfolgreich'
     const expirationDate = getFormattedDate(offer.expirationDate)
-    const deletionUrl = getDeletionUrl(hostname, token)
-    const extensionUrl = getExtensionUrl(hostname, token)
+    const deletionUrl = getDeletionUrl(cityConfigs[offer.city].hostName, token)
+    const extensionUrl = getExtensionUrl(cityConfigs[offer.city].hostName, token)
 
-    const html = renderExtensionMail({expirationDate, deletionUrl, extensionUrl, portalName})
+    const html = renderExtensionMail({
+      expirationDate,
+      deletionUrl,
+      extensionUrl,
+      portalName: cityConfigs[offer.city].title
+    })
     if (!develop) {
       await this.sendMail({to: offer.email, subject, html})
     }
