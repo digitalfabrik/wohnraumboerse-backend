@@ -2,30 +2,31 @@
 
 import CityConfig from './CityConfig'
 
-const configs = {
+const cityConfigs = {
   neuburgschrobenhausenwohnraum: new CityConfig({
     cmsName: 'neuburgschrobenhausenwohnraum',
     hostname: 'raumfrei.neuburg-schrobenhausen.de',
     formsEnabled: true,
     title: 'Raumfrei Neuburg-Schrobenhausen',
-    logo: 'neuburg_logo.svg',
-    favicon: 'neuburg_favicon.ico'
+    logo: `{}/v0/city-configs/image/neuburg_logo.svg`,
+    favicon: `{}/v0/city-configs/image/neuburg_favicon.ico`
   }),
   testumgebungwohnraum: new CityConfig({
     cmsName: 'testumgebungwohnraum',
     hostname: 'test.wohnen.integreat-app.de',
     formsEnabled: true,
     title: 'Testumgebung',
-    logo: null
+    logo: '',
+    favicon: ''
   }),
   bayreuthwohnraum: new CityConfig({
     cmsName: 'bayreuthwohnraum',
     hostname: 'wohnraumboerse.bayreuth.de',
     formsEnabled: false,
     title: 'Bayreuth',
-    logo: 'bayreuth_logo.png',
-    favicon: 'bayreuth_favicon.ico'
+    logo: `{}/v0/city-configs/image/bayreuth_logo.png`,
+    favicon: `{}/v0/city-configs/image/bayreuth_favicon.ico`
   })
 }
 
-export default configs
+export default cityConfigs

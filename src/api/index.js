@@ -4,10 +4,9 @@ import type {$Request, $Response, NextFunction} from 'express'
 import {Router} from 'express'
 import offers from './offers'
 import cityConfigs from './cityConfigs'
-import OfferService from '../services/OfferService'
-import ErrorService from '../services/ErrorService'
+import type {AllServicesType} from '../services/initializeServices'
 
-export default ({offerService, errorService}: { offerService: OfferService, errorService: ErrorService }): Router => {
+export default ({offerService, errorService, cityConfigService}: AllServicesType): Router => {
   const api = Router()
 
   api.param('city', (request: $Request, response: $Response, next: NextFunction, id: string) => {
@@ -15,7 +14,7 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
     next()
   })
   api.use('/v0/:city([-a-z]+)/offer', offers({offerService, errorService}))
-  api.use('/v0/city-configs', cityConfigs())
+  api.use('/v0/city-configs', cityConfigs({cityConfigService}))
 
   return api
 }
