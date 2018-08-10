@@ -14,6 +14,9 @@ export default class CityConfigService {
 
   getFilledCityConfigs (): Array<CityConfig> {
     const baseUrl = `${this.config.host}:${this.config.port}`
+    // Object.values() only returns an Array<mixed>, see https://github.com/facebook/flow/issues/2221 for reference.
+    // Therefore we disable flow type checking for this line.
+    // $FlowFixMe
     const cityConfigsArray: Array<CityConfig> = Object.values(cityConfigs)
     cityConfigsArray.forEach(cityConfig => {
       cityConfig.logo = format(cityConfig.logo, baseUrl)
