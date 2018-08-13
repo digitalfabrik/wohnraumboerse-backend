@@ -19,7 +19,7 @@ const configs = {
   }),
   bayreuthwohnraum: new CityConfig({
     cmsName: 'bayreuthwohnraum',
-    hostname: 'bayreuth.wohnen.integreat-app.de',
+    hostname: 'wohnraumboerse.bayreuth.de',
     formsEnabled: false,
     title: 'Bayreuth',
     logo: null
