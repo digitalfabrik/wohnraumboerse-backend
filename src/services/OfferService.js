@@ -66,9 +66,9 @@ export default class OfferService {
       .exec()
   }
 
-  getActiveOffers (city: string): Promise<Array<Offer>> {
-    const offers = Offer.find()
-      .select('-_id -__v -city -confirmed -expirationDate -hashedToken')
+  async getActiveOffers (city: string): Promise<Array<Offer>> {
+    const offers = await Offer.find()
+      .select('-_id -__v -confirmed -expirationDate -hashedToken')
       .where('city')
       .equals(city)
       .where('expirationDate')
@@ -78,6 +78,9 @@ export default class OfferService {
       .populate({path: 'formData', select: '-_id -__v'})
       .lean()
       .exec()
+
+    // Can't exclude the city in the projection because of populate
+    offers.forEach(offer => delete offer.city)
 
     new UserAction({city, action: ACTION_GET}).save()
 
