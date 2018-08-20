@@ -42,7 +42,7 @@ export default class MailService {
     const subject = 'Bestätigen Sie Ihr Wohnungsangebot'
     const confirmationUrl = getConfirmationUrl(getCityConfigs()[offer.city].hostName, token)
 
-    const html = renderRequestConfirmationMail({confirmationUrl, portalName: getCityConfigs[offer.city].title})
+    const html = renderRequestConfirmationMail({confirmationUrl, portalName: getCityConfigs()[offer.city].title})
     if (!develop) {
       await this.sendMail({to: offer.email, subject, html})
     }
