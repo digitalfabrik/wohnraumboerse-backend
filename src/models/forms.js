@@ -3,7 +3,7 @@
 import neuburgForm from './forms/neuburgForm'
 import testumgebungForm from './forms/testumgebungForm'
 import mongoose from 'mongoose'
-import cityConfigs from '../cities/cityConfigs'
+import getCityConfigs from '../cities/cityConfigs'
 import {difference, get, pull, set} from 'lodash'
 import Offer from './Offer'
 
@@ -12,11 +12,11 @@ type AllFormsType = | typeof neuburgForm
 const schemaOptions = {strict: 'throw'}
 
 const Neuburg = mongoose.model(
-  cityConfigs.neuburgschrobenhausenwohnraum.cmsName, mongoose.Schema(neuburgForm, schemaOptions)
+  getCityConfigs().neuburgschrobenhausenwohnraum.cmsName, mongoose.Schema(neuburgForm, schemaOptions)
 )
 
 const Testumgebung = mongoose.model(
-  cityConfigs.testumgebungwohnraum.cmsName, mongoose.Schema(testumgebungForm, schemaOptions)
+  getCityConfigs().testumgebungwohnraum.cmsName, mongoose.Schema(testumgebungForm, schemaOptions)
 )
 
 const addNotIncludedFor = (offer: Offer, form: AllFormsType, names: Array<string>, omit: Array<string>) => {
@@ -42,14 +42,14 @@ const addNotIncludedFor = (offer: Offer, form: AllFormsType, names: Array<string
 }
 
 export default {
-  [cityConfigs.neuburgschrobenhausenwohnraum.cmsName]: {
+  [getCityConfigs().neuburgschrobenhausenwohnraum.cmsName]: {
     FormModel: Neuburg,
     setAdditionalFields: (offer: Offer): Offer => {
       return addNotIncludedFor(offer, neuburgForm,
         ['costs.ofRunningServices', 'accommodation.ofRooms', 'costs.ofAdditionalServices'], ['other'])
     }
   },
-  [cityConfigs.testumgebungwohnraum.cmsName]: {
+  [getCityConfigs().testumgebungwohnraum.cmsName]: {
     FormModel: Testumgebung,
     setAdditionalFields: (offer: Offer): Offer => {
       return addNotIncludedFor(offer, neuburgForm,
