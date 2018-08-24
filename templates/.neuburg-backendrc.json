@@ -1,6 +1,7 @@
 {
   "host": "127.0.0.1",
   "port": 8080,
+  "protocol": "http",
   "bodyLimit": "100kb",
   "mongoDBUrl": "mongodb://localhost/livingDB",
   "logFile": "./neuburg-backend.log",
