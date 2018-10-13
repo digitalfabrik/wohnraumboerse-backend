@@ -24,6 +24,11 @@ export default class ErrorService {
     this.logger = log4js.getLogger()
   }
 
+  createCityNotFoundErrorResponse (wrongCity: string): ErrorResponse {
+    return new ErrorResponse(errorTypes.city,
+      `Die Instanz zu ${wrongCity} wurde nicht gefunden.`)
+  }
+
   createInternalServerErrorResponse (error: Error): string | ErrorResponse {
     this.logger.error(error.toString())
     if (develop) {
@@ -74,8 +79,6 @@ export default class ErrorService {
         return 'Formular'
       case 'token':
         return 'Token'
-      case 'city':
-        return 'Stadt'
       default:
         return ''
     }
