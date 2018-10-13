@@ -2,7 +2,6 @@
 
 import mongoose from 'mongoose'
 import moment from 'moment'
-import forms from './forms'
 
 const offerSchema = mongoose.Schema({
   email: {

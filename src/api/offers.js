@@ -10,7 +10,7 @@ import HttpStatus from 'http-status-codes'
 import OfferService from '../services/OfferService'
 import Offer from '../models/Offer'
 import ErrorService from '../services/ErrorService'
-import getCityConfigs from '../cities/cityConfigs'
+import cityConfigs from '../cities/cityConfigs'
 
 const develop = process.env.NODE_ENV === 'development'
 const THREE_DAYS = 3
@@ -67,7 +67,8 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
   }
 
   router.get('/',
-    param('city').isIn(Object.values(getCityConfigs()).map(cityConfig => cityConfig.cmsName)),
+    // $FlowFixMe Object.values() only returns an Array<mixed>, see https://github.com/facebook/flow/issues/2221.
+    param('city').isIn(Object.values(cityConfigs).map(cityConfig => cityConfig.cmsName)),
     validateMiddleware(errorService),
     catchInternalErrors(async (request: $Request, response: $Response): Promise<void> => {
       const offers = await offerService.getActiveOffers(request.city)
@@ -77,7 +78,8 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
   )
 
   router.put('/',
-    param('city').isIn(Object.values(getCityConfigs()).map(cityConfig => cityConfig.cmsName)),
+    // $FlowFixMe Object.values() only returns an Array<mixed>, see https://github.com/facebook/flow/issues/2221.
+    param('city').isIn(Object.values(cityConfigs).map(cityConfig => cityConfig.cmsName)),
     body('email').isEmail().trim().normalizeEmail(),
     body('duration').isInt().toInt().custom((value: number): boolean => ALLOWED_DURATIONS.includes(value)),
     body('formData').exists(),
@@ -95,7 +97,8 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
   )
 
   router.post(`/:token/confirm`,
-    param('city').isIn(Object.values(getCityConfigs()).map(cityConfig => cityConfig.cmsName)),
+    // $FlowFixMe Object.values() only returns an Array<mixed>, see https://github.com/facebook/flow/issues/2221.
+    param('city').isIn(Object.values(cityConfigs).map(cityConfig => cityConfig.cmsName)),
     param('token').isHexadecimal().isLength(TOKEN_LENGTH),
     validateMiddleware(errorService),
     catchInternalErrors(async (request: $Request, response: $Response): Promise<void> => {
@@ -119,7 +122,8 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
   )
 
   router.post(`/:token/extend`,
-    param('city').isIn(Object.values(getCityConfigs()).map(cityConfig => cityConfig.cmsName)),
+    // $FlowFixMe Object.values() only returns an Array<mixed>, see https://github.com/facebook/flow/issues/2221.
+    param('city').isIn(Object.values(cityConfigs).map(cityConfig => cityConfig.cmsName)),
     param('token').isHexadecimal().isLength(TOKEN_LENGTH),
     body('duration').isInt().toInt().custom((value: number): boolean => ALLOWED_DURATIONS.includes(value)),
     validateMiddleware(errorService),
@@ -141,7 +145,8 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
   )
 
   router.delete(`/:token`,
-    param('city').isIn(Object.values(getCityConfigs()).map(cityConfig => cityConfig.cmsName)),
+    // $FlowFixMe Object.values() only returns an Array<mixed>, see https://github.com/facebook/flow/issues/2221.
+    param('city').isIn(Object.values(cityConfigs).map(cityConfig => cityConfig.cmsName)),
     param('token').isHexadecimal().isLength(TOKEN_LENGTH),
     validateMiddleware(errorService),
     catchInternalErrors(async (request: $Request, response: $Response): Promise<void> => {
