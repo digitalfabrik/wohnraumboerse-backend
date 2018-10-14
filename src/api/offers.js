@@ -3,7 +3,7 @@
 import type {$Request, $Response, NextFunction} from 'express'
 import {Router} from 'express'
 import moment from 'moment'
-import {body, param, validationResult, Result} from 'express-validator/check'
+import {body, param, Result, validationResult} from 'express-validator/check'
 import {matchedData} from 'express-validator/filter'
 import {TOKEN_LENGTH} from '../utils/createToken'
 import HttpStatus from 'http-status-codes'
@@ -64,11 +64,15 @@ export default ({offerService, errorService}: { offerService: OfferService, erro
       response.json(queryResult)
     }, errorService))
   }
-  router.get('/', catchInternalErrors(async (request: $Request, response: $Response): Promise<void> => {
-    const offers = await offerService.getActiveOffers(request.city)
-    offers.forEach((offer: Offer): Offer => offerService.fillAdditionalFieds(offer, request.city))
-    response.json(offers)
-  }, errorService))
+
+  router.get('/',
+    validateMiddleware(errorService),
+    catchInternalErrors(async (request: $Request, response: $Response): Promise<void> => {
+      const offers = await offerService.getActiveOffers(request.city)
+      offers.forEach((offer: Offer): Offer => offerService.fillAdditionalFieds(offer, request.city))
+      response.json(offers)
+    }, errorService)
+  )
 
   router.put('/',
     body('email').isEmail().trim().normalizeEmail(),

@@ -2,14 +2,15 @@
 
 import ErrorResponse from '../models/ErrorResponse'
 import _ from 'lodash'
-import log4js from 'log4js'
 import type {Logger} from 'log4js'
+import log4js from 'log4js'
 import type {MongooseError, ValidationError} from 'mongoose'
-import type {Result, ErrorFormatter} from 'express-validator/check'
+import type {ErrorFormatter, Result} from 'express-validator/check'
 
 const develop = process.env.NODE_ENV === 'development'
 
 const errorTypes = {
+  city: 'city',
   token: 'token',
   confirmation: 'confirmation',
   validation: 'validation',
@@ -21,6 +22,11 @@ export default class ErrorService {
 
   constructor () {
     this.logger = log4js.getLogger()
+  }
+
+  createCityNotFoundErrorResponse (wrongCity: string): ErrorResponse {
+    return new ErrorResponse(errorTypes.city,
+      `Die Instanz zu ${wrongCity} wurde nicht gefunden.`)
   }
 
   createInternalServerErrorResponse (error: Error): string | ErrorResponse {
