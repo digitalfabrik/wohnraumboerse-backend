@@ -19,7 +19,6 @@ export default class CityConfigService {
     // Therefore we disable flow type checking for this line.
     // $FlowFixMe
     const cityConfigsArray: Array<CityConfig> = _.cloneDeep(Object.values(cityConfigs))
-    console.log(Object.values(cityConfigs))
     cityConfigsArray.forEach(cityConfig => {
       cityConfig.logo = format(cityConfig.logo, baseUrl)
       cityConfig.favicon = format(cityConfig.favicon, baseUrl)
