@@ -33,6 +33,6 @@ export default {
     formsEnabled: true,
     title: 'Wohnraumbörse Landkreis Heidenheim',
     logo: `{}/v0/city-configs/image/heidenheim_logo.png`,
-    favicon: `{}/v0/city-configs/image/heidenheim_favicon.ico` // todo: Add this file once delivered
+    favicon: `{}/v0/city-configs/image/heidenheim_favicon.ico`
   })
 }
