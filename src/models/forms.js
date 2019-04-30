@@ -2,6 +2,7 @@
 
 import neuburgForm from './forms/neuburgForm'
 import testumgebungForm from './forms/testumgebungForm'
+import heidenheimForm from './forms/heidenheimForm'
 import mongoose from 'mongoose'
 import cityConfigs from '../cities/cityConfigs'
 import {difference, get, pull, set} from 'lodash'
@@ -17,6 +18,10 @@ const Neuburg = mongoose.model(
 
 const Testumgebung = mongoose.model(
   cityConfigs.testumgebungwohnraum.cmsName, mongoose.Schema(testumgebungForm, schemaOptions)
+)
+
+const Heidenheim = mongoose.model(
+  cityConfigs.lkheidenheimwohnraum.cmsName, mongoose.Schema(heidenheimForm, schemaOptions)
 )
 
 const addNotIncludedFor = (offer: Offer, form: AllFormsType, names: Array<string>, omit: Array<string>) => {
@@ -53,6 +58,13 @@ export default {
     FormModel: Testumgebung,
     setAdditionalFields: (offer: Offer): Offer => {
       return addNotIncludedFor(offer, neuburgForm,
+        ['costs.ofRunningServices', 'accommodation.ofRooms', 'costs.ofAdditionalServices'], ['other'])
+    }
+  },
+  [cityConfigs.lkheidenheimwohnraum.cmsName]: {
+    FormModel: Heidenheim,
+    setAdditionalFields: (offer: Offer): Offer => {
+      return addNotIncludedFor(offer, heidenheimForm,
         ['costs.ofRunningServices', 'accommodation.ofRooms', 'costs.ofAdditionalServices'], ['other'])
     }
   }

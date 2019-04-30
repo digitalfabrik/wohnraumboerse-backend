@@ -26,5 +26,13 @@ export default {
     title: 'Bayreuth',
     logo: `{}/v0/city-configs/image/bayreuth_logo.png`,
     favicon: `{}/v0/city-configs/image/bayreuth_favicon.ico`
+  }),
+  lkheidenheimwohnraum: new CityConfig({
+    cmsName: 'lkheidenheimwohnraum',
+    hostname: 'wohnraumboerse.landkreis-heidenheim.de', // todo: Replace with real domain name once delivered
+    formsEnabled: true,
+    title: 'Wohnraumbörse Landkreis Heidenheim',
+    logo: `{}/v0/city-configs/image/heidenheim_logo.png`,
+    favicon: `{}/v0/city-configs/image/heidenheim_favicon.ico` // todo: Add this file once delivered
   })
 }
