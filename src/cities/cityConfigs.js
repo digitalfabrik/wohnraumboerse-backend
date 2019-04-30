@@ -16,8 +16,8 @@ export default {
     hostname: 'test.wohnen.integreat-app.de',
     formsEnabled: true,
     title: 'Testumgebung',
-    logo: '',
-    favicon: ''
+    logo: '{}/v0/city-configs/image/testumgebung_logo.png',
+    favicon: '{}/v0/city-configs/image/testumgebung_favicon.ico'
   }),
   bayreuthwohnraum: new CityConfig({
     cmsName: 'bayreuthwohnraum',
