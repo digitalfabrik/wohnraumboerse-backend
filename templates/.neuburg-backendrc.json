@@ -1,7 +1,9 @@
 {
-  "host": "127.0.0.1",
-  "port": 8080,
-  "protocol": "http",
+  "localHost": "127.0.0.1",
+  "localPort": 8080,
+  "externalHost": "api.wohnen.integreat-app.de",
+  "externalProtocol": "https",
+  "externalPort": 443,
   "bodyLimit": "100kb",
   "mongoDBUrl": "mongodb://localhost/livingDB",
   "logFile": "./neuburg-backend.log",

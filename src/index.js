@@ -95,7 +95,7 @@ db.on('error', (message: string) => {
 db.once('open', () => {
   logger.info(`Connected to DB in ${config.mongoDBUrl}.`)
   const CONNECTION_QUEUE_SIZE = 10
-  server.listen(parseInt(process.env.PORT) || config.port, process.env.IP || config.host, CONNECTION_QUEUE_SIZE, () => {
+  server.listen(parseInt(process.env.PORT) || config.internalPort, process.env.IP || config.internalHost, CONNECTION_QUEUE_SIZE, () => {
     logger.info(`Started on port ${server.address().port}`)
   })
 })

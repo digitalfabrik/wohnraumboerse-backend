@@ -2,9 +2,11 @@
 import {SMTPTransport} from 'nodemailer'
 
 export interface Config {
-  host: string,
-  port: number,
-  protocol: string,
+  internalHost: string,
+  internalPort: number,
+  externalHost: string,
+  externalProtocol: string,
+  externalPort: number,
   bodyLimit: string,
   mongoDBUrl: string,
   smtp: SMTPTransport,

@@ -14,7 +14,7 @@ export default class CityConfigService {
   }
 
   getFilledCityConfigs (): Array<CityConfig> {
-    const baseUrl = `${this.config.protocol}://${this.config.host}:${this.config.port}`
+    const baseUrl = `${this.config.externalProtocol}://${this.config.externalHost}:${this.config.externalPort}`
     // Object.values() only returns an Array<mixed>, see https://github.com/facebook/flow/issues/2221 for reference.
     // Therefore we disable flow type checking for this line.
     // $FlowFixMe
